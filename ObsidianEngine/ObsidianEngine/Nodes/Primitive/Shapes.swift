@@ -1,0 +1,86 @@
+//
+//  Shapes.swift
+//  ObsidianEngine
+//
+//  Created by Gellert on 6/8/18.
+//  Copyright © 2018 Gellert. All rights reserved.
+//
+
+open class OBSDShape: OBSDNode {
+    
+    // MARK: Public
+    override open var position: float3 {
+        didSet {
+            updateBuffers()
+        }
+    }
+    
+    override open var rotation: float3 {
+        didSet {
+            updateBuffers()
+        }
+    }
+    
+    override open var scale: float3 {
+        didSet {
+            updateBuffers()
+        }
+    }
+        
+    open var fragmentFunctionName: String = "lit_textured_shader"
+    open var vertexFunctionName: String = "mp_vertex"
+    open var textureImage: String? {
+        didSet {
+            //self.texture = Texturable.loadTexture(imageName: self.textureImage!)
+        }
+    }
+    var texture: MTLTexture?
+    
+    // MARK: Private
+    var pipelineState: MTLRenderPipelineState!
+    
+    var vertices = [OBSDVertex]()
+    
+    var indices = [UInt16]()
+    
+    var vertexBuffer: MTLBuffer!
+
+    var indexBuffer: MTLBuffer!
+    
+    var vertexDescriptor: MTLVertexDescriptor {
+        let vertexDescriptor = MTLVertexDescriptor()
+        
+        vertexDescriptor.attributes[0].format = .float4
+        vertexDescriptor.attributes[0].offset = 0
+        vertexDescriptor.attributes[0].bufferIndex = 0
+        
+        vertexDescriptor.attributes[1].format = .float4
+        vertexDescriptor.attributes[1].offset = MemoryLayout<float4>.stride
+        vertexDescriptor.attributes[1].bufferIndex = 0
+        
+        vertexDescriptor.attributes[2].format = .float2
+        vertexDescriptor.attributes[2].offset = MemoryLayout<float4>.stride * 2
+        vertexDescriptor.attributes[2].bufferIndex = 0
+        
+        vertexDescriptor.attributes[3].format = .float3
+        vertexDescriptor.attributes[3].offset = MemoryLayout<Float>.stride * 10
+        vertexDescriptor.attributes[3].bufferIndex = 0
+        
+        vertexDescriptor.layouts[0].stride = MemoryLayout<Float>.stride * 13
+        return vertexDescriptor
+    }
+        
+    // MARK: Public function
+    public init(name: String) {
+        super.init()
+        self.name = name
+    }
+    
+    // MAKR: Private function
+    func updateBuffers() {
+        vertexBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: vertices, length: MemoryLayout<OBSDVertex>.stride * vertices.count, options: [])
+        indexBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: indices, length: MemoryLayout<UInt16>.size * indices.count, options: [])
+    }
+}
+
+extension OBSDShape: Texturable {}

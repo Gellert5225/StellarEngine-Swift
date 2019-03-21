@@ -1,0 +1,233 @@
+//
+//  Terrain.swift
+//  ObsidianEngine
+//
+//  Created by Jiahe Li on 16/03/2019.
+//  Copyright © 2019 Gellert. All rights reserved.
+//
+
+import MetalKit
+import MetalPerformanceShaders
+
+open class OBSDTerrain: OBSDNode {
+    static let maxTessellation: Int = {
+        #if os(macOS)
+        return 64
+        #else
+        return 16
+        #endif
+    } ()
+    
+    // set up patch
+    let patches = (horizontal: 7, vertical: 7)
+    var patchCount: Int {
+        return patches.horizontal * patches.vertical
+    }
+    
+    // edge and inside factors
+    var edgeFactors: [Float] = [4]
+    var insideFactors: [Float] = [4]
+    
+    var controlPointsBuffer: MTLBuffer?
+    
+    lazy var tessellationFactorsBuffer: MTLBuffer? = {
+        let count = patchCount * (4 + 2) // 4 edge factors and 2 inside factors
+        let size = count * MemoryLayout<Float>.size / 2 // size of buffer, half-float
+        return OBSDRenderer.metalDevice.makeBuffer(length: size, options: .storageModePrivate)
+    }()
+    let tessellationPipelineState: MTLComputePipelineState
+    let renderPipelineState: MTLRenderPipelineState
+    
+    // terrain textures
+    let heightMap: MTLTexture?
+    let cliffMap: MTLTexture?
+    let snowMap: MTLTexture?
+    let grassMap: MTLTexture?
+    let terrainSlope: MTLTexture
+    
+    var tiling: Float = 32
+    
+    var terrainUniforms = OBSDTerrainUniforms()
+    
+    public init(withSize size: float2, heightScale: Float, heightTexture: String, cliffTexture: String, snowTexture: String, grassTexture: String) {
+        
+        do {
+            heightMap = try OBSDTerrain.loadTexture(imageName: heightTexture)
+            cliffMap = try OBSDTerrain.loadTexture(imageName: cliffTexture)
+            snowMap = try OBSDTerrain.loadTexture(imageName: snowTexture)
+            grassMap = try OBSDTerrain.loadTexture(imageName: grassTexture)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+        
+        // fill the beffer with control points
+        let controlPoints = OBSDTerrain.createControlPoints(patches: patches, size: (width: size.x, height: size.y))
+        controlPointsBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: controlPoints, length: MemoryLayout<float3>.stride * controlPoints.count)
+        
+        // compute pipeline state and render pipeline state
+        tessellationPipelineState = OBSDTerrain.buildComputePipelineState()
+        renderPipelineState = OBSDTerrain.buildRenderPipelineState()
+        terrainSlope = OBSDTerrain.heightToSlope(source: heightMap!)
+        
+        super.init()
+        name = "Terrain"
+        terrainUniforms.height = heightScale
+        terrainUniforms.size = size
+        terrainUniforms.maxTessellation = UInt32(OBSDTerrain.maxTessellation)
+    }
+    
+    static func buildRenderPipelineState() -> MTLRenderPipelineState {
+        let descriptor = MTLRenderPipelineDescriptor()
+        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.depthAttachmentPixelFormat = .depth32Float
+        //descriptor.sampleCount = 4
+        
+        let vertexFunction = OBSDRenderer.library?.makeFunction(name: "terrain_vertex")
+        let fragmentFunction = OBSDRenderer.library?.makeFunction(name: "terrain_fragment")
+        descriptor.vertexFunction = vertexFunction
+        descriptor.fragmentFunction = fragmentFunction
+        
+        let vertexDescriptor = MTLVertexDescriptor()
+        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[0].offset = 0
+        vertexDescriptor.attributes[0].bufferIndex = 0
+        
+        vertexDescriptor.layouts[0].stepFunction = .perPatchControlPoint
+        vertexDescriptor.layouts[0].stride = MemoryLayout<float3>.stride
+        descriptor.vertexDescriptor = vertexDescriptor
+        
+        descriptor.tessellationFactorStepFunction = .perPatch
+        descriptor.maxTessellationFactor = OBSDTerrain.maxTessellation
+        descriptor.tessellationPartitionMode = .fractionalEven //pow2
+        
+        return try! OBSDRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
+    }
+    
+    static func buildComputePipelineState() -> MTLComputePipelineState {
+        guard let kernelFunction =
+            OBSDRenderer.library?.makeFunction(name: "terrain_kernel") else {
+                fatalError("Tessellation shader function not found")
+        }
+        return try! OBSDRenderer.metalDevice.makeComputePipelineState(function: kernelFunction)
+    }
+    
+    static func createControlPoints(patches: (horizontal: Int, vertical: Int),
+                                    size: (width: Float, height: Float)) -> [float3] {
+        
+        var points: [float3] = []
+        // per patch width and height
+        let width = 1 / Float(patches.horizontal)
+        let height = 1 / Float(patches.vertical)
+        
+        for j in 0..<patches.vertical {
+            let row = Float(j)
+            for i in 0..<patches.horizontal {
+                let column = Float(i)
+                let left = width * column
+                let bottom = height * row
+                let right = width * column + width
+                let top = height * row + height
+                
+                points.append([left, 0, top])
+                points.append([right, 0, top])
+                points.append([right, 0, bottom])
+                points.append([left, 0, bottom])
+            }
+        }
+        // size and convert to Metal coordinates
+        // eg. 6 across would be -3 to + 3
+        points = points.map {
+            [$0.x * size.width - size.width / 2,
+             0,
+             $0.z * size.height - size.height / 2]
+        }
+        return points
+    }
+    
+    static func heightToSlope(source: MTLTexture) -> MTLTexture {
+        let descriptor =
+            MTLTextureDescriptor.texture2DDescriptor(pixelFormat: source.pixelFormat,
+                                                     width: source.width,
+                                                     height: source.height,
+                                                     mipmapped: false)
+        descriptor.usage = [.shaderWrite, .shaderRead]
+        guard let destination = OBSDRenderer.metalDevice.makeTexture(descriptor: descriptor),
+            let commandBuffer = OBSDRenderer.commandQueue.makeCommandBuffer()
+            else {
+                fatalError()
+        }
+        let shader = MPSImageSobel(device: OBSDRenderer.metalDevice)
+        shader.encode(commandBuffer: commandBuffer,
+                      sourceTexture: source,
+                      destinationTexture: destination)
+        commandBuffer.commit()
+        return destination
+    }
+    
+    func update(viewMatrix: float4x4) {
+        guard let computeEncoder = OBSDRenderer.commandBuffer?.makeComputeCommandEncoder() else {
+            fatalError("failed to create compute encoder")
+        }
+        computeEncoder.setComputePipelineState(tessellationPipelineState)
+        computeEncoder.setBytes(&edgeFactors,
+                                length: MemoryLayout<Float>.size * edgeFactors.count,
+                                index: 0)
+        computeEncoder.setBytes(&insideFactors,
+                                length: MemoryLayout<Float>.size * insideFactors.count,
+                                index: 1)
+        computeEncoder.setBuffer(tessellationFactorsBuffer, offset: 0, index: 2)
+        
+        var cameraPosition = viewMatrix.columns.3
+        computeEncoder.setBytes(&cameraPosition,
+                                length: MemoryLayout<float4>.stride,
+                                index: 3)
+        
+        var matrix = modelMatrix
+        computeEncoder.setBytes(&matrix,
+                                length: MemoryLayout<float4x4>.stride,
+                                index: 4)
+        computeEncoder.setBuffer(controlPointsBuffer, offset: 0, index: 5)
+        computeEncoder.setBytes(&terrainUniforms,
+                                length: MemoryLayout<OBSDTerrainUniforms>.stride,
+                                index: 6)
+        
+        let width = min(patchCount, tessellationPipelineState.threadExecutionWidth)
+        computeEncoder.dispatchThreadgroups(MTLSizeMake(patchCount, 1, 1),
+                                            threadsPerThreadgroup: MTLSizeMake(width, 1, 1))
+        computeEncoder.endEncoding()
+        
+    }
+}
+
+extension OBSDTerrain: Texturable {}
+
+
+extension OBSDTerrain: Renderable {
+    
+    func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: OBSDUniforms, fragmentUniforms: OBSDFragmentUniforms) {
+        var mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix
+        commandEncoder.setVertexBytes(&mvp, length: MemoryLayout<float4x4>.stride, index: 1)
+        commandEncoder.setRenderPipelineState(renderPipelineState)
+        commandEncoder.setVertexBuffer(controlPointsBuffer, offset: 0, index: 0)
+        commandEncoder.setTessellationFactorBuffer(tessellationFactorsBuffer,
+                                                  offset: 0,
+                                                  instanceStride: 0)
+        commandEncoder.setTriangleFillMode(.fill)
+        commandEncoder.setVertexTexture(heightMap, index: 0)
+        commandEncoder.setVertexTexture(terrainSlope, index: 4)
+        commandEncoder.setVertexBytes(&terrainUniforms,
+                                     length: MemoryLayout<OBSDTerrainUniforms>.stride, index: 6)
+        commandEncoder.setFragmentTexture(cliffMap, index: 1)
+        commandEncoder.setFragmentTexture(snowMap, index: 2)
+        commandEncoder.setFragmentTexture(grassMap, index: 3)
+        commandEncoder.setFragmentBytes(&tiling, length: MemoryLayout<Float>.stride, index: 1)
+        // draw
+        commandEncoder.drawPatches(numberOfPatchControlPoints: 4,
+                                  patchStart: 0, patchCount: patchCount,
+                                  patchIndexBuffer: nil,
+                                  patchIndexBufferOffset: 0,
+                                  instanceCount: 1, baseInstance: 0)
+        
+        
+    }
+}
