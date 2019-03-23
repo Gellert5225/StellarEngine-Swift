@@ -31,7 +31,7 @@ vertex VertexOut vertexSkybox(const VertexIn in [[ stage_in ]],
 
 fragment half4 fragmentSkybox(VertexOut in [[stage_in]],
                               texturecube<half> cubeTexture [[texture(20)]]) {
-    constexpr sampler default_sampler(filter::linear);
+    constexpr sampler default_sampler(filter::linear, mag_filter::linear, min_filter::linear);
     half4 color = cubeTexture.sample(default_sampler, in.textureCoordinates);
-    return color;
+    return half4(color);
 }

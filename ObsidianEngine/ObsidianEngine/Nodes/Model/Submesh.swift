@@ -67,6 +67,9 @@ private extension OBSDSubmesh {
         
         pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(OBSDModel.defaultVertexDescriptor)
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.colorAttachments[1].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        pipelineDescriptor.colorAttachments[3].pixelFormat = .rgba16Float
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
         //pipelineDescriptor.sampleCount = 4
         do {

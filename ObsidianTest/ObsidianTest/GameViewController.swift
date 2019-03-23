@@ -31,7 +31,7 @@ class GameViewController: OBSDViewController {
         
 //        let worldScene = WorldScene()
 //        scene = worldScene
-        
+//
         let shadowScene = ShadowScene()
         scene = shadowScene
  

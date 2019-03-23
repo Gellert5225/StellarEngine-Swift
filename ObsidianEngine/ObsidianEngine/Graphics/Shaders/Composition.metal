@@ -31,6 +31,7 @@ float3 compositionLighting(float3 normal,
                            constant Light *lights,
                            float3 baseColor) {
     float3 diffuseColor = 0;
+    float3 ambientColor = 0;
     float3 normalDirection = normalize(normal);
     
     for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
@@ -60,6 +61,8 @@ float3 compositionLighting(float3 normal,
                 color *= attenuation;
                 diffuseColor += color;
             }
+        } else if (light.type == Ambientlight) {
+            ambientColor += light.color * light.intensity;
         }
     }
     return diffuseColor;
@@ -71,16 +74,19 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
                                  depth2d<float> shadowTexture [[ texture(5) ]],
                                  texture2d<float> albedoTexture [[ texture(6) ]],
                                  texture2d<float> normalTexture [[ texture(1) ]],
-                                 texture2d<float> positionTexture [[ texture(7) ]]) {
+                                 texture2d<float> positionTexture [[ texture(7) ]],
+                                 float4 albedoColor [[ color(0) ]],
+                                 float4 normalColor [[ color(1) ]],
+                                 float4 positionColor [[ color(2) ]]) {
     constexpr sampler s(min_filter::linear, mag_filter::linear);
-    float4 albedo = albedoTexture.sample(s, in.texCoords);
-    float3 normal = normalTexture.sample(s, in.texCoords).xyz;
-    float3 position = positionTexture.sample(s, in.texCoords).xyz;
-    float3 baseColor = albedo.rgb;
-    float3 diffuseColor = compositionLighting(normal, position, fragmentUniforms, lightsBuffer, baseColor);
-    float shadow = albedo.a;
+//    float4 albedo = albedoTexture.sample(s, in.texCoords);
+//    float3 normal = normalTexture.sample(s, in.texCoords).xyz;
+//    float3 position = positionTexture.sample(s, in.texCoords).xyz;
+    //float3 baseColor = albedo.rgb;
+    float3 diffuseColor = compositionLighting(normalColor.xyz, positionColor.xyz, fragmentUniforms, lightsBuffer, albedoColor.rgb);
+    float shadow = albedoColor.a;
     if (shadow > 0) {
         diffuseColor *= 0.5;
     }
-    return float4(diffuseColor, 1);
+    return float4(albedoColor);
 }

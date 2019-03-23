@@ -24,6 +24,11 @@ class ShadowScene: OBSDScene {
         add(childNode: train)
         train.scale = [2, 2, 2]
         
+        let car = OBSDModel(modelName: "racing-car", fragmentFunctionName: "fragment_PBR")
+        car.scale = [1.5, 1.5, 1.5]
+        car.position = [7, 0, 0]
+        add(childNode: car)
+        
         camera.position = float3(0, 0, 30)
         camera.rotate(x: 0, y: 0, z: 0)
         camera.fovDegrees = 60
@@ -33,7 +38,7 @@ class ShadowScene: OBSDScene {
         ambientLight.intensity = 0.5
         
         lights.append(sunLignt)
-        createPointLights(count: 30, min: [-15, 1.5, -15], max: [5, 2, 10])
+        createPointLights(count: 40, min: [-15, 1.5, -15], max: [5, 2, 10])
         lights.append(ambientLight)
     }
     

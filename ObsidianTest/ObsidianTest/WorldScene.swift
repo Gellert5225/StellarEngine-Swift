@@ -18,7 +18,7 @@ class WorldScene: OBSDScene {
     
     func setupScene() {
         skybox = OBSDSkybox(textureName: nil)
-        let landscape = OBSDModel(modelName: "Cartoon_lowpoly_landscape_scene_obj", fragmentFunctionName: "fragment_IBL")
+        let landscape = OBSDModel(modelName: "Cartoon_lowpoly_landscape_scene_obj", fragmentFunctionName: "fragment_PBR")
         add(childNode: landscape)
         
         landscape.scale = [0.01, 0.01, 0.01]
@@ -31,7 +31,9 @@ class WorldScene: OBSDScene {
         
         light.position = float3(100, 200, -200)
         light.intensity = 0.5
-        lights.append(light)
+        lights.append(sunLignt)
+        ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
+        ambientLight.intensity = 0.1
         lights.append(ambientLight)
     }
 }

@@ -13,6 +13,8 @@ open class OBSDSkybox {
     var diffuseTexture: MTLTexture?
     var brdfLut: MTLTexture?
     
+    var transform = Transform()
+    
     let mesh: MTKMesh
     let pipelineState: MTLRenderPipelineState
     let depthStencilState: MTLDepthStencilState?
@@ -28,7 +30,7 @@ open class OBSDSkybox {
     
     public init(textureName: String?) {
         let allocator = MTKMeshBufferAllocator(device: OBSDRenderer.metalDevice)
-        let cube = MDLMesh(boxWithExtent: [100, 100, 100], segments: [1, 1, 1], inwardNormals: true, geometryType: .triangles, allocator: allocator)
+        let cube = MDLMesh(boxWithExtent: [1, 1, 1], segments: [1, 1, 1], inwardNormals: true, geometryType: .triangles, allocator: allocator)
         do {
             mesh = try MTKMesh(mesh: cube, device: OBSDRenderer.metalDevice)
         } catch {
@@ -55,10 +57,10 @@ open class OBSDSkybox {
     
     private static func buildPipelineState(vertexDescriptor: MDLVertexDescriptor) -> MTLRenderPipelineState {
         let descriptor = MTLRenderPipelineDescriptor()
+        //descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        descriptor.colorAttachments[1].pixelFormat = .bgra8Unorm
+        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
         descriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        descriptor.colorAttachments[3].pixelFormat = .rgba16Float
         //descriptor.sampleCount = 4;
         descriptor.depthAttachmentPixelFormat = .depth32Float
         descriptor.vertexFunction = OBSDRenderer.library.makeFunction(name: "vertexSkybox")
@@ -84,7 +86,14 @@ open class OBSDSkybox {
         renderEncoder.label = "Skybox"
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
+        //renderEncoder.setCullMode(.front)
+        
+//        for (index, vertexBuffer) in mesh.vertexBuffers.enumerated() {
+//            renderEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
+//        }
+        
         renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: 0)
+
         var viewMatrix = uniforms.viewMatrix
         viewMatrix.columns.3 = [0, 0, 0, 1]
         var viewProjectionMatrix = uniforms.projectionMatrix * viewMatrix
@@ -96,9 +105,9 @@ open class OBSDSkybox {
                                             indexCount: submesh.indexCount,
                                             indexType: submesh.indexType,
                                             indexBuffer: submesh.indexBuffer.buffer,
-                                            indexBufferOffset: 0)
+                                            indexBufferOffset: submesh.indexBuffer.offset)
         
-        
+        renderEncoder.popDebugGroup()
     }
     
     func loadGeneratedSkyboxTexture(dimensions: int2) -> MTLTexture? {
