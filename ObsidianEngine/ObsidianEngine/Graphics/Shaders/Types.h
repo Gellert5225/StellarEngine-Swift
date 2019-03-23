@@ -112,4 +112,15 @@ struct Instances {
     matrix_float3x3 normalMatrix;
 };
 
+typedef struct Lighting {
+    float3 lightDirection;
+    float3 viewDirection;
+    float3 baseColor;
+    float3 normal;
+    float metallic;
+    float roughness;
+    float ambientOcclusion;
+    float3 lightColor;
+} Lighting;
+
 #endif /* Types_h */

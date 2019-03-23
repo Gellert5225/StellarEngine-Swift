@@ -16,8 +16,8 @@ struct VertexOut {
     float2 texCoords;
 };
 
-vertex VertexOut composition_vert(constant float2 *quadVertices [[ buffer(0) ]],
-                                  constant float2 *quadTexCoords [[ buffer(1) ]],
+vertex VertexOut composition_vert(constant float2 *quadVertices     [[ buffer(0) ]],
+                                  constant float2 *quadTexCoords    [[ buffer(1) ]],
                                   uint id [[ vertex_id ]]) {
     VertexOut out;
     out.position = float4(quadVertices[id], 0.0, 1.0);
@@ -70,14 +70,14 @@ float3 compositionLighting(float3 normal,
 
 fragment float4 composition_frag(VertexOut in [[ stage_in ]],
                                  constant OBSDFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
-                                 constant Light *lightsBuffer [[ buffer(2) ]],
-                                 depth2d<float> shadowTexture [[ texture(5) ]],
-                                 texture2d<float> albedoTexture [[ texture(6) ]],
-                                 texture2d<float> normalTexture [[ texture(1) ]],
-                                 texture2d<float> positionTexture [[ texture(7) ]],
-                                 float4 albedoColor [[ color(0) ]],
-                                 float4 normalColor [[ color(1) ]],
-                                 float4 positionColor [[ color(2) ]]) {
+                                 constant Light *lightsBuffer                    [[ buffer(2) ]],
+                                 depth2d<float> shadowTexture       [[ texture(5) ]],
+                                 texture2d<float> albedoTexture     [[ texture(6) ]],
+                                 texture2d<float> normalTexture     [[ texture(1) ]],
+                                 texture2d<float> positionTexture   [[ texture(7) ]],
+                                 float4 albedoColor     [[ color(0) ]],
+                                 float4 normalColor     [[ color(1) ]],
+                                 float4 positionColor   [[ color(2) ]]) {
     constexpr sampler s(min_filter::linear, mag_filter::linear);
 //    float4 albedo = albedoTexture.sample(s, in.texCoords);
 //    float3 normal = normalTexture.sample(s, in.texCoords).xyz;

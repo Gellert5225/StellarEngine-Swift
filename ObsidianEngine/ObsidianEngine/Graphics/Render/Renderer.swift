@@ -183,6 +183,7 @@ open class OBSDRenderer: NSObject {
         descriptor.vertexFunction = OBSDRenderer.library.makeFunction(name: "vertex_main")
         descriptor.fragmentFunction = OBSDRenderer.library.makeFunction(name: "gBufferFragment")
         descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(OBSDModel.defaultVertexDescriptor)
+        //let a = OBSDModel.defaultVertexDescriptor.attributes[3] as! MDLVertexAttribute
         do {
             gBufferPipelineState = try OBSDRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
         } catch let error {
@@ -341,10 +342,16 @@ extension OBSDRenderer: MTKViewDelegate {
         scene.uniforms.normalMatrix = float3x3(normalFrom4x4: model.modelMatrix)
         renderEncoder.setVertexBytes(&scene.uniforms, length: MemoryLayout<OBSDUniforms>.stride, index: 11)
         renderEncoder.setVertexBuffer(model.mesh?.vertexBuffers[0].buffer, offset: 0, index: 0)
+        renderEncoder.setFragmentSamplerState(model.samplerState, index: 0)
         
         for modelSubmesh in model.submeshes! {
             let submesh = modelSubmesh.submesh
             var material = modelSubmesh.material
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: 0)
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.normal, index: 1)
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.roughness, index: 2)
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.metallic, index: 3)
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.ao, index: 4)
             renderEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
             renderEncoder.drawIndexedPrimitives(type: .triangle,
                                                 indexCount: submesh.indexCount,

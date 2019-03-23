@@ -10,11 +10,22 @@
 using namespace metal;
 #import "Types.h"
 
+constant float pi = 3.1415926535897932384626433832795;
+
+constant bool hasColorTexture       [[ function_constant(0) ]];
+constant bool hasNormalTexture      [[ function_constant(1) ]];
+constant bool hasRoughnessTexture   [[ function_constant(2) ]];
+constant bool hasMetallicTexture    [[ function_constant(3) ]];
+constant bool hasAOTexture          [[ function_constant(4) ]];
+
 struct VertexOut {
     float4 position [[ position ]];
     float3 worldPosition;
     float3 normal;
     float4 shadowPosition;
+    float2 textureCoordinates;
+    float3 worldTangent;
+    float3 worldBitangent;
 };
 
 struct GbufferOut {
@@ -66,20 +77,110 @@ float3 gbufferLighting(float3 normal,
     return diffuseColor;
 }
 
+float3 renderGbuffer(Lighting lighting);
+
 fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
-                                    depth2d<float> shadow_texture [[texture(5)]],
-                                    constant Material &material [[buffer(13)]],
+                                    sampler sampler2d [[ sampler(0) ]],
                                     constant OBSDFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
-                                    constant Light *lightsBuffer [[ buffer(2) ]]) {
+                                    constant Light *lightsBuffer                    [[ buffer(2) ]],
+                                    constant Material &material         [[ buffer(13) ]],
+                                    texture2d<float> texture            [[ texture(0) ]],
+                                    texture2d<float> normalTexture      [[ texture(1) ]],
+                                    texture2d<float> roughnessTexture   [[ texture(2) ]],
+                                    texture2d<float> metallicTexture    [[ texture(3) ]],
+                                    texture2d<float> aoTexture          [[ texture(4) ]],
+                                    depth2d<float> shadow_texture       [[ texture(5) ]]) {
     GbufferOut out;
-    out.albedo = float4(material.baseColor, 1.0);
+    
     out.albedo.a = 0;
     out.normal = float4(normalize(in.normal), 1.0);
     out.position = float4(in.worldPosition, 1.0);
     
-    float3 diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, material.baseColor);
+    float4 baseColor;
     
-    out.albedo = float4(diffuseColor, out.albedo.a);
+    if (!is_null_texture(texture)) {
+        float4 colorAlpha = texture.sample(sampler2d, in.textureCoordinates * 1);
+        baseColor = float4(texture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
+        
+        if (colorAlpha.a < 0.2) {
+            discard_fragment();
+        }
+    } else {
+        baseColor = float4(material.baseColor, 1.0);
+    }
+    
+    float metallic = material.metallic;
+    if (!is_null_texture(metallicTexture)) {
+        metallic = metallicTexture.sample(sampler2d, in.textureCoordinates).r;
+    } else {
+        metallic = material.metallic;
+    }
+    
+    // extract roughness
+    float roughness;
+    if (!is_null_texture(roughnessTexture)) {
+        roughness = roughnessTexture.sample(sampler2d, in.textureCoordinates).r;
+    } else {
+        roughness = material.roughness;
+    }
+    
+    // extract ambient occlusion
+    float ambientOcclusion;
+    if (!is_null_texture(aoTexture)) {
+        ambientOcclusion = aoTexture.sample(sampler2d, in.textureCoordinates).r;
+    } else {
+        ambientOcclusion = 1.0;
+    }
+    
+    float3 normal;
+    if (!is_null_texture(normalTexture)) {
+        float3 normalValue = normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
+        normalValue = normalValue * 2 - 1;
+        normal = in.normal * normalValue.z + in.worldTangent * normalValue.x + in.worldBitangent * normalValue.y;
+    } else {
+        normal = in.normal;
+    }
+    
+    normal = normalize(normal);
+    
+    float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition);
+    float3 specularOutput = 0;
+    float3 diffuseColor = 0;
+    float3 ambientColor = 0;
+    
+    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
+        Light light = lightsBuffer[i];
+        if (light.type == 1) {
+            float3 lightDirection = normalize(light.position);
+            lightDirection = light.position;
+            
+            // all the necessary components are in place
+            Lighting lighting;
+            lighting.lightDirection = lightDirection;
+            lighting.viewDirection = viewDirection;
+            lighting.baseColor = baseColor.xyz;
+            lighting.normal = normal;
+            lighting.metallic = metallic;
+            lighting.roughness = roughness;
+            lighting.ambientOcclusion = ambientOcclusion;
+            lighting.lightColor = light.color;
+            
+            specularOutput = renderGbuffer(lighting);
+            
+            //compute Lambertian diffuse
+            //            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
+            //            diffuseColor = light.color * color.rgb * nDotl * ambientOcclusion;
+            //            diffuseColor *= 1.0 - metallic;
+        } else if (light.type == Pointlight){
+            
+        } else {
+            ambientColor += light.color * light.intensity;
+        }
+    }
+    
+    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    
+    //out.albedo = float4(diffuseColor, out.albedo.a);
     
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -96,7 +197,48 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         diffuseColor *= 0.5;
     }
     
-    out.albedo = float4(diffuseColor, out.albedo.a);
+    out.albedo = float4(specularOutput + diffuseColor, 1.0) * ambientOcclusion;
     
     return out;
+}
+
+float3 renderGbuffer(Lighting lighting) {
+    // Rendering equation courtesy of Apple et al.
+    float NoL = saturate(dot(lighting.normal, lighting.lightDirection));
+    float3 H = normalize(lighting.lightDirection + lighting.viewDirection); // half vector
+    float NoH = saturate(dot(lighting.normal, H));
+    float NoV = saturate(dot(lighting.normal, lighting.viewDirection));
+    float HoL = saturate(dot(lighting.lightDirection, H));
+    
+    // specular roughness
+    float specularRoughness = lighting.roughness * (1.0 - lighting.metallic) + lighting.metallic;
+    
+    // Distribution
+    float Ds;
+    if (specularRoughness >= 1.0) {
+        Ds = 1.0 / pi;
+    }
+    else {
+        float roughnessSqr = specularRoughness * specularRoughness;
+        float d = (NoH * roughnessSqr - NoH) * NoH + 1;
+        Ds = roughnessSqr / (pi * d * d);
+    }
+    
+    // Fresnel
+    float3 Cspec0 = float3(1.0);
+    float fresnel = pow(clamp(1.0 - HoL, 0.0, 1.0), 5.0);
+    float3 Fs = float3(mix(float3(Cspec0), float3(1), fresnel));
+    
+    // Geometry
+    float alphaG = (specularRoughness * 0.5 + 0.5) * (specularRoughness * 0.5 + 0.5);
+    float a = alphaG * alphaG;
+    float b1 = NoL * NoL;
+    float b2 = NoV * NoV;
+    float G1 = (float)(1.0 / (b1 + sqrt(a + b1 - a * b1)));
+    float G2 = (float)(1.0 / (b2 + sqrt(a + b2 - a * b2)));
+    float Gs = G1 * G2;
+    
+    float3 specularColor = mix(lighting.lightColor, lighting.baseColor.rgb, lighting.metallic);
+    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion;
+    return specularOutput;
 }

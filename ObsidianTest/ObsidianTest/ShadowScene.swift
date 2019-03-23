@@ -72,7 +72,7 @@ class ShadowScene: OBSDScene {
             let z = Float(random(range: Int(newMin.z)...Int(newMax.z))) * 0.01
             light.position = [x, y, z]
             light.color = colors[random(range: 0...colors.count)]
-            light.intensity = 0.6
+            light.intensity = 1.0
             light.attenuation = float3(1.5, 1, 1)
             lights.append(light)
         }

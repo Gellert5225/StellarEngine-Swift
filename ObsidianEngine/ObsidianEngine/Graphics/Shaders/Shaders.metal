@@ -45,17 +45,6 @@ struct VertexOut {
     float4 shadowPosition;
 };
 
-typedef struct Lighting {
-    float3 lightDirection;
-    float3 viewDirection;
-    float3 baseColor;
-    float3 normal;
-    float metallic;
-    float roughness;
-    float ambientOcclusion;
-    float3 lightColor;
-} Lighting;
-
 // all vertex shaders begin with keyword 'vertex'
 // packed_float3 is a vector of 3 floats(position of each vertex)
 // [[ buffer(0) ]] means the first data in vertex buffer
@@ -72,6 +61,10 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
     out.worldPosition = (uniforms.modelMatrix * vertexIn.position).xyz;
     out.normal = uniforms.normalMatrix * vertexIn.normal, 0;
     out.shadowPosition = uniforms.shadowMatrix * uniforms.modelMatrix * vertexIn.position;
+    out.worldTangent = uniforms.normalMatrix * vertexIn.tangent;
+    out.worldBitangent = uniforms.normalMatrix * vertexIn.bitangent;
+    out.textureCoordinates = vertexIn.textureCoordinates;
+    
     return out;
 }
 
