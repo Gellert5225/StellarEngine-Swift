@@ -19,7 +19,7 @@ open class OBSDScene: OBSDNode {
         light.position = [1, 2, -2]
         light.color = [1, 1, 1]
         light.specularColor = [1, 1, 1]
-        light.intensity = 1.2
+        light.intensity = 0.7
         light.type = Sunlight
         return light
     }()
@@ -28,6 +28,8 @@ open class OBSDScene: OBSDNode {
     var lightConstants = OBSDLightConstants()
     var uniforms = OBSDUniforms()
     var fragmentUniforms = OBSDFragmentUniforms()
+    
+    var fps: Int?
     
     open lazy var ambientLight: Light = {
         var light = buildDefaultLight()
@@ -59,7 +61,6 @@ open class OBSDScene: OBSDNode {
         //    fragmentUniforms.cameraPosition = camera.position
         updateScene(deltaTime: deltaTime)
         update(nodes: children, deltaTime: deltaTime)
-        
         // precompute terrain tessellation
         for terrain in terrains {
             terrain.update(viewMatrix: uniforms.viewMatrix)

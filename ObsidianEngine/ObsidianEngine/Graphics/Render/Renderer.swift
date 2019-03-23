@@ -288,6 +288,7 @@ extension OBSDRenderer: MTKViewDelegate {
         //renderPassDescriptor.depthAttachment.texture = view.depthStencilTexture
         
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)
+        scene.fps = view.preferredFramesPerSecond
         scene.update(deltaTime: deltaTime)
         
         // shadow pass
@@ -303,15 +304,14 @@ extension OBSDRenderer: MTKViewDelegate {
         guard let renderEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {return}
         
         // gbuffer pass
+        scene.skybox?.update(renderEncoder: renderEncoder)
         renderGbufferPass(renderEncoder: renderEncoder)
         
-        // skybox pass
-        scene.skybox?.update(renderEncoder: renderEncoder)
-        scene.skybox?.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
-
         // composition pass
         //renderCompositionPass(renderEncoder: renderEncoder)
         
+        // skybox pass
+        scene.skybox?.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
         
 //        for terrain in scene.terrains {
 //            terrain.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)

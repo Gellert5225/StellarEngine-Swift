@@ -20,13 +20,13 @@ class ShadowScene: OBSDScene {
         ground.scale = [10, 10, 10]
         add(childNode: ground)
         
-        let train = OBSDModel(modelName: "train", fragmentFunctionName: "fragment_PBR")
+        let train = OBSDModel(modelName: "chest", fragmentFunctionName: "fragment_PBR")
         add(childNode: train)
         train.scale = [2, 2, 2]
         
         let car = OBSDModel(modelName: "racing-car", fragmentFunctionName: "fragment_PBR")
         car.scale = [1.5, 1.5, 1.5]
-        car.position = [7, 0, 0]
+        car.position = [6, 0, 0]
         add(childNode: car)
         
         camera.position = float3(0, 0, 30)
@@ -35,11 +35,17 @@ class ShadowScene: OBSDScene {
         
         sunLignt.position = float3(10, 15, -5)
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
-        ambientLight.intensity = 0.5
+        ambientLight.intensity = 0.1
         
         lights.append(sunLignt)
-        createPointLights(count: 40, min: [-15, 1.5, -15], max: [5, 2, 10])
+        createPointLights(count: 40, min: [-8, 0.5, -8], max: [8, 4, 8])
         lights.append(ambientLight)
+    }
+    
+    override func updateScene(deltaTime: Float) {
+        for (index, child) in children.enumerated() {
+            if (index != 0) { child.rotation.y += 0.01 }
+        }
     }
     
     func random(range: CountableClosedRange<Int>) -> Int {
@@ -72,8 +78,8 @@ class ShadowScene: OBSDScene {
             let z = Float(random(range: Int(newMin.z)...Int(newMax.z))) * 0.01
             light.position = [x, y, z]
             light.color = colors[random(range: 0...colors.count)]
-            light.intensity = 1.0
-            light.attenuation = float3(1.5, 1, 1)
+            light.intensity = 5.0
+            light.attenuation = float3(0.4, 0.4, 0.4)
             lights.append(light)
         }
     }

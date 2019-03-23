@@ -20,7 +20,7 @@ open class OBSDCamera: OBSDNode {
     
     open var fovDegrees: Float = 65
     open var nearZ: Float = 0.1
-    open var farZ: Float = 100
+    open var farZ: Float = 1000
     
     var mod: Float {
         return modulus(vector: position)

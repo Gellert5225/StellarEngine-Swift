@@ -88,5 +88,5 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
     if (shadow > 0) {
         diffuseColor *= 0.5;
     }
-    return float4(albedoColor);
+    return float4(diffuseColor, 1.0);
 }
