@@ -72,9 +72,10 @@ float3 gbufferLighting(float3 normal,
             }
         } else if (light.type == Ambientlight) {
             ambientColor += light.color * light.intensity;
+            ambientColor *= baseColor;
         }
     }
-    return diffuseColor;
+    return mix(diffuseColor, diffuseColor + ambientColor, 0.5);
 }
 
 float3 renderGbuffer(Lighting lighting);
@@ -164,6 +165,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
             lighting.roughness = roughness;
             lighting.ambientOcclusion = ambientOcclusion;
             lighting.lightColor = light.color;
+            lighting.intensity = light.intensity;
 
             specularOutput = renderGbuffer(lighting);
 
@@ -194,8 +196,10 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     if (shadow > 0) {
         diffuseColor *= 0.5;
     }
+    
+    float4 specDiffuse = float4(specularOutput + diffuseColor, out.albedo.a) * ambientOcclusion;
 
-    out.albedo = float4(specularOutput + diffuseColor, out.albedo.a) * ambientOcclusion;
+    out.albedo = specDiffuse;
 
     return out;
 }
@@ -336,6 +340,6 @@ float3 renderGbuffer(Lighting lighting) {
     float Gs = G1 * G2;
     
     float3 specularColor = mix(lighting.lightColor, lighting.baseColor.rgb, lighting.metallic);
-    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion;
+    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion * lighting.intensity;
     return specularOutput;
 }

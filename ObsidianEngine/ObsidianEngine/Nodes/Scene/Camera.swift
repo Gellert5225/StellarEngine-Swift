@@ -19,7 +19,7 @@ open class OBSDCamera: OBSDNode {
     }
     var currentPosition: float3?
     
-    open var fovDegrees: Float = 65
+    open var fovDegrees: Float = 100
     open var nearZ: Float = 0.1
     open var farZ: Float = 1000
     

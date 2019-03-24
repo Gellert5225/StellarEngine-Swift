@@ -11,6 +11,20 @@ import ObsidianEngine
 
 class GameViewController: OBSDViewController {
     
+    var demoScene: DemoScene?
+    
+    @IBAction func changeSkySettings(_ sender: UIButton) {
+        if (sender.currentTitle! == "SunRise") {
+            demoScene?.skybox?.skySettings = OBSDSkybox.SunRise
+        } else if (sender.currentTitle! == "SunSet") {
+            demoScene?.skybox?.skySettings = OBSDSkybox.SunSet
+        } else if (sender.currentTitle! == "MidDay") {
+            demoScene?.skybox?.skySettings = OBSDSkybox.MidDay
+        } else if (sender.currentTitle! == "Planet") {
+            demoScene?.skybox = OBSDSkybox(textureName: "sky")
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -38,8 +52,8 @@ class GameViewController: OBSDViewController {
 //        let waterScene = WaterScene()
 //        scene = waterScene
 
-        let demoScene = DemoScene()
-        scene = demoScene
+        demoScene = DemoScene()
+        scene = demoScene!
  
         panEnabled = true
         verticalCameraAngleInterval = (-80, -5)

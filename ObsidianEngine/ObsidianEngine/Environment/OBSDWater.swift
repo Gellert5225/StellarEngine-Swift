@@ -29,7 +29,7 @@ open class OBSDWater: OBSDNode, Texturable {
         do {
             mesh = try MTKMesh(mesh: plane, device: OBSDRenderer.metalDevice)
             let frameworkBundle = Bundle(for: OBSDShape.self)
-            texture = try OBSDWater.loadTexture(imageName: "normal-water", bundle: frameworkBundle)
+            texture = try OBSDWater.loadTexture(imageName: "ocean3", bundle: frameworkBundle)
         } catch {
             fatalError(error.localizedDescription)
         }

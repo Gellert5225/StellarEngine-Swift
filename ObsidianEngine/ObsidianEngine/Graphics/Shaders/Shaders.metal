@@ -349,6 +349,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
             lighting.roughness = roughness;
             lighting.ambientOcclusion = ambientOcclusion;
             lighting.lightColor = light.color;
+            lighting.intensity = light.intensity;
             
             specularOutput = render(lighting);
             
@@ -440,6 +441,6 @@ float3 render(Lighting lighting) {
     float Gs = G1 * G2;
     
     float3 specularColor = mix(lighting.lightColor, lighting.baseColor.rgb, lighting.metallic);
-    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion;
+    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion * lighting.intensity;
     return specularOutput;
 }

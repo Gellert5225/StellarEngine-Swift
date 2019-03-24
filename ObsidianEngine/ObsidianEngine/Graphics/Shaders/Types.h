@@ -124,6 +124,7 @@ typedef struct Lighting {
     float roughness;
     float ambientOcclusion;
     float3 lightColor;
+    float intensity;
 } Lighting;
 
 #endif /* Types_h */

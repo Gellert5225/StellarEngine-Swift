@@ -26,8 +26,16 @@ open class OBSDSkybox {
         var groundAlbedo: Float = 0.6885
     }
     
-    open var skySettingsSunRise = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885)
-    open var skySettingsMidDay = SkySettings(turbidity: 0.7982, sunElevation: 0.7221, upperAtmosphereScattering: 0.6449, groundAlbedo: 0.0)
+    open var skySettings = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885) {
+        didSet {
+            texture = loadGeneratedSkyboxTexture(dimensions: [256, 256])
+            diffuseTexture = texture
+        }
+    }
+    
+    public static var SunRise = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885)
+    public static var MidDay = SkySettings(turbidity: 0.7982, sunElevation: 0.7221, upperAtmosphereScattering: 0.6449, groundAlbedo: 0.0)
+    public static var SunSet = SkySettings(turbidity: 0.6778, sunElevation: 0.4551, upperAtmosphereScattering: 0.0497, groundAlbedo: 0.0)
     
     public init(textureName: String?) {
         let allocator = MTKMeshBufferAllocator(device: OBSDRenderer.metalDevice)
@@ -119,10 +127,10 @@ open class OBSDSkybox {
         let skyTexture = MDLSkyCubeTexture(name: "sky",
                                            channelEncoding: .uInt8,
                                            textureDimensions: dimensions,
-                                           turbidity: skySettingsSunRise.turbidity,
-                                           sunElevation: skySettingsSunRise.sunElevation,
-                                           upperAtmosphereScattering: skySettingsSunRise.upperAtmosphereScattering,
-                                           groundAlbedo: skySettingsSunRise.groundAlbedo)
+                                           turbidity: skySettings.turbidity,
+                                           sunElevation: skySettings.sunElevation,
+                                           upperAtmosphereScattering: skySettings.upperAtmosphereScattering,
+                                           groundAlbedo: skySettings.groundAlbedo)
         do {
             let textureLoader = MTKTextureLoader(device: OBSDRenderer.metalDevice)
             texture = try textureLoader.newTexture(texture: skyTexture,

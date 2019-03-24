@@ -39,6 +39,9 @@
 		DFD684272247449100A78E9F /* RenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD684262247449100A78E9F /* RenderPass.swift */; };
 		DFD6842922477BF400A78E9F /* normal-water.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6842822477BF400A78E9F /* normal-water.png */; };
 		DFEA65BD20E5D64300F3C8A0 /* Submesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEA65BC20E5D64300F3C8A0 /* Submesh.swift */; };
+		DFEAD89B224848EA00703436 /* ocean.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89A224848E900703436 /* ocean.png */; };
+		DFEAD89D224849DE00703436 /* ocean2.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89C224849DE00703436 /* ocean2.png */; };
+		DFEAD89F22484A9700703436 /* ocean3.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89E22484A9700703436 /* ocean3.png */; };
 		DFEF7BA0223FDCD6006711DE /* Gbuffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +80,9 @@
 		DFD684262247449100A78E9F /* RenderPass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderPass.swift; sourceTree = "<group>"; };
 		DFD6842822477BF400A78E9F /* normal-water.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "normal-water.png"; sourceTree = "<group>"; };
 		DFEA65BC20E5D64300F3C8A0 /* Submesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submesh.swift; sourceTree = "<group>"; };
+		DFEAD89A224848E900703436 /* ocean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocean.png; sourceTree = "<group>"; };
+		DFEAD89C224849DE00703436 /* ocean2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocean2.png; sourceTree = "<group>"; };
+		DFEAD89E22484A9700703436 /* ocean3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ocean3.png; sourceTree = "<group>"; };
 		DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Gbuffer.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -241,6 +247,9 @@
 				DFD6842222473EB600A78E9F /* Water.metal */,
 				DFD6842022473AC400A78E9F /* OBSDWater.swift */,
 				DFD6842822477BF400A78E9F /* normal-water.png */,
+				DFEAD89A224848E900703436 /* ocean.png */,
+				DFEAD89C224849DE00703436 /* ocean2.png */,
+				DFEAD89E22484A9700703436 /* ocean3.png */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -318,7 +327,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFEAD89B224848EA00703436 /* ocean.png in Resources */,
 				DFD6842922477BF400A78E9F /* normal-water.png in Resources */,
+				DFEAD89F22484A9700703436 /* ocean3.png in Resources */,
+				DFEAD89D224849DE00703436 /* ocean2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

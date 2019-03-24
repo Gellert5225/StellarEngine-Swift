@@ -48,7 +48,7 @@ fragment float4 fragment_water(VertexOut vertex_in [[ stage_in ]],
     
     float2 uv = vertex_in.uv * 10; // 2 = huge ripple, 16 = small ripple
     
-    float waveStrength = 0.1;
+    float waveStrength = 0.07;
     float2 rippleX = float2(uv.x + timer, uv.y);
     float2 rippleY = float2(-uv.x, uv.y) + timer;
     float2 ripple = ((normalTexture.sample(s, rippleX).rg * 2.0 - 1.0) +
