@@ -40,8 +40,8 @@ class ShadowScene: OBSDScene {
         car.position = [6, 0, 0]
         add(childNode: car)
         
-        camera.position = float3(0, 0, 30)
-        camera.rotate(x: 0, y: 0, z: 0)
+        camera.position = float3(0, -2, 30)
+        camera.rotate(x: -50, y: 0, z: 0)
         camera.fovDegrees = 60
         
         sunLignt.position = float3(100, 50, 50)

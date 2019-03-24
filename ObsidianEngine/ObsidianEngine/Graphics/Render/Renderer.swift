@@ -17,6 +17,7 @@ open class OBSDRenderer: NSObject {
     static var colorPixelFormat: MTLPixelFormat!
     static var commandQueue: MTLCommandQueue!
     static var commandBuffer: MTLCommandBuffer?
+    static var drawableSize: CGSize!
     
     var renderPassDescriptor: MTLRenderPassDescriptor!
     
@@ -37,6 +38,8 @@ open class OBSDRenderer: NSObject {
     var gBufferRenderPipelineDescriptor: MTLRenderPipelineDescriptor!
     
     var compositionPipelineState: MTLRenderPipelineState!
+    
+    //var reflectionRenderPass: RenderPass
     
     var quadVerticesBuffer: MTLBuffer!
     var quadTexCoordBuffer: MTLBuffer!
@@ -64,10 +67,12 @@ open class OBSDRenderer: NSObject {
     var scene: OBSDScene?
     
     public init(with device: MTLDevice, metalView: MTKView) {
-        super.init()
         OBSDRenderer.commandQueue = device.makeCommandQueue()
         OBSDRenderer.metalDevice = device
         OBSDRenderer.colorPixelFormat = metalView.colorPixelFormat
+        OBSDRenderer.drawableSize = metalView.drawableSize
+        
+        super.init()
         
         metalView.depthStencilPixelFormat = .depth32Float
         let frameworkBundle = Bundle(for: OBSDShape.self)
@@ -76,7 +81,7 @@ open class OBSDRenderer: NSObject {
         }
         OBSDRenderer.library = defaultLibrary
         print("Metal Device: \(device.name)")
-        
+                
         renderPassDescriptor = MTLRenderPassDescriptor()
         
         buildDepthStencilState()
@@ -285,8 +290,12 @@ private extension MTLRenderPassDescriptor {
 extension OBSDRenderer: MTKViewDelegate {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         print("size will change")
+        guard let scene = scene else {return}
         buildShadowTexture(size: size)
         buildGBufferRenderPassDescriptor(size: size, descriptor: renderPassDescriptor)
+        for water in scene.waters {
+            water.reflectionRenderPass.updateTextures(size: size)
+        }
     }
     
     public func draw(in view: MTKView) {
@@ -307,13 +316,44 @@ extension OBSDRenderer: MTKViewDelegate {
         guard let shadowEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPassDescriptor) else { return }
         renderShadowPass(renderEncoder: shadowEncoder)
         
-        scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition ?? scene.camera.position
+        for water in scene.waters {
+            guard let reflectEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
+                else { return }
+            
+            scene.fragmentUniforms.cameraPosition = scene.camera.position
+            scene.fragmentUniforms.lightCount = uint(scene.lights.count)
+            scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
+            
+            // Render reflection
+            reflectEncoder.setDepthStencilState(depthStencilState)
+            scene.reflectionCamera.position = scene.camera.position
+            scene.reflectionCamera.rotation = scene.camera.rotation
+            scene.reflectionCamera.position.y = -scene.camera.position.y
+            scene.reflectionCamera.rotation.x = -scene.camera.rotation.x
+            scene.uniforms.viewMatrix = scene.reflectionCamera.vMatrix
+            scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
+            
+            scene.skybox?.update(renderEncoder: reflectEncoder)
+            for child in scene.children {
+                if let model = child as? OBSDModel {
+                    renderGbufferPass(renderEncoder: reflectEncoder, model: model)
+                }
+            }
+            
+            scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
+            
+            reflectEncoder.endEncoding()
+        }
+        
+        // Render Objects
+        guard let renderEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {return}
+        
+        scene.fragmentUniforms.cameraPosition = scene.camera.position
         scene.fragmentUniforms.lightCount = uint(scene.lights.count)
         
         scene.uniforms.viewMatrix = scene.camera.viewMatrix
         scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
-        
-        guard let renderEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {return}
+        scene.uniforms.clipPlane = float4(0, -1, 0, 1000)
         
         // gbuffer pass
         scene.skybox?.update(renderEncoder: renderEncoder)
@@ -328,6 +368,11 @@ extension OBSDRenderer: MTKViewDelegate {
         
         // skybox pass
         scene.skybox?.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
+        
+        for water in scene.waters {
+            water.update()
+            water.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
+        }
         
 //        for terrain in scene.terrains {
 //            terrain.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)

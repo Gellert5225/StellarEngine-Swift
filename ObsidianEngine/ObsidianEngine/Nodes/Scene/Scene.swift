@@ -14,6 +14,7 @@ open class OBSDScene: OBSDNode {
     open var lights = [Light]()
     open var skybox: OBSDSkybox?
     open var terrains: [OBSDTerrain] = []
+    open var waters: [OBSDWater] = []
     open var sunLignt: Light = {
         var light = Light()
         light.position = [1, 2, -2]
@@ -29,6 +30,8 @@ open class OBSDScene: OBSDNode {
     var uniforms = OBSDUniforms()
     var fragmentUniforms = OBSDFragmentUniforms()
     
+    var reflectionCamera = OBSDCamera()
+    
     var fps: Int?
     
     open lazy var ambientLight: Light = {
@@ -41,7 +44,7 @@ open class OBSDScene: OBSDNode {
     }()
     
     public override init() {
-        
+        camera.currentPosition = camera.position
     }
     
     public func buildDefaultLight() -> Light {
@@ -80,5 +83,10 @@ open class OBSDScene: OBSDNode {
     open func add(terrain: OBSDTerrain) {
         terrains.append(terrain)
         add(childNode: terrain)
+    }
+    
+    open func add(water: OBSDWater) {
+        waters.append(water)
+        add(childNode: water)
     }
 }

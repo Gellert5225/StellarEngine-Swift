@@ -94,10 +94,13 @@ open class OBSDSkybox {
         
         renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: 0)
 
+        var uniform = uniforms
         var viewMatrix = uniforms.viewMatrix
         viewMatrix.columns.3 = [0, 0, 0, 1]
-        var viewProjectionMatrix = uniforms.projectionMatrix * viewMatrix
-        renderEncoder.setVertexBytes(&viewProjectionMatrix, length: MemoryLayout<float4x4>.stride, index: 1)
+        uniform.viewMatrix = viewMatrix
+        uniform.modelMatrix = transform.modelMatrix
+        
+        renderEncoder.setVertexBytes(&uniform, length: MemoryLayout<OBSDUniforms>.stride, index: Int(BufferIndexUniforms.rawValue))
         
         let submesh = mesh.submeshes[0]
         renderEncoder.setFragmentTexture(texture, index: 20)

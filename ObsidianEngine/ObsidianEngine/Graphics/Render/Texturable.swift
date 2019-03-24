@@ -11,7 +11,8 @@ import MetalKit
 protocol Texturable {}
 
 extension Texturable {
-    static func loadTexture(imageName: String) throws -> MTLTexture? {
+    
+    static func loadTexture(imageName: String, bundle: Bundle) throws -> MTLTexture? {
         let textureLoader = MTKTextureLoader(device: OBSDRenderer.metalDevice)
         let textureLoaderOptions: [MTKTextureLoader.Option: Any] =
             [.origin: MTKTextureLoader.Origin.bottomLeft,
@@ -20,12 +21,12 @@ extension Texturable {
         let fileExtension =
             URL(fileURLWithPath: imageName).pathExtension.isEmpty ?
                 "png" : nil
-        guard let url = Bundle.main.url(forResource: imageName,
+        guard let url = bundle.url(forResource: imageName,
                                         withExtension: fileExtension)
             else {
                 print("Failed to load \(imageName)\n - loading from Assets Catalog")
                 return try textureLoader.newTexture(name: imageName, scaleFactor: 1.0,
-                                                    bundle: Bundle.main, options: nil)
+                                                    bundle: bundle, options: nil)
         }
         
         let texture = try textureLoader.newTexture(URL: url,
@@ -48,11 +49,11 @@ extension Texturable {
         return texture
     }
     
-    static func loadTextureArray(textureNames: [String]) -> MTLTexture? {
+    static func loadTextureArray(textureNames: [String], bundle: Bundle) -> MTLTexture? {
         var textures: [MTLTexture] = []
         for textureName in textureNames {
             do {
-                if let texture = try OBSDMorph.loadTexture(imageName: textureName) {
+                if let texture = try OBSDMorph.loadTexture(imageName: textureName, bundle: bundle) {
                     textures.append(texture)
                 }
             } catch {

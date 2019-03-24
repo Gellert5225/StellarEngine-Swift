@@ -101,6 +101,7 @@
 		DFD6841A224714A200A78E9F /* Sword.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD68418224714A200A78E9F /* Sword.mtl */; };
 		DFD6841E22471B0A00A78E9F /* MagicMouse.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841C22471B0900A78E9F /* MagicMouse.mtl */; };
 		DFD6841F22471B0A00A78E9F /* MagicMouse.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841D22471B0A00A78E9F /* MagicMouse.obj */; };
+		DFD6842522473FFE00A78E9F /* WaterScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD6842422473FFE00A78E9F /* WaterScene.swift */; };
 		DFEA65BB20E5BD4500F3C8A0 /* img110.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEA65BA20E5BD4400F3C8A0 /* img110.png */; };
 /* End PBXBuildFile section */
 
@@ -231,6 +232,7 @@
 		DFD68418224714A200A78E9F /* Sword.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sword.mtl; sourceTree = "<group>"; };
 		DFD6841C22471B0900A78E9F /* MagicMouse.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MagicMouse.mtl; sourceTree = "<group>"; };
 		DFD6841D22471B0A00A78E9F /* MagicMouse.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MagicMouse.obj; sourceTree = "<group>"; };
+		DFD6842422473FFE00A78E9F /* WaterScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterScene.swift; sourceTree = "<group>"; };
 		DFEA65BA20E5BD4400F3C8A0 /* img110.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img110.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -319,6 +321,7 @@
 				DF44030E223E0C5B00D5A7E3 /* TerrainScene.swift */,
 				DF365472223E4082000E6011 /* WorldScene.swift */,
 				DF1B2CCE223F16B900831793 /* ShadowScene.swift */,
+				DFD6842422473FFE00A78E9F /* WaterScene.swift */,
 				89B3850320D8B50D00FAEDE4 /* Supporting Files */,
 				89B3850120D8B4CD00FAEDE4 /* Assets */,
 			);
@@ -656,6 +659,7 @@
 				DF44030F223E0C5B00D5A7E3 /* TerrainScene.swift in Sources */,
 				89B384FC20D871A200FAEDE4 /* GameScene.swift in Sources */,
 				DF1B2CCF223F16B900831793 /* ShadowScene.swift in Sources */,
+				DFD6842522473FFE00A78E9F /* WaterScene.swift in Sources */,
 				DFA06ECA22309DA800631585 /* SkyScene.swift in Sources */,
 				89B3850C20D8C9E600FAEDE4 /* TestScene.swift in Sources */,
 				89267CDF20D744EA0024085C /* GameViewController.swift in Sources */,

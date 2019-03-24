@@ -34,6 +34,10 @@
 		DFA06ED02230CD7D00631585 /* IBL.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFA06ECF2230CD7D00631585 /* IBL.metal */; };
 		DFA06EE12230F57300631585 /* BRDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EDF2230F57300631585 /* BRDF.metal */; };
 		DFA06EE22230F57300631585 /* RendererBRDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EE02230F57300631585 /* RendererBRDF.swift */; };
+		DFD6842122473AC400A78E9F /* OBSDWater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD6842022473AC400A78E9F /* OBSDWater.swift */; };
+		DFD6842322473EB600A78E9F /* Water.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFD6842222473EB600A78E9F /* Water.metal */; };
+		DFD684272247449100A78E9F /* RenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD684262247449100A78E9F /* RenderPass.swift */; };
+		DFD6842922477BF400A78E9F /* normal-water.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6842822477BF400A78E9F /* normal-water.png */; };
 		DFEA65BD20E5D64300F3C8A0 /* Submesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEA65BC20E5D64300F3C8A0 /* Submesh.swift */; };
 		DFEF7BA0223FDCD6006711DE /* Gbuffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */; };
 /* End PBXBuildFile section */
@@ -68,6 +72,10 @@
 		DFA06ECF2230CD7D00631585 /* IBL.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = IBL.metal; sourceTree = "<group>"; };
 		DFA06EDF2230F57300631585 /* BRDF.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = BRDF.metal; sourceTree = "<group>"; };
 		DFA06EE02230F57300631585 /* RendererBRDF.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RendererBRDF.swift; sourceTree = "<group>"; };
+		DFD6842022473AC400A78E9F /* OBSDWater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OBSDWater.swift; sourceTree = "<group>"; };
+		DFD6842222473EB600A78E9F /* Water.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Water.metal; sourceTree = "<group>"; };
+		DFD684262247449100A78E9F /* RenderPass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderPass.swift; sourceTree = "<group>"; };
+		DFD6842822477BF400A78E9F /* normal-water.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "normal-water.png"; sourceTree = "<group>"; };
 		DFEA65BC20E5D64300F3C8A0 /* Submesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Submesh.swift; sourceTree = "<group>"; };
 		DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Gbuffer.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */,
+				DFD684262247449100A78E9F /* RenderPass.swift */,
 				89157F7A20D20CE600299CB6 /* Renderable.swift */,
 				89B34C9F20D2F20F00873A28 /* Texturable.swift */,
 			);
@@ -229,6 +238,9 @@
 			children = (
 				DFA06EC322309A5A00631585 /* Skybox.metal */,
 				DFA06EC1222F020800631585 /* Skybox.swift */,
+				DFD6842222473EB600A78E9F /* Water.metal */,
+				DFD6842022473AC400A78E9F /* OBSDWater.swift */,
+				DFD6842822477BF400A78E9F /* normal-water.png */,
 			);
 			path = Environment;
 			sourceTree = "<group>";
@@ -306,6 +318,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFD6842922477BF400A78E9F /* normal-water.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +332,8 @@
 				89B384F020D7926400FAEDE4 /* Scene.swift in Sources */,
 				89B384F220D7B9E600FAEDE4 /* MatrixMath.swift in Sources */,
 				DF3347C32240D3AF00632BCB /* Composition.metal in Sources */,
+				DFD684272247449100A78E9F /* RenderPass.swift in Sources */,
+				DFD6842122473AC400A78E9F /* OBSDWater.swift in Sources */,
 				DF4402B0223C737000D5A7E3 /* Transform.swift in Sources */,
 				89FFCABD20CC79B500C6DB28 /* Shaders.metal in Sources */,
 				89267CDD20D742780024085C /* OBSDViewController.swift in Sources */,
@@ -338,6 +353,7 @@
 				DFA06EE12230F57300631585 /* BRDF.metal in Sources */,
 				89FFCAC620CC7A1B00C6DB28 /* Renderer.swift in Sources */,
 				DF89FBEB223F6A7F004BE73B /* Shadow.metal in Sources */,
+				DFD6842322473EB600A78E9F /* Water.metal in Sources */,
 				89FFCAC420CC7A0800C6DB28 /* Shapes.swift in Sources */,
 				DFA06EE22230F57300631585 /* RendererBRDF.swift in Sources */,
 				89B384EC20D78E3600FAEDE4 /* Camera.swift in Sources */,

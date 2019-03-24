@@ -18,20 +18,30 @@ struct VertexIn {
 
 struct VertexOut {
     float4 position [[ position ]];
-    float3 textureCoordinates;
+    float4 uv;
+    float clip_distance [[ clip_distance ]] [1];
 };
 
-vertex VertexOut vertexSkybox(const VertexIn in [[ stage_in ]],
-                              constant float4x4 &vp [[ buffer(1) ]]) {
-    VertexOut out;
-    out.position = (vp * in.position).xyww;
-    out.textureCoordinates = in.position.xyz;
-    return out;
+struct FragmentIn {
+    float4 position [[ position ]];
+    float4 uv;
+    float clip_distance;
+};
+
+vertex VertexOut vertexSkybox(const VertexIn vertex_in [[ stage_in ]],
+                              constant OBSDUniforms &uniforms [[ buffer(BufferIndexUniforms) ]]) {
+    VertexOut vertex_out;
+    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
+    vertex_out.position = (mvp * vertex_in.position).xyww;
+    vertex_out.uv = vertex_in.position;
+    vertex_out.clip_distance[0] = dot(uniforms.modelMatrix * vertex_in.position, uniforms.clipPlane);
+    return vertex_out;
 }
 
-fragment half4 fragmentSkybox(VertexOut in [[stage_in]],
+fragment half4 fragmentSkybox(FragmentIn vertex_in [[stage_in]],
                               texturecube<half> cubeTexture [[texture(20)]]) {
-    constexpr sampler default_sampler(filter::linear, mag_filter::linear, min_filter::linear);
-    half4 color = cubeTexture.sample(default_sampler, in.textureCoordinates);
-    return half4(color);
+    constexpr sampler default_sampler;
+    float3 uv = vertex_in.uv.xyz;
+    half4 color = cubeTexture.sample(default_sampler, uv);
+    return color;
 }

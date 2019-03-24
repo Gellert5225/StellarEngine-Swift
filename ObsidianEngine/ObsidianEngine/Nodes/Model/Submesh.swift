@@ -89,7 +89,7 @@ private extension OBSDSubmesh.Textures {
             guard let property = material?.property(with: semantic),
                 property.type == .string,
                 let filename = property.stringValue,
-                let texture = try? OBSDSubmesh.loadTexture(imageName: filename) else {
+                let texture = try? OBSDSubmesh.loadTexture(imageName: filename, bundle: Bundle.main) else {
                     return nil
             }
             return texture

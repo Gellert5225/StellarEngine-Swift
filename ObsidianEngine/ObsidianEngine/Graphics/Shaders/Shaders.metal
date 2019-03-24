@@ -56,7 +56,7 @@ vertex float4 basic_vertex(const device packed_float3* vertex_array [[ buffer(0)
 vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
                              constant OBSDUniforms &uniforms [[ buffer(11) ]]) {
     VertexOut out;
-    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
+    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.modelMatrix * uniforms.viewMatrix;
     out.position = mvp * vertexIn.position;
     out.worldPosition = (uniforms.modelMatrix * vertexIn.position).xyz;
     out.normal = uniforms.normalMatrix * vertexIn.normal, 0;

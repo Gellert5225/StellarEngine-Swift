@@ -11,10 +11,11 @@ import MetalKit
 open class OBSDCamera: OBSDNode {
     
     var viewMatrix: matrix_float4x4 {
-        let translateMatrix = float4x4(translation: position)
-        let rotateMatrix = float4x4(rotation: rotation)
-        let scaleMatrix = float4x4(scaling: scale)
-        return (translateMatrix * scaleMatrix * rotateMatrix)
+        get{
+            let translateMatrix = float4x4(translation: position)
+            let rotateMatrix = float4x4(rotation: rotation)
+            return (translateMatrix * rotateMatrix)
+        }
     }
     var currentPosition: float3?
     
@@ -32,4 +33,19 @@ open class OBSDCamera: OBSDNode {
                         far: farZ,
                         aspect: Float(UIScreen.main.bounds.size.width / UIScreen.main.bounds.size.height))
     }
+
+    var vMatrix: matrix_float4x4 {
+        let translateMatrix = float4x4(translation: position)
+        let rotateMatrix = float4x4(rotation: rotation)
+        return (translateMatrix * rotateMatrix)
+    }
+//    var transform = Transform() {
+//        didSet {
+//            let translateMatrix = float4x4(translation: [-transform.position.x,
+//                                                         -transform.position.y,
+//                                                         -transform.position.z])
+//            let rotateMatrix = float4x4(rotation: transform.rotation)
+//            vMatrix = rotateMatrix * translateMatrix
+//        }
+//    }
 }

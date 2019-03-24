@@ -52,10 +52,10 @@ open class OBSDTerrain: OBSDNode {
     public init(withSize size: float2, heightScale: Float, heightTexture: String, cliffTexture: String, snowTexture: String, grassTexture: String) {
         
         do {
-            heightMap = try OBSDTerrain.loadTexture(imageName: heightTexture)
-            cliffMap = try OBSDTerrain.loadTexture(imageName: cliffTexture)
-            snowMap = try OBSDTerrain.loadTexture(imageName: snowTexture)
-            grassMap = try OBSDTerrain.loadTexture(imageName: grassTexture)
+            heightMap = try OBSDTerrain.loadTexture(imageName: heightTexture, bundle: Bundle.main)
+            cliffMap = try OBSDTerrain.loadTexture(imageName: cliffTexture, bundle: Bundle.main)
+            snowMap = try OBSDTerrain.loadTexture(imageName: snowTexture, bundle: Bundle.main)
+            grassMap = try OBSDTerrain.loadTexture(imageName: grassTexture, bundle: Bundle.main)
         } catch {
             fatalError(error.localizedDescription)
         }

@@ -87,6 +87,8 @@ open class OBSDViewController: UIViewController {
             scene.camera.position.x = (length - sensitivity) / length * abs(x)
             scene.camera.position.y = (length - sensitivity) / length * abs(y)
             scene.camera.position.z = (length - sensitivity) / length * abs(z)
+            
+            scene.camera.currentPosition = scene.camera.position
         }
         
         if gesture.state == .ended {
@@ -102,7 +104,7 @@ open class OBSDViewController: UIViewController {
             let yDelta = -Float(lastPanLocation.y - pointInView.y) * panSensivity
 
             if (yDelta + currentAngleX! > radians(fromDegrees: verticalCameraAngleInterval.min) && yDelta + currentAngleX! < radians(fromDegrees: verticalCameraAngleInterval.max)) {
-                scene.camera.rotation.x = (yDelta + currentAngleX!)
+                scene.camera.rotation.x += yDelta
 
                 currentAngleX! += yDelta
             }
@@ -111,15 +113,13 @@ open class OBSDViewController: UIViewController {
 
             lastPanLocation = pointInView
             currentAngleY! += xDelta
-
-            if let position = scene.camera.currentPosition {
-                let multiplier = (quardrantOf(angle: currentAngleY!) == 2 || quardrantOf(angle: currentAngleY!) == 3 ? -1 : 1)
-                scene.camera.currentPosition = float3(sin(currentAngleY!) * scene.camera.mod,
-                                                      sin(currentAngleX!) * scene.camera.mod,
-                                                      Float(multiplier) * sqrt(scene.camera.mod * scene.camera.mod - position.x * position.x))
-            } else {
-                scene.camera.currentPosition = float3(sin(currentAngleY!) * scene.camera.mod, sin(currentAngleX!) * scene.camera.mod, sqrt(scene.camera.mod * scene.camera.mod - scene.camera.position.x * scene.camera.position.x))
-            }
+            
+//            let multiplier = (quardrantOf(angle: currentAngleY!) == 2 || quardrantOf(angle: currentAngleY!) == 3 ? -1 : 1)
+//            let projectionXZ = scene.camera.mod * cos(currentAngleX!)
+//            scene.camera.currentPosition = float3(sin(currentAngleY!) * projectionXZ,
+//                                           sin(currentAngleX!) * scene.camera.mod,
+//                                           Float(multiplier) * cos(currentAngleY!) * projectionXZ)
+            
         } else if recognizer.state == UIGestureRecognizer.State.began {
             lastPanLocation = recognizer.location(in: self.view)
             if (currentAngleX == nil) {
@@ -130,7 +130,6 @@ open class OBSDViewController: UIViewController {
                 currentAngleY = scene.camera.rotation.y
             }
         }
-        //print(scene.camera.currentPosition)
     }
     
     func quardrantOf(angle: Float) -> Int {

@@ -96,7 +96,7 @@ open class OBSDMorph: OBSDNode {
         self.instanceCount = instanceCount
         instanceBuffer = OBSDMorph.buildInstanceBuffer(instanceCount: instanceCount)
         
-        baseColorTexture = OBSDMorph.loadTextureArray(textureNames: textureNames)
+        baseColorTexture = OBSDMorph.loadTextureArray(textureNames: textureNames, bundle: Bundle.main)
         super.init()
         
         // initialize the instance buffer in case there is only one instance
