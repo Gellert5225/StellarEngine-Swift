@@ -320,7 +320,7 @@ extension OBSDRenderer: MTKViewDelegate {
             guard let reflectEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
                 else { return }
             
-            scene.fragmentUniforms.cameraPosition = scene.camera.position
+            scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition!
             scene.fragmentUniforms.lightCount = uint(scene.lights.count)
             scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
             

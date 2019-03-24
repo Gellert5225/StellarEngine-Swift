@@ -54,9 +54,9 @@ class ShadowScene: OBSDScene {
     }
     
     override func updateScene(deltaTime: Float) {
-//        for (index, child) in children.enumerated() {
-//            if (index != 0) { child.rotation.y += 0.01 }
-//        }
+        for (index, child) in children.enumerated() {
+            if (index != 0) { child.rotation.y += 0.01 }
+        }
     }
     
     func random(range: CountableClosedRange<Int>) -> Int {

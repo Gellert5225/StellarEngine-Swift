@@ -20,13 +20,14 @@ open class OBSDSkybox {
     let depthStencilState: MTLDepthStencilState?
     
     public struct SkySettings {
-        var turbidity: Float = 0.17
-        var sunElevation: Float = 0.64
-        var upperAtmosphereScattering: Float = 0.48
-        var groundAlbedo: Float = 1.35
+        var turbidity: Float = 0.5597
+        var sunElevation: Float = 0.5164
+        var upperAtmosphereScattering: Float = 0.1767
+        var groundAlbedo: Float = 0.6885
     }
     
-    open var skySettings = SkySettings()
+    open var skySettingsSunRise = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885)
+    open var skySettingsMidDay = SkySettings(turbidity: 0.7982, sunElevation: 0.7221, upperAtmosphereScattering: 0.6449, groundAlbedo: 0.0)
     
     public init(textureName: String?) {
         let allocator = MTKMeshBufferAllocator(device: OBSDRenderer.metalDevice)
@@ -118,10 +119,10 @@ open class OBSDSkybox {
         let skyTexture = MDLSkyCubeTexture(name: "sky",
                                            channelEncoding: .uInt8,
                                            textureDimensions: dimensions,
-                                           turbidity: skySettings.turbidity,
-                                           sunElevation: skySettings.sunElevation,
-                                           upperAtmosphereScattering: skySettings.upperAtmosphereScattering,
-                                           groundAlbedo: skySettings.groundAlbedo)
+                                           turbidity: skySettingsSunRise.turbidity,
+                                           sunElevation: skySettingsSunRise.sunElevation,
+                                           upperAtmosphereScattering: skySettingsSunRise.upperAtmosphereScattering,
+                                           groundAlbedo: skySettingsSunRise.groundAlbedo)
         do {
             let textureLoader = MTKTextureLoader(device: OBSDRenderer.metalDevice)
             texture = try textureLoader.newTexture(texture: skyTexture,

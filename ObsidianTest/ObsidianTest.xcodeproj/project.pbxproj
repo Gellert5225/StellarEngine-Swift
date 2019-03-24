@@ -24,6 +24,8 @@
 		DF1B2CD3223F197C00831793 /* plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF1B2CD1223F197C00831793 /* plane.obj */; };
 		DF1B2CDA223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DF1B2CD8223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.mtl */; };
 		DF1B2CDB223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF1B2CD9223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.obj */; };
+		DF25590122479F02002CA9C3 /* Oil.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DF2558FF22479F02002CA9C3 /* Oil.mtl */; };
+		DF25590222479F02002CA9C3 /* Oil.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF25590022479F02002CA9C3 /* Oil.obj */; };
 		DF365473223E4082000E6011 /* WorldScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF365472223E4082000E6011 /* WorldScene.swift */; };
 		DF3EF501216AD367000F43F4 /* chest.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF3EF4FF216AD366000F43F4 /* chest.obj */; };
 		DF3EF502216AD367000F43F4 /* chest.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DF3EF500216AD366000F43F4 /* chest.mtl */; };
@@ -75,6 +77,7 @@
 		DF44030F223E0C5B00D5A7E3 /* TerrainScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF44030E223E0C5B00D5A7E3 /* TerrainScene.swift */; };
 		DF440311223E35B600D5A7E3 /* sampleHeightMap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DF440310223E35B500D5A7E3 /* sampleHeightMap.jpg */; };
 		DF440313223E38C200D5A7E3 /* SM_Bld_Village_05.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF440312223E38C100D5A7E3 /* SM_Bld_Village_05.obj */; };
+		DF7C328D224790E400EC833A /* DemoScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7C328C224790E400EC833A /* DemoScene.swift */; };
 		DFA06ECA22309DA800631585 /* SkyScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EC922309DA800631585 /* SkyScene.swift */; };
 		DFA06ECD22309F5900631585 /* large-plane.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFA06ECB22309F5800631585 /* large-plane.mtl */; };
 		DFA06ECE22309F5900631585 /* large-plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFA06ECC22309F5900631585 /* large-plane.obj */; };
@@ -88,8 +91,6 @@
 		DFB84E23216B1C3A000195B9 /* racing-car.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFB84E21216B1C39000195B9 /* racing-car.obj */; };
 		DFB84E27216B1CD1000195B9 /* Textures.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DFB84E26216B1CD1000195B9 /* Textures.xcassets */; };
 		DFBD313B20E6E41D009C2C03 /* cottage-normal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFBD313A20E6E41D009C2C03 /* cottage-normal.png */; };
-		DFD6840522470C5700A78E9F /* barrels_obj.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840322470C5700A78E9F /* barrels_obj.mtl */; };
-		DFD6840622470C5700A78E9F /* barrels_obj.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840422470C5700A78E9F /* barrels_obj.obj */; };
 		DFD6840A22470E4D00A78E9F /* Nade.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840822470E4D00A78E9F /* Nade.mtl */; };
 		DFD6840B22470E4D00A78E9F /* Nade.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840922470E4D00A78E9F /* Nade.obj */; };
 		DFD6841122470E6600A78E9F /* Mk2Grenade_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */; };
@@ -155,6 +156,8 @@
 		DF1B2CD1223F197C00831793 /* plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane.obj; sourceTree = "<group>"; };
 		DF1B2CD8223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartoon_lowpoly_landscape_scene_obj.mtl; sourceTree = "<group>"; };
 		DF1B2CD9223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartoon_lowpoly_landscape_scene_obj.obj; sourceTree = "<group>"; };
+		DF2558FF22479F02002CA9C3 /* Oil.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Oil.mtl; sourceTree = "<group>"; };
+		DF25590022479F02002CA9C3 /* Oil.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Oil.obj; sourceTree = "<group>"; };
 		DF365472223E4082000E6011 /* WorldScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldScene.swift; sourceTree = "<group>"; };
 		DF3EF4FF216AD366000F43F4 /* chest.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = chest.obj; sourceTree = "<group>"; };
 		DF3EF500216AD366000F43F4 /* chest.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = chest.mtl; sourceTree = "<group>"; };
@@ -206,6 +209,7 @@
 		DF44030E223E0C5B00D5A7E3 /* TerrainScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerrainScene.swift; sourceTree = "<group>"; };
 		DF440310223E35B500D5A7E3 /* sampleHeightMap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sampleHeightMap.jpg; sourceTree = "<group>"; };
 		DF440312223E38C100D5A7E3 /* SM_Bld_Village_05.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SM_Bld_Village_05.obj; sourceTree = "<group>"; };
+		DF7C328C224790E400EC833A /* DemoScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoScene.swift; sourceTree = "<group>"; };
 		DFA06EC922309DA800631585 /* SkyScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkyScene.swift; sourceTree = "<group>"; };
 		DFA06ECB22309F5800631585 /* large-plane.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "large-plane.mtl"; sourceTree = "<group>"; };
 		DFA06ECC22309F5900631585 /* large-plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "large-plane.obj"; sourceTree = "<group>"; };
@@ -219,8 +223,6 @@
 		DFB84E21216B1C39000195B9 /* racing-car.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "racing-car.obj"; sourceTree = "<group>"; };
 		DFB84E26216B1CD1000195B9 /* Textures.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Textures.xcassets; sourceTree = "<group>"; };
 		DFBD313A20E6E41D009C2C03 /* cottage-normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cottage-normal.png"; sourceTree = "<group>"; };
-		DFD6840322470C5700A78E9F /* barrels_obj.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = barrels_obj.mtl; sourceTree = "<group>"; };
-		DFD6840422470C5700A78E9F /* barrels_obj.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = barrels_obj.obj; sourceTree = "<group>"; };
 		DFD6840822470E4D00A78E9F /* Nade.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nade.mtl; sourceTree = "<group>"; };
 		DFD6840922470E4D00A78E9F /* Nade.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nade.obj; sourceTree = "<group>"; };
 		DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Base_Color.png; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				DF365472223E4082000E6011 /* WorldScene.swift */,
 				DF1B2CCE223F16B900831793 /* ShadowScene.swift */,
 				DFD6842422473FFE00A78E9F /* WaterScene.swift */,
+				DF7C328C224790E400EC833A /* DemoScene.swift */,
 				89B3850320D8B50D00FAEDE4 /* Supporting Files */,
 				89B3850120D8B4CD00FAEDE4 /* Assets */,
 			);
@@ -449,8 +452,8 @@
 		DFD6840222470C3800A78E9F /* Oil Can */ = {
 			isa = PBXGroup;
 			children = (
-				DFD6840322470C5700A78E9F /* barrels_obj.mtl */,
-				DFD6840422470C5700A78E9F /* barrels_obj.obj */,
+				DF2558FF22479F02002CA9C3 /* Oil.mtl */,
+				DF25590022479F02002CA9C3 /* Oil.obj */,
 			);
 			path = "Oil Can";
 			sourceTree = "<group>";
@@ -589,6 +592,7 @@
 				DF4402C2223C8C4100D5A7E3 /* rock2.mtl in Resources */,
 				DFB84E23216B1C3A000195B9 /* racing-car.obj in Resources */,
 				DF4402C3223C8C4100D5A7E3 /* rock2.obj in Resources */,
+				DF25590222479F02002CA9C3 /* Oil.obj in Resources */,
 				DF440311223E35B600D5A7E3 /* sampleHeightMap.jpg in Resources */,
 				DF4402EA223DB52F00D5A7E3 /* houseGround1.obj in Resources */,
 				DF4402F4223DB52F00D5A7E3 /* houseFloor3.mtl in Resources */,
@@ -598,17 +602,16 @@
 				89B384F720D7C98C00FAEDE4 /* cottage-color.png in Resources */,
 				DFD6841322470E6600A78E9F /* Mk2Grenade_Metalness.png in Resources */,
 				DF4402EB223DB52F00D5A7E3 /* houseGround2.obj in Resources */,
-				DFD6840522470C5700A78E9F /* barrels_obj.mtl in Resources */,
 				DF3EF502216AD367000F43F4 /* chest.mtl in Resources */,
 				DF4402E4223DB52F00D5A7E3 /* houseRoof1.obj in Resources */,
 				DFD6841422470E6600A78E9F /* Mk2Grenade_Roughness.png in Resources */,
 				DF4402B3223C7FE200D5A7E3 /* tree.obj in Resources */,
 				DF4402F6223DB52F00D5A7E3 /* houseFloor1.mtl in Resources */,
 				DF3EF50D216AD508000F43F4 /* treefir.obj in Resources */,
-				DFD6840622470C5700A78E9F /* barrels_obj.obj in Resources */,
 				DF3EF50F216AD508000F43F4 /* train.mtl in Resources */,
 				DF440303223DB93900D5A7E3 /* grass03.mtl in Resources */,
 				89B3850020D8B4B700FAEDE4 /* grass.obj in Resources */,
+				DF25590122479F02002CA9C3 /* Oil.mtl in Resources */,
 				DF4402F3223DB52F00D5A7E3 /* houseGround3.obj in Resources */,
 				DF440307223DB93900D5A7E3 /* grass04.obj in Resources */,
 				DF3EF506216AD3AB000F43F4 /* chest-roughness.png in Resources */,
@@ -661,6 +664,7 @@
 				DF1B2CCF223F16B900831793 /* ShadowScene.swift in Sources */,
 				DFD6842522473FFE00A78E9F /* WaterScene.swift in Sources */,
 				DFA06ECA22309DA800631585 /* SkyScene.swift in Sources */,
+				DF7C328D224790E400EC833A /* DemoScene.swift in Sources */,
 				89B3850C20D8C9E600FAEDE4 /* TestScene.swift in Sources */,
 				89267CDF20D744EA0024085C /* GameViewController.swift in Sources */,
 				DF4402F8223DB73000D5A7E3 /* HouseScene.swift in Sources */,
