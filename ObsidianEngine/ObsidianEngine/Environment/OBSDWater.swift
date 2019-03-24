@@ -55,7 +55,7 @@ open class OBSDWater: OBSDNode, Texturable {
         }
     }
     
-    func render(renderEncoder: MTLRenderCommandEncoder, uniforms: OBSDUniforms) {
+    func render(renderEncoder: MTLRenderCommandEncoder, uniforms: OBSDUniforms, fragmentUniform: OBSDFragmentUniforms) {
         guard let mesh = mesh else {
             fatalError("Could not load water mesh")
         }
@@ -68,10 +68,13 @@ open class OBSDWater: OBSDNode, Texturable {
         var uniform = uniforms
         uniform.modelMatrix = transform.modelMatrix
         
+        var frag = fragmentUniform
+        
         renderEncoder.setVertexBytes(&uniform, length: MemoryLayout<OBSDUniforms>.stride, index: Int(BufferIndexUniforms.rawValue))
         renderEncoder.setFragmentTexture(reflectionRenderPass.texture, index: 0)
         renderEncoder.setFragmentTexture(texture, index: 2)
         renderEncoder.setFragmentBytes(&timer, length: MemoryLayout<Float>.size, index: 3)
+        renderEncoder.setFragmentBytes(&frag, length: MemoryLayout<OBSDFragmentUniforms>.stride, index: 15)
         
         for submesh in mesh.submeshes {
             renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)

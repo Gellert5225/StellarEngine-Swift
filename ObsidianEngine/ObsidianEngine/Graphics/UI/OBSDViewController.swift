@@ -114,11 +114,11 @@ open class OBSDViewController: UIViewController {
             lastPanLocation = pointInView
             currentAngleY! += xDelta
             
-//            let multiplier = (quardrantOf(angle: currentAngleY!) == 2 || quardrantOf(angle: currentAngleY!) == 3 ? -1 : 1)
-//            let projectionXZ = scene.camera.mod * cos(currentAngleX!)
-//            scene.camera.currentPosition = float3(sin(currentAngleY!) * projectionXZ,
-//                                           sin(currentAngleX!) * scene.camera.mod,
-//                                           Float(multiplier) * cos(currentAngleY!) * projectionXZ)
+            let multiplier = (quardrantOf(angle: currentAngleY!) == 2 || quardrantOf(angle: currentAngleY!) == 3 ? -1 : 1)
+            let projectionXZ = scene.camera.mod * cos(currentAngleX!)
+            scene.camera.currentPosition = float3(sin(currentAngleY!) * projectionXZ,
+                                           sin(currentAngleX!) * scene.camera.mod,
+                                           Float(multiplier) * cos(currentAngleY!) * projectionXZ)
             
         } else if recognizer.state == UIGestureRecognizer.State.began {
             lastPanLocation = recognizer.location(in: self.view)

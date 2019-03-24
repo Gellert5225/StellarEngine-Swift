@@ -330,7 +330,7 @@ extension OBSDRenderer: MTKViewDelegate {
             scene.reflectionCamera.rotation = scene.camera.rotation
             scene.reflectionCamera.position.y = -scene.camera.position.y
             scene.reflectionCamera.rotation.x = -scene.camera.rotation.x
-            scene.uniforms.viewMatrix = scene.reflectionCamera.vMatrix
+            scene.uniforms.viewMatrix = scene.reflectionCamera.viewMatrix
             scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
             
             scene.skybox?.update(renderEncoder: reflectEncoder)
@@ -348,7 +348,7 @@ extension OBSDRenderer: MTKViewDelegate {
         // Render Objects
         guard let renderEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {return}
         
-        scene.fragmentUniforms.cameraPosition = scene.camera.position
+        scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition!
         scene.fragmentUniforms.lightCount = uint(scene.lights.count)
         
         scene.uniforms.viewMatrix = scene.camera.viewMatrix
@@ -371,7 +371,7 @@ extension OBSDRenderer: MTKViewDelegate {
         
         for water in scene.waters {
             water.update()
-            water.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
+            water.render(renderEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
         }
         
 //        for terrain in scene.terrains {

@@ -28,7 +28,7 @@ class WaterScene: OBSDScene {
         camera.rotate(x: -20, y: 0, z: 0)
         camera.fovDegrees = 60
         
-        sunLignt.position = float3(100, 50, 50)
+        sunLignt.position = float3(5, 50, -50)
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
         ambientLight.intensity = 0.1
         

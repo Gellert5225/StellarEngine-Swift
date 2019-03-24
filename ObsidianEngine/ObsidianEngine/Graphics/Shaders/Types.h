@@ -11,6 +11,8 @@
 
 #import <simd/simd.h>
 
+#define sunLight vector_float3(0, -1000, -1000)
+
 typedef matrix_float4x4 float4x4;
 typedef matrix_float3x3 float3x3;
 typedef vector_float2 float2;

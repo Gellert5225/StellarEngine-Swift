@@ -143,7 +143,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
 
     normal = normalize(normal);
 
-    float3 viewDirection = normalize(fragmentUniforms.cameraPosition + in.worldPosition);
+    float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition);
     float3 specularOutput = 0;
     float3 diffuseColor = 0;
     float3 ambientColor = 0;
