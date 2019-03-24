@@ -36,6 +36,6 @@ class GameViewController: OBSDViewController {
         scene = shadowScene
  
         panEnabled = true
-        verticalCameraAngleInterval = (-80, -5)
+        verticalCameraAngleInterval = (-80, 20)
     }
 }

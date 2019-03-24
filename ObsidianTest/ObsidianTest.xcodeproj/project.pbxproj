@@ -88,6 +88,19 @@
 		DFB84E23216B1C3A000195B9 /* racing-car.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFB84E21216B1C39000195B9 /* racing-car.obj */; };
 		DFB84E27216B1CD1000195B9 /* Textures.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DFB84E26216B1CD1000195B9 /* Textures.xcassets */; };
 		DFBD313B20E6E41D009C2C03 /* cottage-normal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFBD313A20E6E41D009C2C03 /* cottage-normal.png */; };
+		DFD6840522470C5700A78E9F /* barrels_obj.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840322470C5700A78E9F /* barrels_obj.mtl */; };
+		DFD6840622470C5700A78E9F /* barrels_obj.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840422470C5700A78E9F /* barrels_obj.obj */; };
+		DFD6840A22470E4D00A78E9F /* Nade.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840822470E4D00A78E9F /* Nade.mtl */; };
+		DFD6840B22470E4D00A78E9F /* Nade.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840922470E4D00A78E9F /* Nade.obj */; };
+		DFD6841122470E6600A78E9F /* Mk2Grenade_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */; };
+		DFD6841222470E6600A78E9F /* Mk2Grenade_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */; };
+		DFD6841322470E6600A78E9F /* Mk2Grenade_Metalness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */; };
+		DFD6841422470E6600A78E9F /* Mk2Grenade_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */; };
+		DFD6841522470E6600A78E9F /* Mk2Grenade_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */; };
+		DFD68419224714A200A78E9F /* Sword.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD68417224714A200A78E9F /* Sword.obj */; };
+		DFD6841A224714A200A78E9F /* Sword.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD68418224714A200A78E9F /* Sword.mtl */; };
+		DFD6841E22471B0A00A78E9F /* MagicMouse.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841C22471B0900A78E9F /* MagicMouse.mtl */; };
+		DFD6841F22471B0A00A78E9F /* MagicMouse.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841D22471B0A00A78E9F /* MagicMouse.obj */; };
 		DFEA65BB20E5BD4500F3C8A0 /* img110.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEA65BA20E5BD4400F3C8A0 /* img110.png */; };
 /* End PBXBuildFile section */
 
@@ -205,6 +218,19 @@
 		DFB84E21216B1C39000195B9 /* racing-car.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "racing-car.obj"; sourceTree = "<group>"; };
 		DFB84E26216B1CD1000195B9 /* Textures.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Textures.xcassets; sourceTree = "<group>"; };
 		DFBD313A20E6E41D009C2C03 /* cottage-normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cottage-normal.png"; sourceTree = "<group>"; };
+		DFD6840322470C5700A78E9F /* barrels_obj.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = barrels_obj.mtl; sourceTree = "<group>"; };
+		DFD6840422470C5700A78E9F /* barrels_obj.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = barrels_obj.obj; sourceTree = "<group>"; };
+		DFD6840822470E4D00A78E9F /* Nade.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nade.mtl; sourceTree = "<group>"; };
+		DFD6840922470E4D00A78E9F /* Nade.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nade.obj; sourceTree = "<group>"; };
+		DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Base_Color.png; sourceTree = "<group>"; };
+		DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Normal.png; sourceTree = "<group>"; };
+		DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Metalness.png; sourceTree = "<group>"; };
+		DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Roughness.png; sourceTree = "<group>"; };
+		DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_AO.png; sourceTree = "<group>"; };
+		DFD68417224714A200A78E9F /* Sword.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sword.obj; sourceTree = "<group>"; };
+		DFD68418224714A200A78E9F /* Sword.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sword.mtl; sourceTree = "<group>"; };
+		DFD6841C22471B0900A78E9F /* MagicMouse.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MagicMouse.mtl; sourceTree = "<group>"; };
+		DFD6841D22471B0A00A78E9F /* MagicMouse.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MagicMouse.obj; sourceTree = "<group>"; };
 		DFEA65BA20E5BD4400F3C8A0 /* img110.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = img110.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -223,6 +249,10 @@
 		89B3850120D8B4CD00FAEDE4 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				DFD6841B22471AFE00A78E9F /* AppleMouse */,
+				DFD684162247145200A78E9F /* Sword */,
+				DFD6840722470E4400A78E9F /* Nade */,
+				DFD6840222470C3800A78E9F /* Oil Can */,
 				DF4402CE223DB51F00D5A7E3 /* Houses */,
 				DF4402BB223C8C0900D5A7E3 /* Rocks */,
 				DF4402BA223C81F700D5A7E3 /* Grass */,
@@ -413,6 +443,47 @@
 			path = Houses;
 			sourceTree = "<group>";
 		};
+		DFD6840222470C3800A78E9F /* Oil Can */ = {
+			isa = PBXGroup;
+			children = (
+				DFD6840322470C5700A78E9F /* barrels_obj.mtl */,
+				DFD6840422470C5700A78E9F /* barrels_obj.obj */,
+			);
+			path = "Oil Can";
+			sourceTree = "<group>";
+		};
+		DFD6840722470E4400A78E9F /* Nade */ = {
+			isa = PBXGroup;
+			children = (
+				DFD6840822470E4D00A78E9F /* Nade.mtl */,
+				DFD6840922470E4D00A78E9F /* Nade.obj */,
+				DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */,
+				DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */,
+				DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */,
+				DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */,
+				DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */,
+			);
+			path = Nade;
+			sourceTree = "<group>";
+		};
+		DFD684162247145200A78E9F /* Sword */ = {
+			isa = PBXGroup;
+			children = (
+				DFD68418224714A200A78E9F /* Sword.mtl */,
+				DFD68417224714A200A78E9F /* Sword.obj */,
+			);
+			path = Sword;
+			sourceTree = "<group>";
+		};
+		DFD6841B22471AFE00A78E9F /* AppleMouse */ = {
+			isa = PBXGroup;
+			children = (
+				DFD6841C22471B0900A78E9F /* MagicMouse.mtl */,
+				DFD6841D22471B0A00A78E9F /* MagicMouse.obj */,
+			);
+			path = AppleMouse;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -490,12 +561,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF4402E3223DB52F00D5A7E3 /* houseFloor1.obj in Resources */,
+				DFD68419224714A200A78E9F /* Sword.obj in Resources */,
 				DF4402C6223C8C4100D5A7E3 /* rock1.mtl in Resources */,
 				DF1B2CD3223F197C00831793 /* plane.obj in Resources */,
 				DF4402E7223DB52F00D5A7E3 /* houseRoof2.obj in Resources */,
 				DF3EF508216AD3AB000F43F4 /* chest-color.png in Resources */,
 				DFA06ECE22309F5900631585 /* large-plane.obj in Resources */,
 				DF4402E6223DB52F00D5A7E3 /* houseGround4.obj in Resources */,
+				DFD6841A224714A200A78E9F /* Sword.mtl in Resources */,
 				DFA06EDD2230F0DD00631585 /* cube-sky.png in Resources */,
 				89FFCADE20CC7A6100C6DB28 /* LaunchScreen.storyboard in Resources */,
 				DF1B2CDA223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.mtl in Resources */,
@@ -505,6 +578,7 @@
 				DFB84E27216B1CD1000195B9 /* Textures.xcassets in Resources */,
 				DF4402E8223DB52F00D5A7E3 /* houseGround4.mtl in Resources */,
 				DF4402B4223C7FE200D5A7E3 /* tree.mtl in Resources */,
+				DFD6841222470E6600A78E9F /* Mk2Grenade_Normal.png in Resources */,
 				DF4402F2223DB52F00D5A7E3 /* houseFloor2.mtl in Resources */,
 				DF440308223DB93900D5A7E3 /* grass03.obj in Resources */,
 				DFA06EDE2230F0DD00631585 /* irradiance.png in Resources */,
@@ -519,12 +593,16 @@
 				DF4402C5223C8C4100D5A7E3 /* rock3.obj in Resources */,
 				DFA06ECD22309F5900631585 /* large-plane.mtl in Resources */,
 				89B384F720D7C98C00FAEDE4 /* cottage-color.png in Resources */,
+				DFD6841322470E6600A78E9F /* Mk2Grenade_Metalness.png in Resources */,
 				DF4402EB223DB52F00D5A7E3 /* houseGround2.obj in Resources */,
+				DFD6840522470C5700A78E9F /* barrels_obj.mtl in Resources */,
 				DF3EF502216AD367000F43F4 /* chest.mtl in Resources */,
 				DF4402E4223DB52F00D5A7E3 /* houseRoof1.obj in Resources */,
+				DFD6841422470E6600A78E9F /* Mk2Grenade_Roughness.png in Resources */,
 				DF4402B3223C7FE200D5A7E3 /* tree.obj in Resources */,
 				DF4402F6223DB52F00D5A7E3 /* houseFloor1.mtl in Resources */,
 				DF3EF50D216AD508000F43F4 /* treefir.obj in Resources */,
+				DFD6840622470C5700A78E9F /* barrels_obj.obj in Resources */,
 				DF3EF50F216AD508000F43F4 /* train.mtl in Resources */,
 				DF440303223DB93900D5A7E3 /* grass03.mtl in Resources */,
 				89B3850020D8B4B700FAEDE4 /* grass.obj in Resources */,
@@ -532,17 +610,21 @@
 				DF440307223DB93900D5A7E3 /* grass04.obj in Resources */,
 				DF3EF506216AD3AB000F43F4 /* chest-roughness.png in Resources */,
 				DFBD313B20E6E41D009C2C03 /* cottage-normal.png in Resources */,
+				DFD6841122470E6600A78E9F /* Mk2Grenade_Base_Color.png in Resources */,
 				DF4402EC223DB52F00D5A7E3 /* houseGround1.mtl in Resources */,
 				DF3EF510216AD508000F43F4 /* train.obj in Resources */,
 				DF4402ED223DB52F00D5A7E3 /* houseFloor3.obj in Resources */,
 				DFA06EE822310F8700631585 /* cottage1.obj in Resources */,
 				DF440302223DB93900D5A7E3 /* grass01.mtl in Resources */,
 				DFA06EEA22310F8700631585 /* cottage2.obj in Resources */,
+				DFD6840B22470E4D00A78E9F /* Nade.obj in Resources */,
 				DF4402EE223DB52F00D5A7E3 /* houseFloor4.mtl in Resources */,
+				DFD6841F22471B0A00A78E9F /* MagicMouse.obj in Resources */,
 				DF3EF507216AD3AB000F43F4 /* chest-normal.png in Resources */,
 				DF1B2CDB223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.obj in Resources */,
 				DF4402C7223C8C4100D5A7E3 /* rock1.obj in Resources */,
 				DF4402EF223DB52F00D5A7E3 /* houseFloor2.obj in Resources */,
+				DFD6841E22471B0A00A78E9F /* MagicMouse.mtl in Resources */,
 				DF4402E9223DB52F00D5A7E3 /* houseGround3.mtl in Resources */,
 				89FFCADB20CC7A6100C6DB28 /* Assets.xcassets in Resources */,
 				DF4402F0223DB52F00D5A7E3 /* houseFloor4.obj in Resources */,
@@ -550,10 +632,12 @@
 				DF440301223DB93900D5A7E3 /* grass02.obj in Resources */,
 				DF3EF501216AD367000F43F4 /* chest.obj in Resources */,
 				DF4402F5223DB52F00D5A7E3 /* houseGround2.mtl in Resources */,
+				DFD6840A22470E4D00A78E9F /* Nade.mtl in Resources */,
 				DF1B2CD2223F197C00831793 /* plane.mtl in Resources */,
 				DFEA65BB20E5BD4500F3C8A0 /* img110.png in Resources */,
 				DF4402C4223C8C4100D5A7E3 /* rock3.mtl in Resources */,
 				DF440313223E38C200D5A7E3 /* SM_Bld_Village_05.obj in Resources */,
+				DFD6841522470E6600A78E9F /* Mk2Grenade_AO.png in Resources */,
 				DF4402F1223DB52F00D5A7E3 /* houseRoof1.mtl in Resources */,
 				89B384FA20D7CE8A00FAEDE4 /* green-grass.png in Resources */,
 				DF3EF50E216AD508000F43F4 /* treefir.mtl in Resources */,

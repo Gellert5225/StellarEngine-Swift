@@ -9,11 +9,12 @@
 import ObsidianEngine
 
 class SkyScene: OBSDScene {
-    let ground = OBSDModel(modelName: "large-plane", fragmentFunctionName: "fragment_PBR")
-    let car = OBSDModel(modelName: "racing-car", fragmentFunctionName: "fragment_PBR")
-    let chest = OBSDModel(modelName: "chest", fragmentFunctionName: "fragment_PBR")
-    let train = OBSDModel(modelName: "train", fragmentFunctionName: "fragment_PBR")
-    let cottage = OBSDModel(modelName: "cottage1", fragmentFunctionName: "fragment_PBR")
+    let ground = OBSDModel(modelName: "large-plane", fragmentFunctionName: "gBufferFragment")
+    let car = OBSDModel(modelName: "racing-car", fragmentFunctionName: "gBufferFragment")
+    let chest = OBSDModel(modelName: "chest", fragmentFunctionName: "gBufferFragment")
+    let train = OBSDModel(modelName: "train", fragmentFunctionName: "gBufferFragment")
+    let cottage = OBSDModel(modelName: "cottage1", fragmentFunctionName: "gBufferFragment")
+    let mouse = OBSDModel(modelName: "MagicMouse", fragmentFunctionName: "gBufferFragment_IBL")
     var light: Light!
     
     override init() {
@@ -29,6 +30,10 @@ class SkyScene: OBSDScene {
         add(childNode: cottage)
         add(childNode: train)
         add(childNode: chest)
+        add(childNode: mouse)
+        
+        mouse.scale = [0.1, 0.1, 0.1]
+        mouse.position = [0, 0, -10]
         
         car.scale = [1.5, 1.5, 1.5]
         car.position = [7, 0, 0]
@@ -44,11 +49,11 @@ class SkyScene: OBSDScene {
         
         light = buildDefaultLight()
         
-        light.position = float3(100, 50, -50)
-        light.intensity = 0.5
+        sunLignt.position = float3(100, 50, -50)
+        sunLignt.intensity = 0.7
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
         ambientLight.intensity = 0.5
-        lights.append(light)
+        lights.append(sunLignt)
         lights.append(ambientLight)
     }
 }

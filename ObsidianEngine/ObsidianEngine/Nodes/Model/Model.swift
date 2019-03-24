@@ -79,6 +79,8 @@ open class OBSDModel: OBSDNode {
         super.init()
         name = modelName
         loadModel(modelName: modelName, vertexFunctionName: vertexFunctionName, fragmentFunctionName: fragmentFunctionName)
+        self.vertexFunctionName = vertexFunctionName
+        self.fragmentFunctionName = fragmentFunctionName
         //pipelineState = buildPipelineState()
     }
     

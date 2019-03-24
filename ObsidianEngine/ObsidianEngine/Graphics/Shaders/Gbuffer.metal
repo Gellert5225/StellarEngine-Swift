@@ -29,8 +29,8 @@ struct VertexOut {
 };
 
 struct GbufferOut {
-    float4 albedo [[ color(0) ]];
-    float4 normal [[ color(1) ]];
+    float4 albedo   [[ color(0) ]];
+    float4 normal   [[ color(1) ]];
     float4 position [[ color(2) ]];
 };
 
@@ -91,6 +91,131 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     texture2d<float> aoTexture          [[ texture(4) ]],
                                     depth2d<float> shadow_texture       [[ texture(5) ]]) {
     GbufferOut out;
+
+    out.albedo.a = 0;
+    out.normal = float4(normalize(in.normal), 1.0);
+    out.position = float4(in.worldPosition, 1.0);
+    
+    float4 baseColor;
+
+    if (!is_null_texture(texture)) {
+        float4 colorAlpha = texture.sample(sampler2d, in.textureCoordinates * 1);
+        baseColor = float4(texture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
+
+        if (colorAlpha.a < 0.2) {
+            discard_fragment();
+        }
+    } else {
+        baseColor = float4(material.baseColor, 1.0);
+    }
+
+    float metallic = material.metallic;
+    if (!is_null_texture(metallicTexture)) {
+        metallic = metallicTexture.sample(sampler2d, in.textureCoordinates).r;
+    } else {
+        metallic = material.metallic;
+    }
+
+    // extract roughness
+    float roughness;
+    if (!is_null_texture(roughnessTexture)) {
+        roughness = roughnessTexture.sample(sampler2d, in.textureCoordinates).r;
+    } else {
+        roughness = material.roughness;
+    }
+
+    // extract ambient occlusion
+    float ambientOcclusion;
+    if (!is_null_texture(aoTexture)) {
+        ambientOcclusion = aoTexture.sample(sampler2d, in.textureCoordinates).r;
+    } else {
+        ambientOcclusion = 1.0;
+    }
+
+    float3 normal;
+    if (!is_null_texture(normalTexture)) {
+        float3 normalValue = normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
+        normalValue = normalValue * 2 - 1;
+        normal = in.normal * normalValue.z + in.worldTangent * normalValue.x + in.worldBitangent * normalValue.y;
+    } else {
+        normal = in.normal;
+    }
+
+    normal = normalize(normal);
+
+    float3 viewDirection = normalize(fragmentUniforms.cameraPosition + in.worldPosition);
+    float3 specularOutput = 0;
+    float3 diffuseColor = 0;
+    float3 ambientColor = 0;
+
+    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
+        Light light = lightsBuffer[i];
+        if (light.type == 1) {
+            float3 lightDirection = normalize(light.position);
+            lightDirection = light.position;
+
+            // all the necessary components are in place
+            Lighting lighting;
+            lighting.lightDirection = lightDirection;
+            lighting.viewDirection = viewDirection;
+            lighting.baseColor = baseColor.xyz;
+            lighting.normal = normal;
+            lighting.metallic = metallic;
+            lighting.roughness = roughness;
+            lighting.ambientOcclusion = ambientOcclusion;
+            lighting.lightColor = light.color;
+
+            specularOutput = renderGbuffer(lighting);
+
+            //compute Lambertian diffuse
+            //            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
+            //            diffuseColor = light.color * color.rgb * nDotl * ambientOcclusion;
+            //            diffuseColor *= 1.0 - metallic;
+        } else if (light.type == Pointlight){
+
+        } else {
+            ambientColor += light.color * light.intensity;
+        }
+    }
+
+    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    
+    float2 xy = in.shadowPosition.xy;
+    xy = xy * 0.5 + 0.5;
+    xy.y = 1 - xy.y;
+    constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
+    float shadow_sample = shadow_texture.sample(s, xy);
+    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+    if (current_sample > shadow_sample ) {
+        out.albedo.a = 1;
+    }
+    
+    float shadow = out.albedo.a;
+    if (shadow > 0) {
+        diffuseColor *= 0.5;
+    }
+
+    out.albedo = float4(specularOutput + diffuseColor, out.albedo.a) * ambientOcclusion;
+
+    return out;
+}
+
+fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
+                                    sampler sampler2d [[ sampler(0) ]],
+                                    constant OBSDFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
+                                    constant Light *lightsBuffer                    [[ buffer(2) ]],
+                                    constant Material &material         [[ buffer(13) ]],
+                                    texture2d<float> texture            [[ texture(0) ]],
+                                    texture2d<float> normalTexture      [[ texture(1) ]],
+                                    texture2d<float> roughnessTexture   [[ texture(2) ]],
+                                    texture2d<float> metallicTexture    [[ texture(3) ]],
+                                    texture2d<float> aoTexture          [[ texture(4) ]],
+                                    depth2d<float> shadow_texture       [[ texture(5) ]],
+                                    texturecube<float> skybox           [[ texture(BufferIndexSkybox) ]],
+                                    texturecube<float> skyboxDiffuse    [[ texture(BufferIndexSkyboxDiffuse) ]],
+                                    texture2d<float> brdfLut            [[ texture(BufferIndexBRDFLut) ]]) {
+    
+    GbufferOut out;
     
     out.albedo.a = 0;
     out.normal = float4(normalize(in.normal), 1.0);
@@ -143,61 +268,33 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     normal = normalize(normal);
     
-    float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition);
-    float3 specularOutput = 0;
-    float3 diffuseColor = 0;
-    float3 ambientColor = 0;
+    float4 diffuse = skyboxDiffuse.sample(sampler2d, normal);
+    diffuse = mix(pow(diffuse, 0.5), diffuse, metallic);
     
-    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
-        Light light = lightsBuffer[i];
-        if (light.type == 1) {
-            float3 lightDirection = normalize(light.position);
-            lightDirection = light.position;
-            
-            // all the necessary components are in place
-            Lighting lighting;
-            lighting.lightDirection = lightDirection;
-            lighting.viewDirection = viewDirection;
-            lighting.baseColor = baseColor.xyz;
-            lighting.normal = normal;
-            lighting.metallic = metallic;
-            lighting.roughness = roughness;
-            lighting.ambientOcclusion = ambientOcclusion;
-            lighting.lightColor = light.color;
-            
-            specularOutput = renderGbuffer(lighting);
-            
-            //compute Lambertian diffuse
-            //            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
-            //            diffuseColor = light.color * color.rgb * nDotl * ambientOcclusion;
-            //            diffuseColor *= 1.0 - metallic;
-        } else if (light.type == Pointlight){
-            
-        } else {
-            ambientColor += light.color * light.intensity;
-        }
-    }
-    
-    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
-    
-    //out.albedo = float4(diffuseColor, out.albedo.a);
-    
+    //shadow
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
-    constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
-    float shadow_sample = shadow_texture.sample(s, xy);
+    constexpr sampler sShadow(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
+    float shadow_sample = shadow_texture.sample(sShadow, xy);
     float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-    if (current_sample > shadow_sample ) {
-        out.albedo.a = 1;
+    if (current_sample > shadow_sample) {
+        diffuse *= 0.5;
     }
     
-    float shadow = out.albedo.a;
-    if (shadow > 0) {
-        diffuseColor *= 0.5;
-    }
+    float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition.xyz);
+    float3 textureCoordinates = -normalize(reflect(viewDirection, normal));
+    constexpr sampler s(filter::linear, mip_filter::linear);
+    float3 prefilteredColor = skybox.sample(s, textureCoordinates, level(roughness * 10)).rgb;
+    float nDotV = saturate(dot(normal, normalize(-viewDirection)));
+    float2 envBRDF = brdfLut.sample(s, float2(roughness, nDotV)).rg;
+    float3 f0 = mix(0.04, baseColor.rgb, metallic);
+    float3 specularIBL = f0 * envBRDF.r + envBRDF.g;
+    float3 specular = prefilteredColor * specularIBL;
+    float4 color = diffuse * baseColor + float4(specular, 1);
+    color *= ambientOcclusion;
     
-    out.albedo = float4(specularOutput + diffuseColor, 1.0) * ambientOcclusion;
+    out.albedo = color;
     
     return out;
 }

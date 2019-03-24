@@ -398,7 +398,7 @@ fragment float4 skyboxTest(VertexOut in [[ stage_in ]],
     float3 textureCoordinates = reflect(viewDirection, in.normal);
     constexpr sampler defaultSampler(filter::linear);
     float4 color = skybox.sample(defaultSampler, textureCoordinates);
-    float4 copper = float4(0.86, 0.7, 0.48, 1);
+    float4 copper = float4(211/255.0, 211/255.0, 211/255.0, 1);
     color = color * copper;
     return color;
 }
