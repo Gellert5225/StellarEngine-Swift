@@ -9,9 +9,9 @@
 import Foundation
 
 public struct Transform {
-    public var position = float3(0)
-    public var rotation = float3(0)
-    public var scale = float3(1)
+    public var position = float3(repeating: 0)
+    public var rotation = float3(repeating: 0)
+    public var scale = float3(repeating: 1)
     
     public var modelMatrix: float4x4 {
         let translateMatrix = float4x4(translation: position)

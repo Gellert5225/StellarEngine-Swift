@@ -39,8 +39,6 @@ open class OBSDShape: OBSDNode {
     // MARK: Private
     var pipelineState: MTLRenderPipelineState!
     
-    var vertices = [OBSDVertex]()
-    
     var indices = [UInt16]()
     
     var vertexBuffer: MTLBuffer!
@@ -78,8 +76,7 @@ open class OBSDShape: OBSDNode {
     
     // MAKR: Private function
     func updateBuffers() {
-        vertexBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: vertices, length: MemoryLayout<OBSDVertex>.stride * vertices.count, options: [])
-        indexBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: indices, length: MemoryLayout<UInt16>.size * indices.count, options: [])
+        
     }
 }
 

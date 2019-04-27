@@ -15,13 +15,13 @@ open class OBSDNode {
     
     open var name: String = "untitled"
     
-    open var materialColor = float4(1)
+    open var materialColor = float4(repeating: 1)
     
     open var specularIntensity: Float = 1
     
     open var shininess: Float = 1
 
-    open var position = float3(0)
+    open var position = float3(repeating: 0)
     
     open var rotation: float3 = [0, 0, 0] {
         didSet {
@@ -67,7 +67,7 @@ open class OBSDNode {
             children.append(child)
         }
         childNode.children = []
-        guard let index = (children.index {
+        guard let index = (children.firstIndex {
             $0 === childNode
         }) else { return }
         children.remove(at: index)

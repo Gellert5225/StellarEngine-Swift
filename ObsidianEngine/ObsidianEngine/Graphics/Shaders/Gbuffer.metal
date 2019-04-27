@@ -75,7 +75,7 @@ float3 gbufferLighting(float3 normal,
             ambientColor *= baseColor;
         }
     }
-    return mix(diffuseColor, diffuseColor + ambientColor, 0.5);
+    return diffuseColor;
 }
 
 float3 renderGbuffer(Lighting lighting);
