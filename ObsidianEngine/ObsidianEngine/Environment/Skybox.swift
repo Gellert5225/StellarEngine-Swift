@@ -122,7 +122,7 @@ open class OBSDSkybox {
         renderEncoder.popDebugGroup()
     }
     
-    func loadGeneratedSkyboxTexture(dimensions: int2) -> MTLTexture? {
+    func loadGeneratedSkyboxTexture(dimensions: SIMD2<Int32>) -> MTLTexture? {
         var texture: MTLTexture?
         let skyTexture = MDLSkyCubeTexture(name: "sky",
                                            channelEncoding: .uInt8,

@@ -88,8 +88,8 @@ class DemoScene: OBSDScene {
             float3(0, 0, 1),
             float3(0, 1, 1),
             float3(1, 0, 1) ]
-        var newMin: float3 = [min.x*100, min.y*100, min.z*100]
-        var newMax: float3 = [max.x*100, max.y*100, max.z*100]
+        let newMin: float3 = [min.x*100, min.y*100, min.z*100]
+        let newMax: float3 = [max.x*100, max.y*100, max.z*100]
         for _ in 0..<count {
             var light = buildDefaultLight()
             light.type = Pointlight
