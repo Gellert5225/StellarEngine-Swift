@@ -50,15 +50,11 @@ class DemoScene: OBSDScene {
         camera.fovDegrees = 80
         
         sunLignt.position = float3(-100, 300, -100)
-        
-        //sunset color
-//        sunLignt.color = [Float(255/255.0), Float(178/255.0), Float(0/255.0)]
-//        sunLignt.intensity = 0.5
+        sunLignt.intensity = 1.0
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
-        ambientLight.intensity = 0.1
+        ambientLight.intensity = 1.0
         
         lights.append(sunLignt)
-        //createPointLights(count: 40, min: [-8, 0.5, -8], max: [8, 4, 8])
         lights.append(ambientLight)
     }
     

@@ -35,7 +35,7 @@ open class OBSDRenderer: NSObject {
     
     var gBufferPipelineState: MTLRenderPipelineState!
     var gBufferRenderPassDescriptor: MTLRenderPassDescriptor!
-    var gBufferRenderPipelineDescriptor: MTLRenderPipelineDescriptor!
+    //var gBufferRenderPipelineDescriptor: MTLRenderPipelineDescriptor!
     
     var compositionPipelineState: MTLRenderPipelineState!
     
@@ -88,9 +88,8 @@ open class OBSDRenderer: NSObject {
         buildShadowTexture(size: metalView.drawableSize)
         buildShadowPipelineState()
         
-        buildGBufferRenderPassDescriptor(size: metalView.drawableSize, descriptor: renderPassDescriptor)
-        //buildGbufferPipelineState()
-        gBufferRenderPipelineDescriptor = MTLRenderPipelineDescriptor()
+        buildGBufferRenderPassDescriptor(size: metalView.drawableSize)
+        buildGbufferPipelineState(withFragmentFunctionName: "fragment_PBR")
         
         quadVerticesBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: quadVertices, length: MemoryLayout<Float>.size * quadVertices.count, options: [])
         quadVerticesBuffer.label = "Quad vertices"
@@ -137,6 +136,47 @@ open class OBSDRenderer: NSObject {
         }
     }
     
+    func buildGbufferTextures(size: CGSize) {
+        albedoTexture = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo")
+        normalTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal")
+        positionTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position")
+        depthTexture = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth")
+    }
+    
+    func buildGBufferRenderPassDescriptor(size: CGSize) {
+        gBufferRenderPassDescriptor = MTLRenderPassDescriptor()
+        buildGbufferTextures(size: size)
+        let textures: [MTLTexture] = [albedoTexture, normalTexture, positionTexture]
+        for (index, texture) in textures.enumerated() {
+            gBufferRenderPassDescriptor.setUpColorAttachment(position: index, texture: texture)
+        }
+
+        gBufferRenderPassDescriptor.setUpDepthAttachment(texture: depthTexture)
+    }
+    
+    func buildGbufferPipelineState(withFragmentFunctionName name: String) {
+        let descriptor = MTLRenderPipelineDescriptor()
+        //descriptor.colorAttachments[0].pixelFormat = OBSDRenderer.colorPixelFormat
+        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
+        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        descriptor.depthAttachmentPixelFormat = .depth32Float
+        descriptor.label = "GBuffer state"
+        descriptor.vertexFunction = OBSDRenderer.library.makeFunction(name: "vertex_main")
+        if (name == "fragment_PBR") {
+            descriptor.fragmentFunction = OBSDRenderer.library.makeFunction(name: "gBufferFragment")
+        } else {
+            descriptor.fragmentFunction = OBSDRenderer.library.makeFunction(name: "gBufferFragment_IBL")
+        }
+        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(OBSDModel.defaultVertexDescriptor)
+        //let a = OBSDModel.defaultVertexDescriptor.attributes[3] as! MDLVertexAttribute
+        do {
+            gBufferPipelineState = try OBSDRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
+        } catch let error {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
     func renderShadowPass(renderEncoder: MTLRenderCommandEncoder) {
         guard let scene = scene else { return }
         
@@ -162,51 +202,13 @@ open class OBSDRenderer: NSObject {
         renderEncoder.popDebugGroup()
     }
     
-    func buildGbufferTextures(size: CGSize) {
-        albedoTexture = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo")
-        normalTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal")
-        positionTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position")
-        depthTexture = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth")
-    }
-    
-    func buildGBufferRenderPassDescriptor(size: CGSize, descriptor: MTLRenderPassDescriptor) {
-        buildGbufferTextures(size: size)
-        let textures: [MTLTexture] = [albedoTexture, normalTexture, positionTexture]
-        for (index, texture) in textures.enumerated() {
-            descriptor.setUpColorAttachment(position: index, texture: texture)
-        }
-
-        descriptor.setUpDepthAttachment(texture: depthTexture)
-    }
-    
-    func buildGbufferPipelineState(withFragmentFunctionName name: String) {
-        //let descriptor = MTLRenderPipelineDescriptor()
-        //descriptor.colorAttachments[0].pixelFormat = OBSDRenderer.colorPixelFormat
-        gBufferRenderPipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        gBufferRenderPipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
-        gBufferRenderPipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        gBufferRenderPipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-        gBufferRenderPipelineDescriptor.label = "GBuffer state"
-        gBufferRenderPipelineDescriptor.vertexFunction = OBSDRenderer.library.makeFunction(name: "vertex_main")
-        if (name == "fragment_PBR") {
-            gBufferRenderPipelineDescriptor.fragmentFunction = OBSDRenderer.library.makeFunction(name: "gBufferFragment")
-        } else {
-            gBufferRenderPipelineDescriptor.fragmentFunction = OBSDRenderer.library.makeFunction(name: "gBufferFragment_IBL")
-        }
-        gBufferRenderPipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(OBSDModel.defaultVertexDescriptor)
-        //let a = OBSDModel.defaultVertexDescriptor.attributes[3] as! MDLVertexAttribute
-        do {
-            gBufferPipelineState = try OBSDRenderer.metalDevice.makeRenderPipelineState(descriptor: gBufferRenderPipelineDescriptor)
-        } catch let error {
-            fatalError(error.localizedDescription)
-        }
-    }
-    
-    func renderGbufferPass(renderEncoder: MTLRenderCommandEncoder, model: OBSDModel) {
+    func renderGbufferPass(renderEncoder: MTLRenderCommandEncoder) {
         guard let scene = scene else { return }
         
-        renderEncoder.pushDebugGroup("Gbuffer pass \(model.name)")
-        renderEncoder.label = "Gbuffer encoder \(model.name)"
+        renderEncoder.pushDebugGroup("Gbuffer pass")
+        renderEncoder.label = "Gbuffer encoder"
+        
+        renderEncoder.setRenderPipelineState(gBufferPipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
         
         renderEncoder.setFragmentTexture(shadowTexture, index: 5)
@@ -214,21 +216,12 @@ open class OBSDRenderer: NSObject {
         let lights = scene.lights
         let lightsBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
-//        for child in scene.children {
-//            if let renderable = child as? OBSDModel {
-//                buildGbufferPipelineState(withFragmentFunctionName: renderable.fragmentFunctionName)
-//                renderEncoder.setRenderPipelineState(gBufferPipelineState)
-//                draw(renderEncoder: renderEncoder, model: renderable)
-//            }
-//        }
-        
-//        buildGbufferPipelineState(withFragmentFunctionName: model.fragmentFunctionName)
-//        renderEncoder.setRenderPipelineState(gBufferPipelineState)
-//        draw(renderEncoder: renderEncoder, model: model)
-        
-        model.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
-
-        renderEncoder.popDebugGroup()
+        for child in scene.children {
+            if let renderable = child as? OBSDModel {
+                renderable.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
+                //draw(renderEncoder: renderEncoder, model: renderable)
+            }
+        }
     }
     
     func renderCompositionPass(renderEncoder: MTLRenderCommandEncoder) {
@@ -240,6 +233,10 @@ open class OBSDRenderer: NSObject {
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
+        renderEncoder.setFragmentTexture(albedoTexture, index: 0)
+        renderEncoder.setFragmentTexture(normalTexture, index: 1)
+        renderEncoder.setFragmentTexture(positionTexture, index: 2)
+        
         guard let scene = scene else { return }
         
         let lights = scene.lights
@@ -248,6 +245,7 @@ open class OBSDRenderer: NSObject {
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<OBSDFragmentUniforms>.stride, index: 15)
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: quadVertices.count)
         
+        renderEncoder.endEncoding()
         renderEncoder.popDebugGroup()
     }
     
@@ -255,8 +253,7 @@ open class OBSDRenderer: NSObject {
         let descriptor = MTLRenderPipelineDescriptor()
         //descriptor.colorAttachments[0].pixelFormat = OBSDRenderer.colorPixelFormat
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
-        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        
         descriptor.depthAttachmentPixelFormat = .depth32Float
         //descriptor.sampleCount = 4
         descriptor.label = "Composition state"
@@ -292,21 +289,17 @@ extension OBSDRenderer: MTKViewDelegate {
         print("size will change")
         guard let scene = scene else {return}
         buildShadowTexture(size: size)
-        buildGBufferRenderPassDescriptor(size: size, descriptor: renderPassDescriptor)
+        buildGBufferRenderPassDescriptor(size: size)
         for water in scene.waters {
             water.reflectionRenderPass.updateTextures(size: size)
         }
     }
     
     public func draw(in view: MTKView) {
+        guard let descriptor = view.currentRenderPassDescriptor else {return}
         OBSDRenderer.commandBuffer = OBSDRenderer.commandQueue.makeCommandBuffer()
         
         guard let scene = scene else { return }
-        
-        renderPassDescriptor.colorAttachments[0].texture = view.currentDrawable?.texture
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 0.66, green: 0.9, blue: 0.96, alpha: 1.0)
-    
-        //renderPassDescriptor.depthAttachment.texture = view.depthStencilTexture
         
         let deltaTime = 1 / Float(view.preferredFramesPerSecond)
         scene.fps = view.preferredFramesPerSecond
@@ -319,11 +312,11 @@ extension OBSDRenderer: MTKViewDelegate {
         for water in scene.waters {
             guard let reflectEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
                 else { return }
-            
+
             scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition!
             scene.fragmentUniforms.lightCount = uint(scene.lights.count)
             scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
-            
+
             // Render reflection
             reflectEncoder.setDepthStencilState(depthStencilState)
             scene.reflectionCamera.position = scene.camera.position
@@ -332,59 +325,44 @@ extension OBSDRenderer: MTKViewDelegate {
             scene.reflectionCamera.rotation.x = -scene.camera.rotation.x
             scene.uniforms.viewMatrix = scene.reflectionCamera.viewMatrix
             scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
-            
+
             scene.skybox?.update(renderEncoder: reflectEncoder)
-            for child in scene.children {
-                if let model = child as? OBSDModel {
-                    renderGbufferPass(renderEncoder: reflectEncoder, model: model)
-                }
-            }
-            
+            renderGbufferPass(renderEncoder: reflectEncoder)
+
             scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
-            
+
             reflectEncoder.endEncoding()
+            reflectEncoder.popDebugGroup()
         }
-        
-        // Render Objects
-        guard let renderEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {return}
         
         scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition!
         scene.fragmentUniforms.lightCount = uint(scene.lights.count)
-        
+
         scene.uniforms.viewMatrix = scene.camera.viewMatrix
         scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
         scene.uniforms.clipPlane = float4(0, -1, 0, 1000)
         
         // gbuffer pass
-        scene.skybox?.update(renderEncoder: renderEncoder)
-        for child in scene.children {
-            if let model = child as? OBSDModel {
-                renderGbufferPass(renderEncoder: renderEncoder, model: model)
-            }
-        }
+        guard let gBufferEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPassDescriptor) else {return}
         
-        // composition pass
-        //renderCompositionPass(renderEncoder: renderEncoder)
-        
-        // skybox pass
-        scene.skybox?.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
-        
+        scene.skybox?.update(renderEncoder: gBufferEncoder)
+        renderGbufferPass(renderEncoder: gBufferEncoder)
+        scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
         for water in scene.waters {
             water.update()
-            water.render(renderEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
+            water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
         }
         
 //        for terrain in scene.terrains {
-//            terrain.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
+//            terrain.doRender(commandEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
 //        }
         
-//        for child in scene.children {
-//            if let renderable = child as? Renderable {
-//                renderable.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
-//            }
-//        }
-    
-        renderEncoder.endEncoding()
+        gBufferEncoder.endEncoding()
+        gBufferEncoder.popDebugGroup()
+        
+        // composition pass
+        guard let compositionEncoder = OBSDRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: descriptor) else {return}
+        renderCompositionPass(renderEncoder: compositionEncoder)
         
         guard let drawable = view.currentDrawable else {
             //sOBSDRenderer.commandBuffer?.commit()

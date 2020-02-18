@@ -180,7 +180,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         }
     }
 
-    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    //diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
     
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -197,7 +197,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         diffuseColor *= 0.5;
     }
     
-    float4 specDiffuse = float4(specularOutput + diffuseColor, out.albedo.a) * ambientOcclusion;
+    float4 specDiffuse = float4(specularOutput + baseColor.xyz, out.albedo.a) * ambientOcclusion;
 
     out.albedo = specDiffuse;
 

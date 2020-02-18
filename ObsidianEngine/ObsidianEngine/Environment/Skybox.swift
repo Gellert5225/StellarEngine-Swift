@@ -19,6 +19,8 @@ open class OBSDSkybox {
     let pipelineState: MTLRenderPipelineState
     let depthStencilState: MTLDepthStencilState?
     
+    var renderPass: RenderPass
+    
     public struct SkySettings {
         var turbidity: Float = 0.5597
         var sunElevation: Float = 0.5164
@@ -38,6 +40,7 @@ open class OBSDSkybox {
     public static var SunSet = SkySettings(turbidity: 0.6778, sunElevation: 0.4551, upperAtmosphereScattering: 0.0497, groundAlbedo: 0.0)
     
     public init(textureName: String?) {
+        renderPass = RenderPass(name: "skyBoxPass", size: OBSDRenderer.drawableSize)
         let allocator = MTKMeshBufferAllocator(device: OBSDRenderer.metalDevice)
         let cube = MDLMesh(boxWithExtent: [1, 1, 1], segments: [1, 1, 1], inwardNormals: true, geometryType: .triangles, allocator: allocator)
         do {
@@ -66,11 +69,9 @@ open class OBSDSkybox {
     
     private static func buildPipelineState(vertexDescriptor: MDLVertexDescriptor) -> MTLRenderPipelineState {
         let descriptor = MTLRenderPipelineDescriptor()
-        //descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[1].pixelFormat = .rgba16Float
         descriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        //descriptor.sampleCount = 4;
         descriptor.depthAttachmentPixelFormat = .depth32Float
         descriptor.vertexFunction = OBSDRenderer.library.makeFunction(name: "vertexSkybox")
         descriptor.fragmentFunction = OBSDRenderer.library.makeFunction(name: "fragmentSkybox")

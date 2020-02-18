@@ -119,11 +119,27 @@ fragment float4 fragment_IBL(VertexOut in [[ stage_in ]],
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
     constexpr sampler sShadow(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
-    float shadow_sample = shadowTexture.sample(sShadow, xy);
-    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-    if (current_sample > shadow_sample) {
-        diffuse *= 0.5;
+//    float shadow_sample = shadowTexture.sample(sShadow, xy);
+//    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+//    if (current_sample > shadow_sample) {
+//        diffuse *= 0.5;
+//    }
+    const int neighborWidth = 3;
+    const float neighbors = (neighborWidth * 2.0 + 1.0) * (neighborWidth * 2.0 + 1.0);
+    
+    float mapSize = 4096;
+    float texelSize = 1.0 / mapSize;
+    float total = 0.0;
+    for (int i = -neighborWidth; i <= neighborWidth; i++) {
+        for (int j = -neighborWidth; j <= neighborWidth; j++) {
+            float shadow_sample = shadowTexture.sample(sShadow, xy + float2(i, j) * texelSize);
+            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+            if (current_sample > shadow_sample) total += 1.0;
+        }
     }
+    total /= neighbors;
+    float lightFactor = 1.0 - (total * in.shadowPosition.w);
+    diffuse *= lightFactor;
     
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition.xyz);
     float3 textureCoordinates = -normalize(reflect(viewDirection, normal));

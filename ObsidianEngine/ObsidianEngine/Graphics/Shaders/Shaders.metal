@@ -56,7 +56,7 @@ vertex float4 basic_vertex(const device packed_float3* vertex_array [[ buffer(0)
 vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
                              constant OBSDUniforms &uniforms [[ buffer(11) ]]) {
     VertexOut out;
-    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.modelMatrix * uniforms.viewMatrix;
+    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
     out.position = mvp * vertexIn.position;
     out.worldPosition = (uniforms.modelMatrix * vertexIn.position).xyz;
     out.normal = uniforms.normalMatrix * vertexIn.normal, 0;
@@ -381,7 +381,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
             float shadow_sample = shadowTexture.sample(s, xy + float2(x, y) * texelSize);
             float current_sample = v.shadowPosition.z / v.shadowPosition.w;
             if (current_sample > shadow_sample) {
-                total += 2.0;
+                total += 1.0;
             }
         }
     }
