@@ -30,13 +30,13 @@ class GameScene: OBSDScene {
             transform.rotation.y = .random(in: -Float.pi..<Float.pi)
             tree.updateBuffer(instance: i, transform: transform)
         }
-//        for _ in 0..<25 {
-//            let tree = OBSDModel(modelName: "tree")
-//            add(childNode: tree)
-//            tree.position.x = .random(in: -10..<10)
-//            tree.position.z = .random(in: -10..<10)
-//            tree.rotation.y = .random(in: -Float.pi..<Float.pi)
-//        }
+        for _ in 0..<25 {
+            let tree = OBSDModel(modelName: "tree")
+            add(childNode: tree)
+            tree.position.x = .random(in: -10..<10)
+            tree.position.z = .random(in: -10..<10)
+            tree.rotation.y = .random(in: -Float.pi..<Float.pi)
+        }
         
         camera.position = float3(0, 0, 30)
         camera.rotate(x: 0, y: 0, z: 0)
@@ -45,7 +45,7 @@ class GameScene: OBSDScene {
         light = buildDefaultLight()
         
         light.position = float3(100, 50, -50)
-        light.intensity = 0.5
+        light.intensity = 1.0
         lights.append(light)
         lights.append(ambientLight)
     }

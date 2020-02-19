@@ -185,7 +185,7 @@ extension OBSDModel: Renderable {
         }
         
         for mesh in submeshes! {
-            //commandEncoder.setRenderPipelineState(mesh.pipelineState)
+            commandEncoder.setRenderPipelineState(mesh.pipelineState)
             
             commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: 0)
             commandEncoder.setFragmentTexture(mesh.textures.normal, index: 1)

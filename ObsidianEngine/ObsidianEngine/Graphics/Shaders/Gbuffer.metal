@@ -35,10 +35,10 @@ struct GbufferOut {
 };
 
 float3 gbufferLighting(float3 normal,
-                           float3 position,
-                           constant OBSDFragmentUniforms &fragmentUniforms,
-                           constant Light *lights,
-                           float3 baseColor) {
+                       float3 position,
+                       constant OBSDFragmentUniforms &fragmentUniforms,
+                       constant Light *lights,
+                       float3 baseColor) {
     float3 diffuseColor = 0;
     float3 ambientColor = 0;
     float3 normalDirection = normalize(normal);
@@ -141,7 +141,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     } else {
         normal = in.normal;
     }
-
+    
     normal = normalize(normal);
 
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition);
@@ -169,10 +169,10 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
 
             specularOutput = renderGbuffer(lighting);
 
-            //compute Lambertian diffuse
-            //            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
-            //            diffuseColor = light.color * color.rgb * nDotl * ambientOcclusion;
-            //            diffuseColor *= 1.0 - metallic;
+            //compute Lambertian diffuse, phong shading
+//            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
+//            diffuseColor = light.color * baseColor.rgb * nDotl * ambientOcclusion;
+//            diffuseColor *= 1.0 - metallic;
         } else if (light.type == Pointlight){
 
         } else {
@@ -180,7 +180,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         }
     }
 
-    //diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
     
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -197,7 +197,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         diffuseColor *= 0.5;
     }
     
-    float4 specDiffuse = float4(specularOutput + baseColor.xyz, out.albedo.a) * ambientOcclusion;
+    float4 specDiffuse = float4(specularOutput + diffuseColor.xyz, out.albedo.a) * ambientOcclusion;
 
     out.albedo = specDiffuse;
 

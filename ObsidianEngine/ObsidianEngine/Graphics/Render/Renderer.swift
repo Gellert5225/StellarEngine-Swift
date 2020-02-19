@@ -208,7 +208,7 @@ open class OBSDRenderer: NSObject {
         renderEncoder.pushDebugGroup("Gbuffer pass")
         renderEncoder.label = "Gbuffer encoder"
         
-        renderEncoder.setRenderPipelineState(gBufferPipelineState)
+        //renderEncoder.setRenderPipelineState(gBufferPipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
         
         renderEncoder.setFragmentTexture(shadowTexture, index: 5)

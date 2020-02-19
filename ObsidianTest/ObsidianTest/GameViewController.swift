@@ -31,8 +31,8 @@ class GameViewController: OBSDViewController {
 //        let gameScene = GameScene()
 //        scene = gameScene
         
-        //let testScene = TestScene()
-        //scene = testScene
+//        let testScene = TestScene()
+//        scene = testScene
         
 //        let skyScene = SkyScene()
 //        scene = skyScene
@@ -46,14 +46,14 @@ class GameViewController: OBSDViewController {
 //        let worldScene = WorldScene()
 //        scene = worldScene
 //
-//        let shadowScene = ShadowScene()
-//        scene = shadowScene
+        let shadowScene = ShadowScene()
+        scene = shadowScene
 //
 //        let waterScene = WaterScene()
 //        scene = waterScene
 
-        demoScene = DemoScene()
-        scene = demoScene!
+//        demoScene = DemoScene()
+//        scene = demoScene!
  
         panEnabled = true
         verticalCameraAngleInterval = (-80, -5)
