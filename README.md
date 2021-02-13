@@ -1,4 +1,4 @@
-# Obsidian Engine
+# Stellar Engine
 A lightweight rendering engine featuring:
 - Physically based rendering
 - Image based lighting
