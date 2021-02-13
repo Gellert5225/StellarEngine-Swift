@@ -21,6 +21,7 @@
 		89FFCAC420CC7A0800C6DB28 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC320CC7A0800C6DB28 /* Shapes.swift */; };
 		89FFCAC620CC7A1B00C6DB28 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */; };
 		89FFCAF220CC7EEE00C6DB28 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */; };
+		D94BB86925D8357A00F159E0 /* STLRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BB86825D8357A00F159E0 /* STLRViewController.swift */; };
 		D9B33E6C25D7D4EA00B8BCF3 /* StellarMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B33E6325D7D4EA00B8BCF3 /* StellarMacOS.framework */; };
 		D9B33E7125D7D4EA00B8BCF3 /* StellarMacOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B33E7025D7D4EA00B8BCF3 /* StellarMacOSTests.swift */; };
 		D9B33E7325D7D4EA00B8BCF3 /* StellarMacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D9B33E6525D7D4EA00B8BCF3 /* StellarMacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -118,6 +119,7 @@
 		89FFCAC320CC7A0800C6DB28 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		D94BB86825D8357A00F159E0 /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
 		D9B33E6325D7D4EA00B8BCF3 /* StellarMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StellarMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9B33E6525D7D4EA00B8BCF3 /* StellarMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StellarMacOS.h; sourceTree = "<group>"; };
 		D9B33E6625D7D4EA00B8BCF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -315,9 +317,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D94BB86725D8356D00F159E0 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				D94BB86825D8357A00F159E0 /* STLRViewController.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		D9B33E6425D7D4EA00B8BCF3 /* StellarMacOS */ = {
 			isa = PBXGroup;
 			children = (
+				D94BB86725D8356D00F159E0 /* UI */,
 				D9B33E6525D7D4EA00B8BCF3 /* StellarMacOS.h */,
 				D9B33E6625D7D4EA00B8BCF3 /* Info.plist */,
 			);
@@ -624,6 +635,7 @@
 				D9B33E9F25D7D67700B8BCF3 /* Scene.swift in Sources */,
 				D9B33EA025D7D67700B8BCF3 /* Camera.swift in Sources */,
 				D9B33EA125D7D67700B8BCF3 /* Node.swift in Sources */,
+				D94BB86925D8357A00F159E0 /* STLRViewController.swift in Sources */,
 				D9B33EA225D7D67700B8BCF3 /* Shaders.metal in Sources */,
 				D9B33EA325D7D67700B8BCF3 /* IBL.metal in Sources */,
 				D9B33EA425D7D67700B8BCF3 /* Morph.metal in Sources */,

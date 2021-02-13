@@ -30,7 +30,7 @@ open class STLRSkybox {
     
     open var skySettings = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885) {
         didSet {
-            texture = loadGeneratedSkyboxTexture(dimensions: [256, 256])
+            texture = loadGeneratedSkyboxTexture(dimensions: [1024, 1024])
             diffuseTexture = texture
         }
     }
@@ -60,7 +60,7 @@ open class STLRSkybox {
                 fatalError(error.localizedDescription)
             }
         } else {
-            texture = loadGeneratedSkyboxTexture(dimensions: [256, 256])
+            texture = loadGeneratedSkyboxTexture(dimensions: [1024, 1024])
             diffuseTexture = texture
         }
         

@@ -19,21 +19,16 @@ open class STLRCamera: STLRNode {
     }
     var currentPosition: simd_float3?
     
-    open var fovDegrees: Float = 100
+    open var fovDegrees: Float = 80
     open var nearZ: Float = 0.1
     open var farZ: Float = 1000
+    open var aspect: Float = 1.0
     
     var mod: Float {
         return modulus(vector: position)
     }
     
     var projectionMatrix: float4x4 {
-        #if os(iOS)
-            let aspect = Float(UIScreen.main.bounds.size.width / UIScreen.main.bounds.size.height)
-        #elseif os(macOS)
-            let aspect = Float(1.0)
-        #endif
-        
         return float4x4(projectionFov: radians(fromDegrees: fovDegrees),
                         near: nearZ,
                         far: farZ,

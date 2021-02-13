@@ -48,15 +48,9 @@ open class STLRViewController: UIViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
 
-        metalView.depthStencilPixelFormat = .depth32Float
-        metalView.device = MTLCreateSystemDefaultDevice()
-        guard let device = metalView.device else {
-            fatalError("Device not created. Run on a physical device")
-        }
         //metalView.sampleCount = 4
-        renderer = STLRRenderer(with: device, metalView: metalView)
+        renderer = STLRRenderer(metalView: metalView)
         print("renderer has been init");
-        metalView.delegate = renderer
         
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
         

@@ -7,21 +7,22 @@
 //
 
 import Cocoa
+import StellarMacOS
 
-class ViewController: NSViewController {
-
+class HomeViewController: STLRViewControllerMacOS {
+    var renderer: STLRRenderer?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        //self.view.window?.setFrame(NSRect(x:0,y:0,width: 1280,height: 720), display: true)
+        
+        let testScene = TestScene()
+        scene = testScene
+        
+        panEnabled = true
+        verticalCameraAngleInterval = (-80, -5)
+        
     }
-
-    override var representedObject: Any? {
-        didSet {
-        // Update the view, if already loaded.
-        }
-    }
-
 
 }
 

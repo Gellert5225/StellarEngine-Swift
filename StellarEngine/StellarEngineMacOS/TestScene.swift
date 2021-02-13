@@ -1,14 +1,14 @@
 //
-//  ShadowScene.swift
-//  ObsidianTest
+//  TestScene.swift
+//  StellarEngineMacOS
 //
-//  Created by Jiahe Li on 17/03/2019.
-//  Copyright © 2019 Gellert. All rights reserved.
+//  Created by Gellert Li on 2/13/21.
+//  Copyright © 2021 Gellert. All rights reserved.
 //
 
-import StellariOS
+import StellarMacOS
 
-class ShadowScene: STLRScene {
+class TestScene: STLRScene {
     override init() {
         super.init()
         setupScene()
@@ -17,6 +17,7 @@ class ShadowScene: STLRScene {
     func setupScene() {
         skybox = STLRSkybox(textureName: nil)
         skybox?.skySettings = STLRSkybox.MidDay
+        
         let ground = STLRModel(modelName: "plane", fragmentFunctionName: "gBufferFragment")
         ground.scale = [10, 10, 10]
         add(childNode: ground)
@@ -50,7 +51,6 @@ class ShadowScene: STLRScene {
         ambientLight.intensity = 0.1
         
         lights.append(sunLignt)
-        createPointLights(count: 40, min: [-8, 0.5, -8], max: [8, 4, 8])
         lights.append(ambientLight)
     }
     

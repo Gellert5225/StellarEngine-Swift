@@ -66,7 +66,11 @@ open class STLRRenderer: NSObject {
     
     var scene: STLRScene?
     
-    public init(with device: MTLDevice, metalView: MTKView) {
+    public init(metalView: MTKView) {
+        metalView.device = MTLCreateSystemDefaultDevice()
+        guard let device = metalView.device else {
+            fatalError("Device not created. Run on a physical device")
+        }
         STLRRenderer.commandQueue = device.makeCommandQueue()
         STLRRenderer.metalDevice = device
         STLRRenderer.colorPixelFormat = metalView.colorPixelFormat
@@ -75,6 +79,10 @@ open class STLRRenderer: NSObject {
         super.init()
         
         metalView.depthStencilPixelFormat = .depth32Float
+        metalView.delegate = self
+        mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
+        metalView.framebufferOnly = false
+        
         let frameworkBundle = Bundle(for: STLRShape.self)
         guard let defaultLibrary = try? device.makeDefaultLibrary(bundle: frameworkBundle) else {
             fatalError("Could not load default library from specified bundle")
@@ -286,8 +294,8 @@ private extension MTLRenderPassDescriptor {
 
 extension STLRRenderer: MTKViewDelegate {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        print("size will change")
         guard let scene = scene else {return}
+        scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
         buildGBufferRenderPassDescriptor(size: size)
         for water in scene.waters {

@@ -47,6 +47,20 @@ open class STLRScene: STLRNode {
         camera.currentPosition = camera.position
     }
     
+    open func updateScene(deltaTime: Float) {
+        // override this to update your scene
+    }
+    
+    open func add(terrain: STLRTerrain) {
+        terrains.append(terrain)
+        add(childNode: terrain)
+    }
+    
+    open func add(water: STLRWater) {
+        waters.append(water)
+        add(childNode: water)
+    }
+    
     public func buildDefaultLight() -> Light {
         var light = Light()
         light.position = [0, 0, 0]
@@ -56,6 +70,10 @@ open class STLRScene: STLRNode {
         light.attenuation = float3(1, 0, 0)
         light.type = Sunlight
         return light
+    }
+    
+    public func sceneSizeWillChange(to size: CGSize) {
+        camera.aspect = Float(size.width / size.height)
     }
     
     final func update(deltaTime: Float) {
@@ -74,19 +92,5 @@ open class STLRScene: STLRNode {
         nodes.forEach { node in
             update(nodes: node.children, deltaTime: deltaTime)
         }
-    }
-    
-    open func updateScene(deltaTime: Float) {
-        // override this to update your scene
-    }
-    
-    open func add(terrain: STLRTerrain) {
-        terrains.append(terrain)
-        add(childNode: terrain)
-    }
-    
-    open func add(water: STLRWater) {
-        waters.append(water)
-        add(childNode: water)
     }
 }
