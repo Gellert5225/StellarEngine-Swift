@@ -49,7 +49,7 @@ open class OBSDTerrain: OBSDNode {
     
     var terrainUniforms = OBSDTerrainUniforms()
     
-    public init(withSize size: float2, heightScale: Float, heightTexture: String, cliffTexture: String, snowTexture: String, grassTexture: String) {
+    public init(withSize size: simd_float2, heightScale: Float, heightTexture: String, cliffTexture: String, snowTexture: String, grassTexture: String) {
         
         do {
             heightMap = try OBSDTerrain.loadTexture(imageName: heightTexture, bundle: Bundle.main)
@@ -62,7 +62,7 @@ open class OBSDTerrain: OBSDNode {
         
         // fill the beffer with control points
         let controlPoints = OBSDTerrain.createControlPoints(patches: patches, size: (width: size.x, height: size.y))
-        controlPointsBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: controlPoints, length: MemoryLayout<float3>.stride * controlPoints.count)
+        controlPointsBuffer = OBSDRenderer.metalDevice.makeBuffer(bytes: controlPoints, length: MemoryLayout<simd_float3>.stride * controlPoints.count)
         
         // compute pipeline state and render pipeline state
         tessellationPipelineState = OBSDTerrain.buildComputePipelineState()
@@ -93,7 +93,7 @@ open class OBSDTerrain: OBSDNode {
         vertexDescriptor.attributes[0].bufferIndex = 0
         
         vertexDescriptor.layouts[0].stepFunction = .perPatchControlPoint
-        vertexDescriptor.layouts[0].stride = MemoryLayout<float3>.stride
+        vertexDescriptor.layouts[0].stride = MemoryLayout<simd_float3>.stride
         descriptor.vertexDescriptor = vertexDescriptor
         
         descriptor.tessellationFactorStepFunction = .perPatch
@@ -112,9 +112,9 @@ open class OBSDTerrain: OBSDNode {
     }
     
     static func createControlPoints(patches: (horizontal: Int, vertical: Int),
-                                    size: (width: Float, height: Float)) -> [float3] {
+                                    size: (width: Float, height: Float)) -> [simd_float3] {
         
-        var points: [float3] = []
+        var points: [simd_float3] = []
         // per patch width and height
         let width = 1 / Float(patches.horizontal)
         let height = 1 / Float(patches.vertical)
@@ -179,7 +179,7 @@ open class OBSDTerrain: OBSDNode {
         
         var cameraPosition = viewMatrix.columns.3
         computeEncoder.setBytes(&cameraPosition,
-                                length: MemoryLayout<float4>.stride,
+                                length: MemoryLayout<simd_float4>.stride,
                                 index: 3)
         
         var matrix = modelMatrix

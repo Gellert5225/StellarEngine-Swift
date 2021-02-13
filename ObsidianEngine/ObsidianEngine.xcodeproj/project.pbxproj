@@ -21,6 +21,45 @@
 		89FFCAC420CC7A0800C6DB28 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC320CC7A0800C6DB28 /* Shapes.swift */; };
 		89FFCAC620CC7A1B00C6DB28 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */; };
 		89FFCAF220CC7EEE00C6DB28 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */; };
+		D9B33E6C25D7D4EA00B8BCF3 /* ObsidianEngineMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B33E6325D7D4EA00B8BCF3 /* ObsidianEngineMacOS.framework */; };
+		D9B33E7125D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B33E7025D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.swift */; };
+		D9B33E7325D7D4EA00B8BCF3 /* ObsidianEngineMacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D9B33E6525D7D4EA00B8BCF3 /* ObsidianEngineMacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D9B33E8425D7D54000B8BCF3 /* ObsidianEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B33E8325D7D54000B8BCF3 /* ObsidianEngineTests.swift */; };
+		D9B33E8625D7D54000B8BCF3 /* ObsidianEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89FFCAB020CC799900C6DB28 /* ObsidianEngine.framework */; };
+		D9B33E9025D7D62F00B8BCF3 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = DF38B59620DD8D6400E86E82 /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		D9B33E9525D7D67600B8BCF3 /* Terrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF44030A223DCA7F00D5A7E3 /* Terrain.swift */; };
+		D9B33E9625D7D67600B8BCF3 /* Terrain.metal in Sources */ = {isa = PBXBuildFile; fileRef = DF44030C223E01F900D5A7E3 /* Terrain.metal */; };
+		D9B33E9725D7D67700B8BCF3 /* Skybox.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EC322309A5A00631585 /* Skybox.metal */; };
+		D9B33E9825D7D67700B8BCF3 /* Skybox.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EC1222F020800631585 /* Skybox.swift */; };
+		D9B33E9925D7D67700B8BCF3 /* Water.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFD6842222473EB600A78E9F /* Water.metal */; };
+		D9B33E9A25D7D67700B8BCF3 /* OBSDWater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD6842022473AC400A78E9F /* OBSDWater.swift */; };
+		D9B33E9B25D7D67700B8BCF3 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384F320D7C31E00FAEDE4 /* Model.swift */; };
+		D9B33E9C25D7D67700B8BCF3 /* Submesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFEA65BC20E5D64300F3C8A0 /* Submesh.swift */; };
+		D9B33E9D25D7D67700B8BCF3 /* Morph.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4402CA223C8F7B00D5A7E3 /* Morph.swift */; };
+		D9B33E9E25D7D67700B8BCF3 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC320CC7A0800C6DB28 /* Shapes.swift */; };
+		D9B33E9F25D7D67700B8BCF3 /* Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384EF20D7926400FAEDE4 /* Scene.swift */; };
+		D9B33EA025D7D67700B8BCF3 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384EB20D78E3600FAEDE4 /* Camera.swift */; };
+		D9B33EA125D7D67700B8BCF3 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384E920D78AB700FAEDE4 /* Node.swift */; };
+		D9B33EA225D7D67700B8BCF3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCABC20CC79B500C6DB28 /* Shaders.metal */; };
+		D9B33EA325D7D67700B8BCF3 /* IBL.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFA06ECF2230CD7D00631585 /* IBL.metal */; };
+		D9B33EA425D7D67700B8BCF3 /* Morph.metal in Sources */ = {isa = PBXBuildFile; fileRef = DF4402CC223C9C6F00D5A7E3 /* Morph.metal */; };
+		D9B33EA525D7D67700B8BCF3 /* Shadow.metal in Sources */ = {isa = PBXBuildFile; fileRef = DF89FBEA223F6A7F004BE73B /* Shadow.metal */; };
+		D9B33EA625D7D67700B8BCF3 /* Gbuffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */; };
+		D9B33EA725D7D67700B8BCF3 /* Composition.metal in Sources */ = {isa = PBXBuildFile; fileRef = DF3347C22240D3AF00632BCB /* Composition.metal */; };
+		D9B33EA925D7D67700B8BCF3 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */; };
+		D9B33EAA25D7D67700B8BCF3 /* RenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFD684262247449100A78E9F /* RenderPass.swift */; };
+		D9B33EAB25D7D67700B8BCF3 /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89157F7A20D20CE600299CB6 /* Renderable.swift */; };
+		D9B33EAC25D7D67700B8BCF3 /* Texturable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B34C9F20D2F20F00873A28 /* Texturable.swift */; };
+		D9B33EAD25D7D67700B8BCF3 /* BRDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EDF2230F57300631585 /* BRDF.metal */; };
+		D9B33EAE25D7D67700B8BCF3 /* RendererBRDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EE02230F57300631585 /* RendererBRDF.swift */; };
+		D9B33EAF25D7D67700B8BCF3 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Types.swift */; };
+		D9B33EB025D7D67700B8BCF3 /* MatrixMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384F120D7B9E600FAEDE4 /* MatrixMath.swift */; };
+		D9B33EB125D7D67700B8BCF3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4402AF223C737000D5A7E3 /* Transform.swift */; };
+		D9B33EBB25D7D68500B8BCF3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B33EBA25D7D68500B8BCF3 /* MetalKit.framework */; };
+		D9B33EBC25D7D69100B8BCF3 /* normal-water.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6842822477BF400A78E9F /* normal-water.png */; };
+		D9B33EBD25D7D69100B8BCF3 /* ocean.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89A224848E900703436 /* ocean.png */; };
+		D9B33EBE25D7D69100B8BCF3 /* ocean2.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89C224849DE00703436 /* ocean2.png */; };
+		D9B33EBF25D7D69100B8BCF3 /* ocean3.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89E22484A9700703436 /* ocean3.png */; };
 		DF3347C32240D3AF00632BCB /* Composition.metal in Sources */ = {isa = PBXBuildFile; fileRef = DF3347C22240D3AF00632BCB /* Composition.metal */; };
 		DF38B59820DD907800E86E82 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = DF38B59620DD8D6400E86E82 /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF4402B0223C737000D5A7E3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4402AF223C737000D5A7E3 /* Transform.swift */; };
@@ -45,6 +84,23 @@
 		DFEF7BA0223FDCD6006711DE /* Gbuffer.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		D9B33E6D25D7D4EA00B8BCF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 89FFCAA720CC799900C6DB28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D9B33E6225D7D4EA00B8BCF3;
+			remoteInfo = ObsidianEngineMacOS;
+		};
+		D9B33E8725D7D54000B8BCF3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 89FFCAA720CC799900C6DB28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 89FFCAAF20CC799900C6DB28;
+			remoteInfo = ObsidianEngine;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		89157F7A20D20CE600299CB6 /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		8924FDE120D7781500D52908 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
@@ -62,6 +118,16 @@
 		89FFCAC320CC7A0800C6DB28 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
 		89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		D9B33E6325D7D4EA00B8BCF3 /* ObsidianEngineMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObsidianEngineMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9B33E6525D7D4EA00B8BCF3 /* ObsidianEngineMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObsidianEngineMacOS.h; sourceTree = "<group>"; };
+		D9B33E6625D7D4EA00B8BCF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D9B33E6B25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObsidianEngineMacOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9B33E7025D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObsidianEngineMacOSTests.swift; sourceTree = "<group>"; };
+		D9B33E7225D7D4EA00B8BCF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D9B33E8125D7D54000B8BCF3 /* ObsidianEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObsidianEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9B33E8325D7D54000B8BCF3 /* ObsidianEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObsidianEngineTests.swift; sourceTree = "<group>"; };
+		D9B33E8525D7D54000B8BCF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D9B33EBA25D7D68500B8BCF3 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		DF3347C22240D3AF00632BCB /* Composition.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Composition.metal; sourceTree = "<group>"; };
 		DF38B59620DD8D6400E86E82 /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		DF4402AF223C737000D5A7E3 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
@@ -92,6 +158,30 @@
 			buildActionMask = 2147483647;
 			files = (
 				89FFCAF220CC7EEE00C6DB28 /* MetalKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E6025D7D4EA00B8BCF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33EBB25D7D68500B8BCF3 /* MetalKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E6825D7D4EA00B8BCF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33E6C25D7D4EA00B8BCF3 /* ObsidianEngineMacOS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E7E25D7D54000B8BCF3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33E8625D7D54000B8BCF3 /* ObsidianEngine.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,14 +226,6 @@
 			path = Render;
 			sourceTree = "<group>";
 		};
-		89B3850A20D8B86200FAEDE4 /* UI */ = {
-			isa = PBXGroup;
-			children = (
-				89267CDC20D742780024085C /* OBSDViewController.swift */,
-			);
-			path = UI;
-			sourceTree = "<group>";
-		};
 		89B9B13620CE20FF005B7C72 /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
@@ -158,7 +240,11 @@
 		89FFCAA620CC799900C6DB28 = {
 			isa = PBXGroup;
 			children = (
+				D9B33EC825D7D77D00B8BCF3 /* Source */,
 				89FFCAB220CC799900C6DB28 /* ObsidianEngine */,
+				D9B33E6425D7D4EA00B8BCF3 /* ObsidianEngineMacOS */,
+				D9B33E6F25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests */,
+				D9B33E8225D7D54000B8BCF3 /* ObsidianEngineTests */,
 				89FFCAB120CC799900C6DB28 /* Products */,
 				89FFCAF020CC7EEE00C6DB28 /* Frameworks */,
 			);
@@ -168,6 +254,9 @@
 			isa = PBXGroup;
 			children = (
 				89FFCAB020CC799900C6DB28 /* ObsidianEngine.framework */,
+				D9B33E6325D7D4EA00B8BCF3 /* ObsidianEngineMacOS.framework */,
+				D9B33E6B25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.xctest */,
+				D9B33E8125D7D54000B8BCF3 /* ObsidianEngineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,11 +264,7 @@
 		89FFCAB220CC799900C6DB28 /* ObsidianEngine */ = {
 			isa = PBXGroup;
 			children = (
-				DF440309223DCA7400D5A7E3 /* Terrain */,
-				DFA06EC0222F01EC00631585 /* Environment */,
-				89B9B13620CE20FF005B7C72 /* Nodes */,
-				89FFCAC220CC79FE00C6DB28 /* Graphics */,
-				89FFCABE20CC79CC00C6DB28 /* Math_&_Utility */,
+				D9B33ED125D7D8F300B8BCF3 /* UI */,
 				89FFCAB320CC799900C6DB28 /* ObsidianEngine.h */,
 				89FFCAB420CC799900C6DB28 /* Info.plist */,
 			);
@@ -216,7 +301,6 @@
 			isa = PBXGroup;
 			children = (
 				89FFCABB20CC79A600C6DB28 /* Shaders */,
-				89B3850A20D8B86200FAEDE4 /* UI */,
 				89B3850920D8B85500FAEDE4 /* Render */,
 			);
 			path = Graphics;
@@ -225,9 +309,57 @@
 		89FFCAF020CC7EEE00C6DB28 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D9B33EBA25D7D68500B8BCF3 /* MetalKit.framework */,
 				89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D9B33E6425D7D4EA00B8BCF3 /* ObsidianEngineMacOS */ = {
+			isa = PBXGroup;
+			children = (
+				D9B33E6525D7D4EA00B8BCF3 /* ObsidianEngineMacOS.h */,
+				D9B33E6625D7D4EA00B8BCF3 /* Info.plist */,
+			);
+			path = ObsidianEngineMacOS;
+			sourceTree = "<group>";
+		};
+		D9B33E6F25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				D9B33E7025D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.swift */,
+				D9B33E7225D7D4EA00B8BCF3 /* Info.plist */,
+			);
+			path = ObsidianEngineMacOSTests;
+			sourceTree = "<group>";
+		};
+		D9B33E8225D7D54000B8BCF3 /* ObsidianEngineTests */ = {
+			isa = PBXGroup;
+			children = (
+				D9B33E8325D7D54000B8BCF3 /* ObsidianEngineTests.swift */,
+				D9B33E8525D7D54000B8BCF3 /* Info.plist */,
+			);
+			path = ObsidianEngineTests;
+			sourceTree = "<group>";
+		};
+		D9B33EC825D7D77D00B8BCF3 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				DF440309223DCA7400D5A7E3 /* Terrain */,
+				DFA06EC0222F01EC00631585 /* Environment */,
+				89B9B13620CE20FF005B7C72 /* Nodes */,
+				89FFCAC220CC79FE00C6DB28 /* Graphics */,
+				89FFCABE20CC79CC00C6DB28 /* Math_&_Utility */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		D9B33ED125D7D8F300B8BCF3 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				89267CDC20D742780024085C /* OBSDViewController.swift */,
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 		DF440309223DCA7400D5A7E3 /* Terrain */ = {
@@ -266,6 +398,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9B33E5E25D7D4EA00B8BCF3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33E7325D7D4EA00B8BCF3 /* ObsidianEngineMacOS.h in Headers */,
+				D9B33E9025D7D62F00B8BCF3 /* Types.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
@@ -287,6 +428,60 @@
 			productReference = 89FFCAB020CC799900C6DB28 /* ObsidianEngine.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		D9B33E6225D7D4EA00B8BCF3 /* ObsidianEngineMacOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9B33E7825D7D4EA00B8BCF3 /* Build configuration list for PBXNativeTarget "ObsidianEngineMacOS" */;
+			buildPhases = (
+				D9B33E5E25D7D4EA00B8BCF3 /* Headers */,
+				D9B33E5F25D7D4EA00B8BCF3 /* Sources */,
+				D9B33E6025D7D4EA00B8BCF3 /* Frameworks */,
+				D9B33E6125D7D4EA00B8BCF3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ObsidianEngineMacOS;
+			productName = ObsidianEngineMacOS;
+			productReference = D9B33E6325D7D4EA00B8BCF3 /* ObsidianEngineMacOS.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		D9B33E6A25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9B33E7925D7D4EA00B8BCF3 /* Build configuration list for PBXNativeTarget "ObsidianEngineMacOSTests" */;
+			buildPhases = (
+				D9B33E6725D7D4EA00B8BCF3 /* Sources */,
+				D9B33E6825D7D4EA00B8BCF3 /* Frameworks */,
+				D9B33E6925D7D4EA00B8BCF3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D9B33E6E25D7D4EA00B8BCF3 /* PBXTargetDependency */,
+			);
+			name = ObsidianEngineMacOSTests;
+			productName = ObsidianEngineMacOSTests;
+			productReference = D9B33E6B25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		D9B33E8025D7D54000B8BCF3 /* ObsidianEngineTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9B33E8925D7D54000B8BCF3 /* Build configuration list for PBXNativeTarget "ObsidianEngineTests" */;
+			buildPhases = (
+				D9B33E7D25D7D54000B8BCF3 /* Sources */,
+				D9B33E7E25D7D54000B8BCF3 /* Frameworks */,
+				D9B33E7F25D7D54000B8BCF3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D9B33E8825D7D54000B8BCF3 /* PBXTargetDependency */,
+			);
+			name = ObsidianEngineTests;
+			productName = ObsidianEngineTests;
+			productReference = D9B33E8125D7D54000B8BCF3 /* ObsidianEngineTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -296,12 +491,22 @@
 				KnownAssetTags = (
 					New,
 				);
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = Gellert;
 				TargetAttributes = {
 					89FFCAAF20CC799900C6DB28 = {
 						CreatedOnToolsVersion = 10.0;
 						LastSwiftMigration = 1020;
+					};
+					D9B33E6225D7D4EA00B8BCF3 = {
+						CreatedOnToolsVersion = 12.0;
+					};
+					D9B33E6A25D7D4EA00B8BCF3 = {
+						CreatedOnToolsVersion = 12.0;
+					};
+					D9B33E8025D7D54000B8BCF3 = {
+						CreatedOnToolsVersion = 12.0;
 					};
 				};
 			};
@@ -319,6 +524,9 @@
 			projectRoot = "";
 			targets = (
 				89FFCAAF20CC799900C6DB28 /* ObsidianEngine */,
+				D9B33E6225D7D4EA00B8BCF3 /* ObsidianEngineMacOS */,
+				D9B33E6A25D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests */,
+				D9B33E8025D7D54000B8BCF3 /* ObsidianEngineTests */,
 			);
 		};
 /* End PBXProject section */
@@ -332,6 +540,31 @@
 				DFD6842922477BF400A78E9F /* normal-water.png in Resources */,
 				DFEAD89F22484A9700703436 /* ocean3.png in Resources */,
 				DFEAD89D224849DE00703436 /* ocean2.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E6125D7D4EA00B8BCF3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33EBC25D7D69100B8BCF3 /* normal-water.png in Resources */,
+				D9B33EBD25D7D69100B8BCF3 /* ocean.png in Resources */,
+				D9B33EBE25D7D69100B8BCF3 /* ocean2.png in Resources */,
+				D9B33EBF25D7D69100B8BCF3 /* ocean3.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E6925D7D4EA00B8BCF3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E7F25D7D54000B8BCF3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,7 +607,71 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9B33E5F25D7D4EA00B8BCF3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33E9525D7D67600B8BCF3 /* Terrain.swift in Sources */,
+				D9B33E9625D7D67600B8BCF3 /* Terrain.metal in Sources */,
+				D9B33E9725D7D67700B8BCF3 /* Skybox.metal in Sources */,
+				D9B33E9825D7D67700B8BCF3 /* Skybox.swift in Sources */,
+				D9B33E9925D7D67700B8BCF3 /* Water.metal in Sources */,
+				D9B33E9A25D7D67700B8BCF3 /* OBSDWater.swift in Sources */,
+				D9B33E9B25D7D67700B8BCF3 /* Model.swift in Sources */,
+				D9B33E9C25D7D67700B8BCF3 /* Submesh.swift in Sources */,
+				D9B33E9D25D7D67700B8BCF3 /* Morph.swift in Sources */,
+				D9B33E9E25D7D67700B8BCF3 /* Shapes.swift in Sources */,
+				D9B33E9F25D7D67700B8BCF3 /* Scene.swift in Sources */,
+				D9B33EA025D7D67700B8BCF3 /* Camera.swift in Sources */,
+				D9B33EA125D7D67700B8BCF3 /* Node.swift in Sources */,
+				D9B33EA225D7D67700B8BCF3 /* Shaders.metal in Sources */,
+				D9B33EA325D7D67700B8BCF3 /* IBL.metal in Sources */,
+				D9B33EA425D7D67700B8BCF3 /* Morph.metal in Sources */,
+				D9B33EA525D7D67700B8BCF3 /* Shadow.metal in Sources */,
+				D9B33EA625D7D67700B8BCF3 /* Gbuffer.metal in Sources */,
+				D9B33EA725D7D67700B8BCF3 /* Composition.metal in Sources */,
+				D9B33EA925D7D67700B8BCF3 /* Renderer.swift in Sources */,
+				D9B33EAA25D7D67700B8BCF3 /* RenderPass.swift in Sources */,
+				D9B33EAB25D7D67700B8BCF3 /* Renderable.swift in Sources */,
+				D9B33EAC25D7D67700B8BCF3 /* Texturable.swift in Sources */,
+				D9B33EAD25D7D67700B8BCF3 /* BRDF.metal in Sources */,
+				D9B33EAE25D7D67700B8BCF3 /* RendererBRDF.swift in Sources */,
+				D9B33EAF25D7D67700B8BCF3 /* Types.swift in Sources */,
+				D9B33EB025D7D67700B8BCF3 /* MatrixMath.swift in Sources */,
+				D9B33EB125D7D67700B8BCF3 /* Transform.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E6725D7D4EA00B8BCF3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33E7125D7D4EA00B8BCF3 /* ObsidianEngineMacOSTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9B33E7D25D7D54000B8BCF3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9B33E8425D7D54000B8BCF3 /* ObsidianEngineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D9B33E6E25D7D4EA00B8BCF3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D9B33E6225D7D4EA00B8BCF3 /* ObsidianEngineMacOS */;
+			targetProxy = D9B33E6D25D7D4EA00B8BCF3 /* PBXContainerItemProxy */;
+		};
+		D9B33E8825D7D54000B8BCF3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 89FFCAAF20CC799900C6DB28 /* ObsidianEngine */;
+			targetProxy = D9B33E8725D7D54000B8BCF3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		89FFCAB620CC799900C6DB28 /* Debug */ = {
@@ -433,6 +730,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -489,6 +787,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -521,6 +820,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.gellert.ObsidianEngine;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -551,7 +851,158 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.gellert.ObsidianEngine;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D9B33E7425D7D4EA00B8BCF3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = XS2QV44L5G;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EXCLUDED_ARCHS = "";
+				INFOPLIST_FILE = ObsidianEngineMacOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.ObsidianEngineMacOS;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D9B33E7525D7D4EA00B8BCF3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = XS2QV44L5G;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EXCLUDED_ARCHS = "";
+				INFOPLIST_FILE = ObsidianEngineMacOS/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.ObsidianEngineMacOS;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D9B33E7625D7D4EA00B8BCF3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = XS2QV44L5G;
+				INFOPLIST_FILE = ObsidianEngineMacOSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.ObsidianEngineMacOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D9B33E7725D7D4EA00B8BCF3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = XS2QV44L5G;
+				INFOPLIST_FILE = ObsidianEngineMacOSTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.ObsidianEngineMacOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D9B33E8A25D7D54000B8BCF3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XS2QV44L5G;
+				INFOPLIST_FILE = ObsidianEngineTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.ObsidianEngineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D9B33E8B25D7D54000B8BCF3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XS2QV44L5G;
+				INFOPLIST_FILE = ObsidianEngineTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.ObsidianEngineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -574,6 +1025,33 @@
 			buildConfigurations = (
 				89FFCAB920CC799900C6DB28 /* Debug */,
 				89FFCABA20CC799900C6DB28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D9B33E7825D7D4EA00B8BCF3 /* Build configuration list for PBXNativeTarget "ObsidianEngineMacOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9B33E7425D7D4EA00B8BCF3 /* Debug */,
+				D9B33E7525D7D4EA00B8BCF3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D9B33E7925D7D4EA00B8BCF3 /* Build configuration list for PBXNativeTarget "ObsidianEngineMacOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9B33E7625D7D4EA00B8BCF3 /* Debug */,
+				D9B33E7725D7D4EA00B8BCF3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D9B33E8925D7D54000B8BCF3 /* Build configuration list for PBXNativeTarget "ObsidianEngineTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9B33E8A25D7D54000B8BCF3 /* Debug */,
+				D9B33E8B25D7D54000B8BCF3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

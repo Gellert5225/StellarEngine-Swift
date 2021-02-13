@@ -17,7 +17,7 @@ open class OBSDCamera: OBSDNode {
             return (translateMatrix * rotateMatrix)
         }
     }
-    var currentPosition: float3?
+    var currentPosition: simd_float3?
     
     open var fovDegrees: Float = 100
     open var nearZ: Float = 0.1
@@ -28,10 +28,17 @@ open class OBSDCamera: OBSDNode {
     }
     
     var projectionMatrix: float4x4 {
+        #if os(iOS)
+            let aspect = Float(UIScreen.main.bounds.size.width / UIScreen.main.bounds.size.height)
+        #elseif os(macOS)
+            let aspect = Float(1.0)
+        #endif
+        
         return float4x4(projectionFov: radians(fromDegrees: fovDegrees),
                         near: nearZ,
                         far: farZ,
-                        aspect: Float(UIScreen.main.bounds.size.width / UIScreen.main.bounds.size.height))
+                        aspect: aspect)
+        
     }
 
     var vMatrix: matrix_float4x4 {

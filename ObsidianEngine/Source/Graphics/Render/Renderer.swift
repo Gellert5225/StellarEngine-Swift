@@ -186,8 +186,8 @@ open class OBSDRenderer: NSObject {
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setDepthBias(0.01, slopeScale: 1.0, clamp: 0.01)
         scene.uniforms.projectionMatrix = float4x4(orthoLeft: -15, right: 15, bottom: -15, top: 15, near: 0.1, far: 30)
-        let position: float3 = [-scene.sunLignt.position.x, -scene.sunLignt.position.y, -scene.sunLignt.position.z]
-        let center: float3 = [0, 0, 0]
+        let position: simd_float3 = [-scene.sunLignt.position.x, -scene.sunLignt.position.y, -scene.sunLignt.position.z]
+        let center: simd_float3 = [0, 0, 0]
         let lookAt = float4x4(eye: position, center: center, up: [0, 1, 0])
         scene.uniforms.viewMatrix = float4x4(translation: [0, 0, 7]) * lookAt
         scene.uniforms.shadowMatrix = scene.uniforms.projectionMatrix * scene.uniforms.viewMatrix

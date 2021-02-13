@@ -41,7 +41,7 @@ open class OBSDMorph: OBSDNode {
                                                             format: .float2,
                                                             offset: offset,
                                                             bufferIndex: 0)
-        offset += MemoryLayout<float2>.stride
+        offset += MemoryLayout<simd_float2>.stride
         vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
         print("Vertex descriptor stride: \((vertexDescriptor.layouts[0] as! MDLVertexBufferLayout).stride)")
         return vertexDescriptor

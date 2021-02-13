@@ -121,6 +121,27 @@
 			remoteGlobalIDString = 89FFCAAF20CC799900C6DB28;
 			remoteInfo = ObsidianEngine;
 		};
+		D941F54F25D7E85800DE2ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 89FFCAE520CC7B4D00C6DB28 /* ObsidianEngine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D9B33E6325D7D4EA00B8BCF3;
+			remoteInfo = ObsidianEngineMacOS;
+		};
+		D941F55125D7E85800DE2ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 89FFCAE520CC7B4D00C6DB28 /* ObsidianEngine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D9B33E6B25D7D4EA00B8BCF3;
+			remoteInfo = ObsidianEngineMacOSTests;
+		};
+		D941F55325D7E85800DE2ACD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 89FFCAE520CC7B4D00C6DB28 /* ObsidianEngine.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D9B33E8125D7D54000B8BCF3;
+			remoteInfo = ObsidianEngineTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -335,6 +356,9 @@
 			isa = PBXGroup;
 			children = (
 				89FFCAEA20CC7B4D00C6DB28 /* ObsidianEngine.framework */,
+				D941F55025D7E85800DE2ACD /* ObsidianEngineMacOS.framework */,
+				D941F55225D7E85800DE2ACD /* ObsidianEngineMacOSTests.xctest */,
+				D941F55425D7E85800DE2ACD /* ObsidianEngineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -558,6 +582,27 @@
 			fileType = wrapper.framework;
 			path = ObsidianEngine.framework;
 			remoteRef = 89FFCAE920CC7B4D00C6DB28 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D941F55025D7E85800DE2ACD /* ObsidianEngineMacOS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ObsidianEngineMacOS.framework;
+			remoteRef = D941F54F25D7E85800DE2ACD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D941F55225D7E85800DE2ACD /* ObsidianEngineMacOSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ObsidianEngineMacOSTests.xctest;
+			remoteRef = D941F55125D7E85800DE2ACD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D941F55425D7E85800DE2ACD /* ObsidianEngineTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ObsidianEngineTests.xctest;
+			remoteRef = D941F55325D7E85800DE2ACD /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

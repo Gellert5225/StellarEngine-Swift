@@ -23,14 +23,14 @@ open class OBSDNode {
 
     open var position = float3(repeating: 0)
     
-    open var rotation: float3 = [0, 0, 0] {
+    open var rotation: simd_float3 = [0, 0, 0] {
         didSet {
             let rotationMatrix = float4x4(rotation: rotation)
             quaternion = simd_quatf(rotationMatrix)
         }
     }
     
-    open var scale: float3 = [1.0, 1.0, 1.0]
+    open var scale: simd_float3 = [1.0, 1.0, 1.0]
     
     open func rotate(x: Float, y: Float, z: Float) {
         rotation = [radians(fromDegrees: x), radians(fromDegrees: y), radians(fromDegrees: z)]

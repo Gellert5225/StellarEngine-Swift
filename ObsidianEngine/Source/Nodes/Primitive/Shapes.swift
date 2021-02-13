@@ -6,22 +6,24 @@
 //  Copyright © 2018 Gellert. All rights reserved.
 //
 
+import MetalKit
+
 open class OBSDShape: OBSDNode {
     
     // MARK: Public
-    override open var position: float3 {
+    override open var position: simd_float3 {
         didSet {
             updateBuffers()
         }
     }
     
-    override open var rotation: float3 {
+    override open var rotation: simd_float3 {
         didSet {
             updateBuffers()
         }
     }
     
-    override open var scale: float3 {
+    override open var scale: simd_float3 {
         didSet {
             updateBuffers()
         }
@@ -53,11 +55,11 @@ open class OBSDShape: OBSDNode {
         vertexDescriptor.attributes[0].bufferIndex = 0
         
         vertexDescriptor.attributes[1].format = .float4
-        vertexDescriptor.attributes[1].offset = MemoryLayout<float4>.stride
+        vertexDescriptor.attributes[1].offset = MemoryLayout<simd_float4>.stride
         vertexDescriptor.attributes[1].bufferIndex = 0
         
         vertexDescriptor.attributes[2].format = .float2
-        vertexDescriptor.attributes[2].offset = MemoryLayout<float4>.stride * 2
+        vertexDescriptor.attributes[2].offset = MemoryLayout<simd_float4>.stride * 2
         vertexDescriptor.attributes[2].bufferIndex = 0
         
         vertexDescriptor.attributes[3].format = .float3
