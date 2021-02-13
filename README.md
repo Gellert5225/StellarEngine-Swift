@@ -1,5 +1,8 @@
+![](./Images/logo/StellarEngine_logo_256.png)
 # Stellar Engine
-A lightweight rendering engine featuring:
+A lightweight rendering engine written in Swift
+
+Featuring:
 - Physically based rendering
 - Image based lighting
 - Dynamic reflection
