@@ -4,10 +4,11 @@
 </p>
 
 <h1 align="center">
-  Stellar Engine
+    Stellar Engine
 </h1>
-
-A lightweight rendering engine written in Swift
+<h4 align="center">
+    A lightweight rendering engine written in Swift
+</h4>
 
 Featuring:
 - Physically based rendering
