@@ -8,13 +8,15 @@
 
 import MetalKit
 
-open class STLRScene: STLRNode {
+open class STLRScene {
     
-    open var camera = STLRCamera()
+    open var camera = STLRArcballCamera()
     open var lights = [Light]()
     open var skybox: STLRSkybox?
     open var terrains: [STLRTerrain] = []
     open var waters: [STLRWater] = []
+    open var renderables: [Renderable] = []
+    
     open var sunLignt: Light = {
         var light = Light()
         light.position = [1, 2, -2]
@@ -29,6 +31,7 @@ open class STLRScene: STLRNode {
     var lightConstants = STLRLightConstants()
     var uniforms = STLRUniforms()
     var fragmentUniforms = STLRFragmentUniforms()
+    var axis: STLRModel?
     
     var reflectionCamera = STLRCamera()
     
@@ -43,8 +46,11 @@ open class STLRScene: STLRNode {
         return light
     }()
     
-    public override init() {
-        camera.currentPosition = camera.position
+    public init() {
+        camera.distance = 10
+        add(node: camera, render: false)
+        axis = STLRModel(modelName: "axis")
+        //add(node: axis!, render: true)
     }
     
     open func updateScene(deltaTime: Float) {
@@ -53,12 +59,41 @@ open class STLRScene: STLRNode {
     
     open func add(terrain: STLRTerrain) {
         terrains.append(terrain)
-        add(childNode: terrain)
+        add(node: terrain)
     }
     
     open func add(water: STLRWater) {
         waters.append(water)
-        add(childNode: water)
+        add(node: water)
+    }
+    
+    open func add(node: STLRNode, parent: STLRNode? = nil, render: Bool = true) {
+        if let parent = parent {
+            parent.add(childNode: node)
+        } else {
+            rootNode.add(childNode: node)
+        }
+        guard render == true,
+              let renderable = node as? Renderable else {
+                return
+        }
+        renderables.append(renderable)
+    }
+    
+    open func remove(node: STLRNode) {
+        if let parent = node.parent {
+            parent.remove(childNode: node)
+        } else {
+            for child in node.children {
+                child.parent = nil
+            }
+            node.children = []
+        }
+        guard node is Renderable,
+              let index = (renderables.firstIndex {
+                $0 as? STLRNode === node
+              }) else { return }
+        renderables.remove(at: index)
     }
     
     public func buildDefaultLight() -> Light {
@@ -81,7 +116,7 @@ open class STLRScene: STLRNode {
         uniforms.viewMatrix = camera.viewMatrix
         //    fragmentUniforms.cameraPosition = camera.position
         updateScene(deltaTime: deltaTime)
-        update(nodes: children, deltaTime: deltaTime)
+        update(nodes: rootNode.children, deltaTime: deltaTime)
         // precompute terrain tessellation
         for terrain in terrains {
             terrain.update(viewMatrix: uniforms.viewMatrix)

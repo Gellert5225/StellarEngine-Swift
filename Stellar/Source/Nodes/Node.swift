@@ -36,25 +36,9 @@ open class STLRNode {
         rotation = [radians(fromDegrees: x), radians(fromDegrees: y), radians(fromDegrees: z)]
     }
     
-    var modelMatrix: matrix_float4x4 {
-        let translateMatrix = float4x4(translation: position)
-        let rotateMatrix = float4x4(quaternion)
-        let scaleMatrix = float4x4(scaling: scale)
-        return translateMatrix * rotateMatrix * scaleMatrix
-    }
-    
-    var worldTransform: float4x4 {
-        if let parent = parent {
-            return parent.worldTransform * self.modelMatrix
-        }
-        return modelMatrix
-    }
-    
     open var children: [STLRNode] = []
     
     open var parent: STLRNode?
-    
-    var quaternion = simd_quatf()
     
     open func add(childNode: STLRNode) {
         children.append(childNode)
@@ -72,5 +56,29 @@ open class STLRNode {
         }) else { return }
         children.remove(at: index)
         childNode.parent = nil
+    }
+    
+    var forwardVector: simd_float3 {
+      return normalize([sin(rotation.y), 0, cos(rotation.y)])
+    }
+    
+    var rightVector: simd_float3 {
+      return [forwardVector.z, forwardVector.y, -forwardVector.x]
+    }
+    
+    var quaternion = simd_quatf()
+    
+    var modelMatrix: matrix_float4x4 {
+        let translateMatrix = float4x4(translation: position)
+        let rotateMatrix = float4x4(quaternion)
+        let scaleMatrix = float4x4(scaling: scale)
+        return translateMatrix * rotateMatrix * scaleMatrix
+    }
+    
+    open var worldTransform: float4x4 {
+        if let parent = parent {
+            return parent.worldTransform * self.modelMatrix
+        }
+        return modelMatrix
     }
 }

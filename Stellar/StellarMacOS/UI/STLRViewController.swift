@@ -8,7 +8,7 @@
 
 import MetalKit
 
-open class STLRViewControllerMacOS: NSViewController {
+open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegate {
     open var scene: STLRScene {
         set {
             renderer.scene = newValue
@@ -21,9 +21,10 @@ open class STLRViewControllerMacOS: NSViewController {
     open var panEnabled: Bool = false {
         didSet {
             if self.panEnabled {
-                self.view.addGestureRecognizer(panGesture!)
+                panGesture?.delegate = self
+                self.metalView.addGestureRecognizer(panGesture!)
             } else {
-                self.view.removeGestureRecognizer(panGesture!)
+                self.metalView.removeGestureRecognizer(panGesture!)
             }
         }
     }
@@ -35,9 +36,7 @@ open class STLRViewControllerMacOS: NSViewController {
     var renderer: STLRRenderer!
     var pipelineState: MTLRenderPipelineState!
     var commandQueue: MTLCommandQueue!
-    var metalView: MTKView {
-        return view as! MTKView
-    }
+    open var metalView: MTKView!
     
     var panGesture: NSPanGestureRecognizer?
     
@@ -48,23 +47,26 @@ open class STLRViewControllerMacOS: NSViewController {
         renderer = STLRRenderer(metalView: metalView)
         panGesture = NSPanGestureRecognizer(target: self, action: #selector(handlePan))
     }
-    
-    open func add(_ shape: STLRNode) {
-        renderer.scene?.add(childNode: shape)
-    }
         
     open override func scrollWheel(with event: NSEvent) {
-        let sensitivity: Float = 0.1
-        scene.camera.position.z += Float(event.deltaY) * sensitivity
+        //let sensitivity: Float = 0.1
+        scene.camera.zoom(delta: Float(event.deltaY))
     }
     
     @objc func handlePan(recognizer: NSPanGestureRecognizer) {
-        let translation = float2(Float(recognizer.translation(in: recognizer.view).x),
-                                 Float(recognizer.translation(in: recognizer.view).y))
+        let translation = recognizer.translation(in: recognizer.view)
+        let delta = float2(Float(translation.x), Float(translation.y))
         
-        scene.camera.rotation.x += Float(translation.y) * panSensitivity
-        scene.camera.rotation.y -= Float(translation.x) * panSensitivity
-        
+        scene.camera.rotate(delta: delta)
         recognizer.setTranslation(.zero, in: recognizer.view)
+    }
+    
+    public func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+        print(gestureRecognizer)
+        return true
+    }
+    
+    public func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: NSGestureRecognizer) -> Bool {
+        return true
     }
 }

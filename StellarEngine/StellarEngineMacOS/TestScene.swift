@@ -20,43 +20,47 @@ class TestScene: STLRScene {
         
         let ground = STLRModel(modelName: "plane", fragmentFunctionName: "gBufferFragment")
         ground.scale = [10, 10, 10]
-        add(childNode: ground)
+        ground.position = [10, 0, 10]
+        add(node: ground)
         
         let train = STLRModel(modelName: "train", fragmentFunctionName: "gBufferFragment")
-        add(childNode: train)
-        train.scale = [2, 2, 2]
-        train.position = [0, 0, 5]
+        add(node: train, parent: ground)
+        train.scale = [0.1, 0.1, 0.1]
+        train.position = [0, 0, 0]
         
         let chest = STLRModel(modelName: "chest", fragmentFunctionName: "gBufferFragment")
-        add(childNode: chest)
-        chest.position = [0, 0, -5]
-        chest.scale = [2, 2, 2]
+        add(node: chest, parent: ground)
+        chest.position = [0, 0, -1]
+        chest.scale = [0.2, 0.2, 0.2]
         
         let mouse = STLRModel(modelName: "MagicMouse", fragmentFunctionName: "gBufferFragment_IBL")
-        add(childNode: mouse)
-        mouse.scale = [0.05, 0.05, 0.05]
-        mouse.position = [-6, 0, 0]
+        add(node: mouse, parent: ground)
+        mouse.scale = [0.005, 0.005, 0.005]
+        mouse.position = [-1, 0, 0]
         
         let car = STLRModel(modelName: "racing-car", fragmentFunctionName: "gBufferFragment")
-        car.scale = [1.5, 1.5, 1.5]
-        car.position = [6, 0, 0]
-        add(childNode: car)
+        car.scale = [0.2, 0.2, 0.2]
+        car.position = [1, 0, 0]
+        add(node: car, parent: ground)
         
-        camera.position = float3(0, -2, 30)
-        camera.rotate(x: -50, y: 0, z: 0)
         camera.fovDegrees = 60
         
-        sunLignt.position = float3(100, 50, 50)
+        sunLignt.position = float3(0, 200, -150)
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
         ambientLight.intensity = 0.1
         
         lights.append(sunLignt)
         lights.append(ambientLight)
+        createPointLights(count: 40, min: [-8, 0.5, -8], max: [8, 4, 8])
     }
     
     override func updateScene(deltaTime: Float) {
-        for (index, child) in children.enumerated() {
-            if (index != 0) { child.rotation.y += 0.01 }
+        for (index, child) in renderables.enumerated() {
+            if (index != 0) {
+                if let renderable = child as? STLRModel {
+                    renderable.rotation.y += 0.01
+                }
+            }
         }
     }
     

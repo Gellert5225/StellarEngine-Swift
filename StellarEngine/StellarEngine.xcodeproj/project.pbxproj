@@ -108,6 +108,10 @@
 		D9EE1F2425D837EA00A6F4F8 /* sampleHeightMap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = DF440310223E35B500D5A7E3 /* sampleHeightMap.jpg */; };
 		D9EE1F2525D837EA00A6F4F8 /* Textures.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DFB84E26216B1CD1000195B9 /* Textures.xcassets */; };
 		D9EE1F2725D8385500A6F4F8 /* TestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EE1F2625D8385500A6F4F8 /* TestScene.swift */; };
+		D9EE1F3725D886D400A6F4F8 /* axis.obj in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F3625D886D400A6F4F8 /* axis.obj */; };
+		D9EE1F3825D886D400A6F4F8 /* axis.obj in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F3625D886D400A6F4F8 /* axis.obj */; };
+		D9EE1F4525D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */; };
+		D9EE1F4625D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */; };
 		DF1B2CCF223F16B900831793 /* ShadowScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1B2CCE223F16B900831793 /* ShadowScene.swift */; };
 		DF1B2CD2223F197C00831793 /* plane.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DF1B2CD0223F197B00831793 /* plane.mtl */; };
 		DF1B2CD3223F197C00831793 /* plane.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF1B2CD1223F197C00831793 /* plane.obj */; };
@@ -293,6 +297,8 @@
 		D941F59325D8035300DE2ACD /* StellarEngineMacOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StellarEngineMacOSUITests.swift; sourceTree = "<group>"; };
 		D941F59525D8035300DE2ACD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9EE1F2625D8385500A6F4F8 /* TestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
+		D9EE1F3625D886D400A6F4F8 /* axis.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = axis.obj; sourceTree = "<group>"; };
+		D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 1e6xsxnhzn0v.mtl; sourceTree = "<group>"; };
 		DF1B2CCE223F16B900831793 /* ShadowScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShadowScene.swift; sourceTree = "<group>"; };
 		DF1B2CD0223F197B00831793 /* plane.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane.mtl; sourceTree = "<group>"; };
 		DF1B2CD1223F197C00831793 /* plane.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plane.obj; sourceTree = "<group>"; };
@@ -417,6 +423,7 @@
 		89B3850120D8B4CD00FAEDE4 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				D9EE1F2E25D886AB00A6F4F8 /* Axis */,
 				DFD6841B22471AFE00A78E9F /* AppleMouse */,
 				DFD684162247145200A78E9F /* Sword */,
 				DFD6840722470E4400A78E9F /* Nade */,
@@ -467,7 +474,6 @@
 				D941F58725D8035300DE2ACD /* StellarEngineMacOSTests */,
 				D941F59225D8035300DE2ACD /* StellarEngineMacOSUITests */,
 				89FFCAD120CC7A6000C6DB28 /* Products */,
-				D941F56625D801B000DE2ACD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -513,13 +519,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D941F56625D801B000DE2ACD /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		D941F57425D8035200DE2ACD /* StellarEngineMacOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -550,6 +549,15 @@
 				D941F59525D8035300DE2ACD /* Info.plist */,
 			);
 			path = StellarEngineMacOSUITests;
+			sourceTree = "<group>";
+		};
+		D9EE1F2E25D886AB00A6F4F8 /* Axis */ = {
+			isa = PBXGroup;
+			children = (
+				D9EE1F3625D886D400A6F4F8 /* axis.obj */,
+				D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */,
+			);
+			path = Axis;
 			sourceTree = "<group>";
 		};
 		DF4402B5223C818400D5A7E3 /* Tree */ = {
@@ -874,6 +882,7 @@
 				DF1B2CD3223F197C00831793 /* plane.obj in Resources */,
 				DF4402E7223DB52F00D5A7E3 /* houseRoof2.obj in Resources */,
 				DF3EF508216AD3AB000F43F4 /* chest-color.png in Resources */,
+				D9EE1F3725D886D400A6F4F8 /* axis.obj in Resources */,
 				DFA06ECE22309F5900631585 /* large-plane.obj in Resources */,
 				DF4402E6223DB52F00D5A7E3 /* houseGround4.obj in Resources */,
 				DFD6841A224714A200A78E9F /* Sword.mtl in Resources */,
@@ -933,6 +942,7 @@
 				DF4402C7223C8C4100D5A7E3 /* rock1.obj in Resources */,
 				DF4402EF223DB52F00D5A7E3 /* houseFloor2.obj in Resources */,
 				DFD6841E22471B0A00A78E9F /* MagicMouse.mtl in Resources */,
+				D9EE1F4525D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */,
 				DF4402E9223DB52F00D5A7E3 /* houseGround3.mtl in Resources */,
 				89FFCADB20CC7A6100C6DB28 /* Assets.xcassets in Resources */,
 				DF4402F0223DB52F00D5A7E3 /* houseFloor4.obj in Resources */,
@@ -964,6 +974,7 @@
 				D9EE1ED925D837EA00A6F4F8 /* Sword.obj in Resources */,
 				D9EE1EDA25D837EA00A6F4F8 /* Nade.mtl in Resources */,
 				D9EE1EDB25D837EA00A6F4F8 /* Nade.obj in Resources */,
+				D9EE1F4625D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */,
 				D9EE1EDC25D837EA00A6F4F8 /* Mk2Grenade_AO.png in Resources */,
 				D9EE1EDD25D837EA00A6F4F8 /* Mk2Grenade_Base_Color.png in Resources */,
 				D9EE1EDE25D837EA00A6F4F8 /* Mk2Grenade_Metalness.png in Resources */,
@@ -1006,6 +1017,7 @@
 				D9EE1F0325D837EA00A6F4F8 /* grass04.mtl in Resources */,
 				D9EE1F0425D837EA00A6F4F8 /* grass04.obj in Resources */,
 				D9EE1F0525D837EA00A6F4F8 /* img110.png in Resources */,
+				D9EE1F3825D886D400A6F4F8 /* axis.obj in Resources */,
 				D9EE1F0625D837EA00A6F4F8 /* train.mtl in Resources */,
 				D9EE1F0725D837EA00A6F4F8 /* train.obj in Resources */,
 				D9EE1F0825D837EA00A6F4F8 /* chest.mtl in Resources */,

@@ -89,6 +89,13 @@ extension float4x4 {
         self = rotationX * rotationY * rotationZ
     }
     
+    init(rotationYXZ angle: SIMD3<Float>) {
+      let rotationX = float4x4(rotationX: angle.x)
+      let rotationY = float4x4(rotationY: angle.y)
+      let rotationZ = float4x4(rotationZ: angle.z)
+      self = rotationY * rotationX * rotationZ
+    }
+    
     static func identity() -> float4x4 {
         let matrix:float4x4 = matrix_identity_float4x4
         return matrix

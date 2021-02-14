@@ -166,7 +166,7 @@ open class STLRModel: STLRNode {
 
 extension STLRModel: Renderable {
     
-    func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
+    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
         var fragConsts = fragmentUniforms
         fragConsts.tiling = tiling
         var vertexUniform = uniforms

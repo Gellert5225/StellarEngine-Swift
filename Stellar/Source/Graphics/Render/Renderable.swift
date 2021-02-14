@@ -8,7 +8,7 @@
 
 import MetalKit
 
-protocol Renderable {
+public protocol Renderable {
     
     func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms)
     

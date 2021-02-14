@@ -82,7 +82,7 @@ open class STLRViewController: UIViewController {
             scene.camera.position.y = (length - sensitivity) / length * abs(y)
             scene.camera.position.z = (length - sensitivity) / length * abs(z)
             
-            scene.camera.currentPosition = scene.camera.position
+            scene.camera.position = scene.camera.position
         }
         
         if gesture.state == .ended {
@@ -110,7 +110,7 @@ open class STLRViewController: UIViewController {
             
             let multiplier = (quardrantOf(angle: currentAngleY!) == 2 || quardrantOf(angle: currentAngleY!) == 3 ? -1 : 1)
             let projectionXZ = scene.camera.mod * cos(currentAngleX!)
-            scene.camera.currentPosition = float3(sin(currentAngleY!) * projectionXZ,
+            scene.camera.position = float3(sin(currentAngleY!) * projectionXZ,
                                            sin(currentAngleX!) * scene.camera.mod,
                                            Float(multiplier) * cos(currentAngleY!) * projectionXZ)
             

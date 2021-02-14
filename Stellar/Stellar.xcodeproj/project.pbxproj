@@ -61,6 +61,10 @@
 		D9B33EBD25D7D69100B8BCF3 /* ocean.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89A224848E900703436 /* ocean.png */; };
 		D9B33EBE25D7D69100B8BCF3 /* ocean2.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89C224849DE00703436 /* ocean2.png */; };
 		D9B33EBF25D7D69100B8BCF3 /* ocean3.png in Resources */ = {isa = PBXBuildFile; fileRef = DFEAD89E22484A9700703436 /* ocean3.png */; };
+		D9EE1F3F25D8908E00A6F4F8 /* axis.obj in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F3E25D8908E00A6F4F8 /* axis.obj */; };
+		D9EE1F4025D8908E00A6F4F8 /* axis.obj in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F3E25D8908E00A6F4F8 /* axis.obj */; };
+		D9EE1F4225D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F4125D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl */; };
+		D9EE1F4325D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */ = {isa = PBXBuildFile; fileRef = D9EE1F4125D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl */; };
 		DF3347C32240D3AF00632BCB /* Composition.metal in Sources */ = {isa = PBXBuildFile; fileRef = DF3347C22240D3AF00632BCB /* Composition.metal */; };
 		DF38B59820DD907800E86E82 /* Types.h in Headers */ = {isa = PBXBuildFile; fileRef = DF38B59620DD8D6400E86E82 /* Types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DF4402B0223C737000D5A7E3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4402AF223C737000D5A7E3 /* Transform.swift */; };
@@ -130,6 +134,8 @@
 		D9B33E8325D7D54000B8BCF3 /* StellariOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StellariOSTests.swift; sourceTree = "<group>"; };
 		D9B33E8525D7D54000B8BCF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9B33EBA25D7D68500B8BCF3 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
+		D9EE1F3E25D8908E00A6F4F8 /* axis.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = axis.obj; sourceTree = "<group>"; };
+		D9EE1F4125D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 1e6xsxnhzn0v.mtl; sourceTree = "<group>"; };
 		DF3347C22240D3AF00632BCB /* Composition.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Composition.metal; sourceTree = "<group>"; };
 		DF38B59620DD8D6400E86E82 /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
 		DF4402AF223C737000D5A7E3 /* Transform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transform.swift; sourceTree = "<group>"; };
@@ -356,6 +362,7 @@
 		D9B33EC825D7D77D00B8BCF3 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				D9EE1F3925D8906600A6F4F8 /* Resources */,
 				DF440309223DCA7400D5A7E3 /* Terrain */,
 				DFA06EC0222F01EC00631585 /* Environment */,
 				89B9B13620CE20FF005B7C72 /* Nodes */,
@@ -371,6 +378,23 @@
 				89267CDC20D742780024085C /* STLRViewController.swift */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		D9EE1F3925D8906600A6F4F8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D9EE1F3A25D8907B00A6F4F8 /* Axis */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		D9EE1F3A25D8907B00A6F4F8 /* Axis */ = {
+			isa = PBXGroup;
+			children = (
+				D9EE1F3E25D8908E00A6F4F8 /* axis.obj */,
+				D9EE1F4125D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl */,
+			);
+			path = Axis;
 			sourceTree = "<group>";
 		};
 		DF440309223DCA7400D5A7E3 /* Terrain */ = {
@@ -547,6 +571,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9EE1F4225D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */,
+				D9EE1F3F25D8908E00A6F4F8 /* axis.obj in Resources */,
 				DFEAD89B224848EA00703436 /* ocean.png in Resources */,
 				DFD6842922477BF400A78E9F /* normal-water.png in Resources */,
 				DFEAD89F22484A9700703436 /* ocean3.png in Resources */,
@@ -558,6 +584,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9EE1F4325D8921A00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */,
+				D9EE1F4025D8908E00A6F4F8 /* axis.obj in Resources */,
 				D9B33EBC25D7D69100B8BCF3 /* normal-water.png in Resources */,
 				D9B33EBD25D7D69100B8BCF3 /* ocean.png in Resources */,
 				D9B33EBE25D7D69100B8BCF3 /* ocean2.png in Resources */,

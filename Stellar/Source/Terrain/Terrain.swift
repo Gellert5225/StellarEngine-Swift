@@ -204,7 +204,7 @@ extension STLRTerrain: Texturable {}
 
 extension STLRTerrain: Renderable {
     
-    func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
+    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
         var mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelMatrix
         commandEncoder.setVertexBytes(&mvp, length: MemoryLayout<float4x4>.stride, index: 1)
         commandEncoder.setRenderPipelineState(renderPipelineState)

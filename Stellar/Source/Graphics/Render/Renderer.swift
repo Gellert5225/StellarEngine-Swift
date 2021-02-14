@@ -201,7 +201,7 @@ open class STLRRenderer: NSObject {
         scene.uniforms.shadowMatrix = scene.uniforms.projectionMatrix * scene.uniforms.viewMatrix
         
         renderEncoder.setRenderPipelineState(shadowPipelineState)
-        for child in scene.children {
+        for child in scene.renderables {
             if let renderable = child as? STLRModel {
                 draw(renderEncoder: renderEncoder, model: renderable)
             }
@@ -224,7 +224,7 @@ open class STLRRenderer: NSObject {
         let lights = scene.lights
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
-        for child in scene.children {
+        for child in scene.renderables {
             if let renderable = child as? STLRModel {
                 renderable.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
                 //draw(renderEncoder: renderEncoder, model: renderable)
@@ -321,7 +321,7 @@ extension STLRRenderer: MTKViewDelegate {
             guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
                 else { return }
 
-            scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition!
+            scene.fragmentUniforms.cameraPosition = scene.camera.position
             scene.fragmentUniforms.lightCount = uint(scene.lights.count)
             scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
 
@@ -343,7 +343,7 @@ extension STLRRenderer: MTKViewDelegate {
             reflectEncoder.popDebugGroup()
         }
         
-        scene.fragmentUniforms.cameraPosition = scene.camera.currentPosition!
+        scene.fragmentUniforms.cameraPosition = scene.camera.position
         scene.fragmentUniforms.lightCount = uint(scene.lights.count)
 
         scene.uniforms.viewMatrix = scene.camera.viewMatrix

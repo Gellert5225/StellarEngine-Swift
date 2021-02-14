@@ -165,7 +165,7 @@ extension STLRMorph: Texturable {}
 
 extension STLRMorph: Renderable {
     
-    func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
+    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
         guard let submesh = submesh else { return }
         var uniforms = uniforms
         var fragmentUniforms = fragmentUniforms
