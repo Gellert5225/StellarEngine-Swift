@@ -33,7 +33,7 @@ open class STLRScene {
     var fragmentUniforms = STLRFragmentUniforms()
     var axis: STLRModel?
     
-    var reflectionCamera = STLRCamera()
+    var reflectionCamera = STLRArcballCamera()
     
     var fps: Int?
     
@@ -47,10 +47,11 @@ open class STLRScene {
     }()
     
     public init() {
-        camera.distance = 10
         add(node: camera, render: false)
         axis = STLRModel(modelName: "axis")
         //add(node: axis!, render: true)
+        camera.transform.position = [10, 2, 35]
+        
     }
     
     open func updateScene(deltaTime: Float) {
@@ -113,6 +114,7 @@ open class STLRScene {
     
     final func update(deltaTime: Float) {
         uniforms.projectionMatrix = camera.projectionMatrix
+        uniforms.cameraPosition = camera.transform.position
         uniforms.viewMatrix = camera.viewMatrix
         //    fragmentUniforms.cameraPosition = camera.position
         updateScene(deltaTime: deltaTime)

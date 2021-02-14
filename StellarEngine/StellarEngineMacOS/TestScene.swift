@@ -18,9 +18,12 @@ class TestScene: STLRScene {
         skybox = STLRSkybox(textureName: nil)
         skybox?.skySettings = STLRSkybox.MidDay
         
+        let water = STLRWater()
+        add(water: water)
+        
         let ground = STLRModel(modelName: "plane", fragmentFunctionName: "gBufferFragment")
         ground.scale = [10, 10, 10]
-        ground.position = [10, 0, 10]
+        ground.position = [10, 1, 10]
         add(node: ground)
         
         let train = STLRModel(modelName: "train", fragmentFunctionName: "gBufferFragment")

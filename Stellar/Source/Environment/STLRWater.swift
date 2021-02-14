@@ -23,6 +23,8 @@ open class STLRWater: STLRNode, Texturable {
         reflectionRenderPass = RenderPass(name: "reflection", size: STLRRenderer.drawableSize)
         super.init()
         
+        name = "Water"
+        
         let allocator = MTKMeshBufferAllocator(device: STLRRenderer.metalDevice)
         let plane = MDLMesh.newPlane(withDimensions: [1000, 1000], segments: [1, 1], geometryType: .triangles, allocator: allocator)
         

@@ -19,6 +19,7 @@ struct VertexOut {
     float4 position [[ position ]];
     float2 uv;
     float3 worldPosition;
+    float3 toCamera;
 };
 
 vertex VertexOut vertex_water(const VertexIn vertex_in [[ stage_in ]],
@@ -29,6 +30,7 @@ vertex VertexOut vertex_water(const VertexIn vertex_in [[ stage_in ]],
     out.position = mvp * vertex_in.position;
     out.uv = vertex_in.uv;
     out.worldPosition = (uniforms.modelMatrix * vertex_in.position).xyz;
+    out.toCamera = uniforms.cameraPosition - out.worldPosition;
     
     return out;
 }
@@ -44,8 +46,8 @@ fragment float4 fragment_water(VertexOut vertex_in [[ stage_in ]],
     float height = float(reflectionTexture.get_height() * 2.0);
     float x = vertex_in.position.x / width;
     float y = vertex_in.position.y / height;
-    float2 reflectionCoords = float2(x, 1 - y);
     
+    float2 reflectionCoords = float2(x, 1 - y);
     float2 uv = vertex_in.uv * 10; // 2 = huge ripple, 16 = small ripple
     
     float waveStrength = 0.07;
@@ -57,7 +59,7 @@ fragment float4 fragment_water(VertexOut vertex_in [[ stage_in ]],
     reflectionCoords += ripple;
     reflectionCoords = clamp(reflectionCoords, 0.001, 0.999);
     
-    float3 viewVector = normalize(fragmentUniforms.cameraPosition - vertex_in.worldPosition);
+    float3 viewVector = normalize(vertex_in.toCamera);
     //float mixRatio = dot(viewVector, float3(0.0, 1.0, 0.0));
     
     float4 color = reflectionTexture.sample(s, reflectionCoords);

@@ -23,9 +23,6 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     override func viewDidLoad() {
         metalView = mtkView
         super.viewDidLoad()
-        
-        STLRLog.delegate = self
-        
         consoleSplitView.delegate = self
         navigationSplitView.delegate = self
         
@@ -42,10 +39,8 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
         panEnabled = true
         verticalCameraAngleInterval = (-80, -5)
     }
-}
-
-extension HomeViewController: STLRLogDelegate {
-    func flushToConsole() {
+    
+    override func flushToConsole() {
         outputTextView.textStorage?.append(STLRLog.logBuffer[STLRLog.logBuffer.count - 1])
     }
 }

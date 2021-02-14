@@ -12,6 +12,8 @@
 #import <simd/simd.h>
 
 #define sunLight vector_float3(0, -1000, -1000)
+#define near 0.1
+#define far 100.0
 
 typedef matrix_float4x4 float4x4;
 typedef matrix_float3x3 float3x3;
@@ -32,6 +34,7 @@ typedef struct {
     matrix_float3x3 normalMatrix;
     matrix_float4x4 shadowMatrix;
     vector_float4 clipPlane;
+    vector_float3 cameraPosition;
 } STLRUniforms;
 
 typedef struct {
