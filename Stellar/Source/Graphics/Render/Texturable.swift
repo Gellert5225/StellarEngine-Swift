@@ -29,7 +29,7 @@ extension Texturable {
         }
         
         let texture = try textureLoader.newTexture(URL: url, options: textureLoaderOptions)
-        print("Loaded Texture: \(url.lastPathComponent)")
+        STLRLog.CORE_INFO("Loaded Texture: \(url.lastPathComponent)")
         return texture
     }
     

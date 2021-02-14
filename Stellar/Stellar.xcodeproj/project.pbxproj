@@ -22,6 +22,8 @@
 		89FFCAC620CC7A1B00C6DB28 /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */; };
 		89FFCAF220CC7EEE00C6DB28 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */; };
 		D94BB86925D8357A00F159E0 /* STLRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D94BB86825D8357A00F159E0 /* STLRViewController.swift */; };
+		D96CE0DE25D9781400468A56 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96CE0DD25D9781400468A56 /* Log.swift */; };
+		D96CE0DF25D9781400468A56 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96CE0DD25D9781400468A56 /* Log.swift */; };
 		D9B33E6C25D7D4EA00B8BCF3 /* StellarMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B33E6325D7D4EA00B8BCF3 /* StellarMacOS.framework */; };
 		D9B33E7125D7D4EA00B8BCF3 /* StellarMacOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B33E7025D7D4EA00B8BCF3 /* StellarMacOSTests.swift */; };
 		D9B33E7325D7D4EA00B8BCF3 /* StellarMacOS.h in Headers */ = {isa = PBXBuildFile; fileRef = D9B33E6525D7D4EA00B8BCF3 /* StellarMacOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -124,6 +126,7 @@
 		89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		89FFCAF120CC7EEE00C6DB28 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		D94BB86825D8357A00F159E0 /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
+		D96CE0DD25D9781400468A56 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		D9B33E6325D7D4EA00B8BCF3 /* StellarMacOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StellarMacOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9B33E6525D7D4EA00B8BCF3 /* StellarMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StellarMacOS.h; sourceTree = "<group>"; };
 		D9B33E6625D7D4EA00B8BCF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -301,6 +304,7 @@
 				8924FDE120D7781500D52908 /* Types.swift */,
 				89B384F120D7B9E600FAEDE4 /* MatrixMath.swift */,
 				DF4402AF223C737000D5A7E3 /* Transform.swift */,
+				D96CE0DD25D9781400468A56 /* Log.swift */,
 			);
 			path = "Math_&_Utility";
 			sourceTree = "<group>";
@@ -616,6 +620,7 @@
 			files = (
 				89B384F020D7926400FAEDE4 /* Scene.swift in Sources */,
 				89B384F220D7B9E600FAEDE4 /* MatrixMath.swift in Sources */,
+				D96CE0DE25D9781400468A56 /* Log.swift in Sources */,
 				DF3347C32240D3AF00632BCB /* Composition.metal in Sources */,
 				DFD684272247449100A78E9F /* RenderPass.swift in Sources */,
 				DFD6842122473AC400A78E9F /* STLRWater.swift in Sources */,
@@ -652,6 +657,7 @@
 			files = (
 				D9B33E9525D7D67600B8BCF3 /* Terrain.swift in Sources */,
 				D9B33E9625D7D67600B8BCF3 /* Terrain.metal in Sources */,
+				D96CE0DF25D9781400468A56 /* Log.swift in Sources */,
 				D9B33E9725D7D67700B8BCF3 /* Skybox.metal in Sources */,
 				D9B33E9825D7D67700B8BCF3 /* Skybox.swift in Sources */,
 				D9B33E9925D7D67700B8BCF3 /* Water.metal in Sources */,

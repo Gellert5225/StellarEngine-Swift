@@ -125,7 +125,7 @@ open class STLRModel: STLRNode {
         guard let assetURL = Bundle.main.url(forResource: modelName, withExtension: "obj") else {
             fatalError("Asset \(modelName) does not exist")
         }
-        print("Loaded Model: \(modelName)")
+        STLRLog.CORE_INFO("Loaded model: \(modelName)")
         let descriptor = MTKModelIOVertexDescriptorFromMetal(STLRModel.vertexDescriptor)
         
         let attributePosition = descriptor.attributes[0] as! MDLVertexAttribute

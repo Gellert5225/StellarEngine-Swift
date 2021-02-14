@@ -54,6 +54,13 @@ class TestScene: STLRScene {
         createPointLights(count: 40, min: [-8, 0.5, -8], max: [8, 4, 8])
     }
     
+    func printNodes(root: STLRNode, level: Int) {
+        for child in root.children {
+            print("\(child.name) at level \(level)")
+            printNodes(root: child, level: level+1)
+        }
+    }
+    
     override func updateScene(deltaTime: Float) {
         for (index, child) in renderables.enumerated() {
             if (index != 0) {

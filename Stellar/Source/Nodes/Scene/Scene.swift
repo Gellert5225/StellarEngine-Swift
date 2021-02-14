@@ -16,6 +16,7 @@ open class STLRScene {
     open var terrains: [STLRTerrain] = []
     open var waters: [STLRWater] = []
     open var renderables: [Renderable] = []
+    open var rootNode = STLRNode()
     
     open var sunLignt: Light = {
         var light = Light()
@@ -26,7 +27,6 @@ open class STLRScene {
         light.type = Sunlight
         return light
     }()
-    public let rootNode = STLRNode()
     
     var lightConstants = STLRLightConstants()
     var uniforms = STLRUniforms()

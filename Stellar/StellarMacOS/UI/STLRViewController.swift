@@ -13,7 +13,7 @@ open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegat
         set {
             renderer.scene = newValue
             renderer.scene?.sceneSizeWillChange(to: self.view.bounds.size)
-            print("new scene has been set")
+            STLRLog.CORE_INFO("New scene has been set")
         } get {
             return renderer.scene!
         }

@@ -35,12 +35,17 @@ open class STLRCamera: STLRNode {
         
     }
     
+    override init() {
+        super.init()
+        name = "Defualt Camera"
+    }
+    
     func zoom(delta: Float) {}
     func rotate(delta: simd_float2) {}
 }
 
 open class STLRArcballCamera: STLRCamera {
-  
+    
     var minDistance: Float = 0.5
     var maxDistance: Float = 100
     var target: simd_float3 = [0, 0, 0] {
@@ -69,6 +74,7 @@ open class STLRArcballCamera: STLRCamera {
 
     override init() {
         super.init()
+        name = "Archball Camera"
         _viewMatrix = updateViewMatrix()
     }
 
