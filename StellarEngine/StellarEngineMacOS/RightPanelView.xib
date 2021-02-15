@@ -57,6 +57,7 @@
                                 <constraint firstAttribute="trailing" secondItem="Tes-Cw-ZDk" secondAttribute="trailing" id="1if-0B-pKG"/>
                                 <constraint firstItem="8EZ-LZ-Di2" firstAttribute="leading" secondItem="MGc-z2-YIg" secondAttribute="leading" constant="20" symbolic="YES" id="4ss-0T-M4L"/>
                                 <constraint firstItem="Tes-Cw-ZDk" firstAttribute="leading" secondItem="MGc-z2-YIg" secondAttribute="leading" id="BXc-2f-LGD"/>
+                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="8EZ-LZ-Di2" secondAttribute="trailing" constant="20" symbolic="YES" id="RNd-eK-viu"/>
                                 <constraint firstItem="8EZ-LZ-Di2" firstAttribute="top" secondItem="MGc-z2-YIg" secondAttribute="top" constant="3" id="eoZ-Jl-ZCK"/>
                                 <constraint firstAttribute="bottom" secondItem="Tes-Cw-ZDk" secondAttribute="bottom" id="uoG-4M-LoS"/>
                                 <constraint firstItem="Tes-Cw-ZDk" firstAttribute="top" secondItem="8EZ-LZ-Di2" secondAttribute="bottom" constant="3" id="xfL-tK-zS0"/>
@@ -100,6 +101,7 @@
                                 <constraint firstItem="bhU-sk-8ZN" firstAttribute="top" secondItem="WyD-Ze-wMj" secondAttribute="bottom" constant="2" id="S2w-2J-0U6"/>
                                 <constraint firstItem="WyD-Ze-wMj" firstAttribute="top" secondItem="39E-56-F52" secondAttribute="top" constant="3" id="bSO-E2-zD0"/>
                                 <constraint firstAttribute="bottom" secondItem="bhU-sk-8ZN" secondAttribute="bottom" id="fZo-R3-pOJ"/>
+                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="WyD-Ze-wMj" secondAttribute="trailing" constant="20" symbolic="YES" id="iMf-cJ-Fls"/>
                                 <constraint firstItem="WyD-Ze-wMj" firstAttribute="leading" secondItem="39E-56-F52" secondAttribute="leading" constant="20" symbolic="YES" id="qNi-4J-Ms1"/>
                                 <constraint firstItem="bhU-sk-8ZN" firstAttribute="leading" secondItem="39E-56-F52" secondAttribute="leading" id="qnC-vK-DoS"/>
                                 <constraint firstAttribute="trailing" secondItem="bhU-sk-8ZN" secondAttribute="trailing" id="snd-uQ-arE"/>
