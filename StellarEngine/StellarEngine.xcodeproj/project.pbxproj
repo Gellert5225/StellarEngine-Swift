@@ -28,6 +28,8 @@
 		D94BB86425D834D800F159E0 /* StellarMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; };
 		D94BB86525D834D800F159E0 /* StellarMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D9589D0425DA24CC00755911 /* ResourceTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9589D0325DA24CC00755911 /* ResourceTree.swift */; };
+		D97CB5E125DA5CEB005C9F18 /* RightPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97CB5E025DA5CEB005C9F18 /* RightPanelView.swift */; };
+		D97CB5E325DA5D17005C9F18 /* RightPanelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D97CB5E225DA5D17005C9F18 /* RightPanelView.xib */; };
 		D9EE1ED625D837EA00A6F4F8 /* MagicMouse.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841C22471B0900A78E9F /* MagicMouse.mtl */; };
 		D9EE1ED725D837EA00A6F4F8 /* MagicMouse.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841D22471B0A00A78E9F /* MagicMouse.obj */; };
 		D9EE1ED825D837EA00A6F4F8 /* Sword.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD68418224714A200A78E9F /* Sword.mtl */; };
@@ -298,6 +300,8 @@
 		D941F59325D8035300DE2ACD /* StellarEngineMacOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StellarEngineMacOSUITests.swift; sourceTree = "<group>"; };
 		D941F59525D8035300DE2ACD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9589D0325DA24CC00755911 /* ResourceTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceTree.swift; sourceTree = "<group>"; };
+		D97CB5E025DA5CEB005C9F18 /* RightPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightPanelView.swift; sourceTree = "<group>"; };
+		D97CB5E225DA5D17005C9F18 /* RightPanelView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RightPanelView.xib; sourceTree = "<group>"; };
 		D9EE1F2625D8385500A6F4F8 /* TestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
 		D9EE1F3625D886D400A6F4F8 /* axis.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = axis.obj; sourceTree = "<group>"; };
 		D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 1e6xsxnhzn0v.mtl; sourceTree = "<group>"; };
@@ -529,6 +533,8 @@
 				D9EE1F2625D8385500A6F4F8 /* TestScene.swift */,
 				D941F57925D8035300DE2ACD /* Assets.xcassets */,
 				D941F57B25D8035300DE2ACD /* Main.storyboard */,
+				D97CB5E025DA5CEB005C9F18 /* RightPanelView.swift */,
+				D97CB5E225DA5D17005C9F18 /* RightPanelView.xib */,
 				D941F57E25D8035300DE2ACD /* Info.plist */,
 				D941F57F25D8035300DE2ACD /* StellarEngineMacOS.entitlements */,
 			);
@@ -1003,6 +1009,7 @@
 				D9EE1EEA25D837EA00A6F4F8 /* houseFloor4.obj in Resources */,
 				D9EE1EEB25D837EA00A6F4F8 /* houseGround1.mtl in Resources */,
 				D9EE1EEC25D837EA00A6F4F8 /* houseGround1.obj in Resources */,
+				D97CB5E325DA5D17005C9F18 /* RightPanelView.xib in Resources */,
 				D9EE1EED25D837EA00A6F4F8 /* houseGround2.mtl in Resources */,
 				D9EE1EEE25D837EA00A6F4F8 /* houseGround2.obj in Resources */,
 				D9EE1EEF25D837EA00A6F4F8 /* houseGround3.mtl in Resources */,
@@ -1107,6 +1114,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D941F57825D8035200DE2ACD /* ViewController.swift in Sources */,
+				D97CB5E125DA5CEB005C9F18 /* RightPanelView.swift in Sources */,
 				D9589D0425DA24CC00755911 /* ResourceTree.swift in Sources */,
 				D9EE1F2725D8385500A6F4F8 /* TestScene.swift in Sources */,
 				D941F57625D8035200DE2ACD /* AppDelegate.swift in Sources */,
