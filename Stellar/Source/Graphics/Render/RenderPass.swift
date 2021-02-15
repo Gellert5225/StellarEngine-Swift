@@ -43,7 +43,7 @@ class RenderPass {
                                                                   width: Int(size.width * 0.5),
                                                                   height: Int(size.height * 0.5),
                                                                   mipmapped: false)
-        //descriptor.sampleCount = 1
+        //descriptor.sampleCount = 4
         descriptor.storageMode = .private
         descriptor.textureType = .type2D
         descriptor.usage = [.renderTarget, .shaderRead]

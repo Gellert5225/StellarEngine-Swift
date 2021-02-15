@@ -217,18 +217,24 @@ open class STLRRenderer: NSObject {
         renderEncoder.pushDebugGroup("Gbuffer pass")
         renderEncoder.label = "Gbuffer encoder"
         
-        //renderEncoder.setRenderPipelineState(gBufferPipelineState)
+        renderEncoder.setRenderPipelineState(gBufferPipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
         
-        renderEncoder.setFragmentTexture(shadowTexture, index: 5)
-        renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         let lights = scene.lights
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
+        
+        scene.uniforms.viewMatrix = scene.camera.viewMatrix
+        scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
+        scene.fragmentUniforms.cameraPosition = scene.camera.position
+        
+        renderEncoder.setFragmentTexture(shadowTexture, index: 5)
+        renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
+        
         for child in scene.renderables {
             if let renderable = child as? STLRModel {
-                renderable.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
-                //draw(renderEncoder: renderEncoder, model: renderable)
+                //renderable.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
+                draw(renderEncoder: renderEncoder, model: renderable)
             }
         }
     }
@@ -260,8 +266,8 @@ open class STLRRenderer: NSObject {
     
     func buildCompositionPipelineState() {
         let descriptor = MTLRenderPipelineDescriptor()
-        //descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
-        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
+        //descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         
         descriptor.depthAttachmentPixelFormat = .depth32Float
         //descriptor.sampleCount = 4

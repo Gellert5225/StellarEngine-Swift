@@ -168,11 +168,6 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
             lighting.intensity = light.intensity;
 
             specularOutput = renderGbuffer(lighting);
-
-            //compute Lambertian diffuse, phong shading
-//            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
-//            diffuseColor = light.color * baseColor.rgb * nDotl * ambientOcclusion;
-//            diffuseColor *= 1.0 - metallic;
         } else if (light.type == Pointlight){
 
         } else {
@@ -186,18 +181,37 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
-    float shadow_sample = shadow_texture.sample(s, xy);
-    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-    if (current_sample > shadow_sample ) {
-        out.albedo.a = 1;
+//    float shadow_sample = shadow_texture.sample(s, xy);
+//    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+//    if (current_sample > shadow_sample ) {
+//        out.albedo.a = 1;
+//    }
+//
+//    float shadow = out.albedo.a;
+//    if (shadow > 0) {
+//        diffuseColor *= 0.5;
+//    }
+    
+    const int neighborWidth = 3;
+    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
+    
+    float mapSize = 4096;
+    float texelSize = 1.0 / mapSize;
+    float total = 0.0;
+    for (int x = -neighborWidth; x <= neighborWidth; x++) {
+        for (int y = -neighborWidth; y <= neighborWidth; y++) {
+            float shadow_sample = shadow_texture.sample(s, xy + float2(x, y) * texelSize);
+            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+            if (current_sample > shadow_sample) {
+                total += 1.0;
+            }
+        }
     }
     
-    float shadow = out.albedo.a;
-    if (shadow > 0) {
-        diffuseColor *= 0.5;
-    }
+    total /= neighbors;
+    float lightFactor = 1.0 - (total * in.shadowPosition.w);
     
-    float4 specDiffuse = float4(specularOutput + diffuseColor.xyz, out.albedo.a) * ambientOcclusion;
+    float4 specDiffuse = float4(specularOutput + diffuseColor.xyz, out.albedo.a) * ambientOcclusion * lightFactor;
 
     out.albedo = specDiffuse;
 
@@ -276,15 +290,39 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     diffuse = mix(pow(diffuse, 0.5), diffuse, metallic);
     
     //shadow
+//    float2 xy = in.shadowPosition.xy;
+//    xy = xy * 0.5 + 0.5;
+//    xy.y = 1 - xy.y;
+//    constexpr sampler sShadow(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
+//    float shadow_sample = shadow_texture.sample(sShadow, xy);
+//    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+//    if (current_sample > shadow_sample) {
+//        diffuse *= 0.5;
+//    }
+    
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
-    constexpr sampler sShadow(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
-    float shadow_sample = shadow_texture.sample(sShadow, xy);
-    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-    if (current_sample > shadow_sample) {
-        diffuse *= 0.5;
+    constexpr sampler shadow_s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
+    
+    const int neighborWidth = 3;
+    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
+    
+    float mapSize = 4096;
+    float texelSize = 1.0 / mapSize;
+    float total = 0.0;
+    for (int x = -neighborWidth; x <= neighborWidth; x++) {
+        for (int y = -neighborWidth; y <= neighborWidth; y++) {
+            float shadow_sample = shadow_texture.sample(shadow_s, xy + float2(x, y) * texelSize);
+            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+            if (current_sample > shadow_sample) {
+                total += 1.0;
+            }
+        }
     }
+    
+    total /= neighbors;
+    float lightFactor = 1.0 - (total * in.shadowPosition.w);
     
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition.xyz);
     float3 textureCoordinates = -normalize(reflect(viewDirection, normal));
@@ -296,7 +334,7 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     float3 specularIBL = f0 * envBRDF.r + envBRDF.g;
     float3 specular = prefilteredColor * specularIBL;
     float4 color = diffuse * baseColor + float4(specular, 1);
-    color *= ambientOcclusion;
+    color *= ambientOcclusion * lightFactor;
     
     out.albedo = color;
     

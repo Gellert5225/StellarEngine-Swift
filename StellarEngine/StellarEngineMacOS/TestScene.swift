@@ -18,37 +18,37 @@ class TestScene: STLRScene {
         skybox = STLRSkybox(textureName: nil)
         skybox?.skySettings = STLRSkybox.MidDay
         
-        let water = STLRWater()
-        add(water: water)
+//        let water = STLRWater()
+//        add(water: water)
         
-        let ground = STLRModel(modelName: "plane", fragmentFunctionName: "gBufferFragment")
+        let ground = STLRModel(modelName: "plane")
         ground.scale = [10, 10, 10]
         ground.position = [10, 1, 10]
         add(node: ground)
         
-        let train = STLRModel(modelName: "train", fragmentFunctionName: "gBufferFragment")
+        let train = STLRModel(modelName: "train")
         add(node: train, parent: ground)
         train.scale = [0.1, 0.1, 0.1]
         train.position = [0, 0, 0]
         
-        let chest = STLRModel(modelName: "chest", fragmentFunctionName: "gBufferFragment")
+        let chest = STLRModel(modelName: "chest")
         add(node: chest, parent: ground)
         chest.position = [0, 0, -1]
         chest.scale = [0.2, 0.2, 0.2]
         
-        let mouse = STLRModel(modelName: "MagicMouse", fragmentFunctionName: "gBufferFragment_IBL")
+        let mouse = STLRModel(modelName: "MagicMouse")
         add(node: mouse, parent: ground)
         mouse.scale = [0.005, 0.005, 0.005]
         mouse.position = [-1, 0, 0]
         
-        let car = STLRModel(modelName: "racing-car", fragmentFunctionName: "gBufferFragment")
+        let car = STLRModel(modelName: "racing-car")
         car.scale = [0.2, 0.2, 0.2]
         car.position = [1, 0, 0]
         add(node: car, parent: ground)
         
         camera.fovDegrees = 60
         
-        sunLignt.position = float3(0, 200, -150)
+        sunLignt.position = float3(0, 20, -15)
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
         ambientLight.intensity = 0.1
         

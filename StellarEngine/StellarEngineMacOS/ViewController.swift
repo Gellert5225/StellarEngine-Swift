@@ -12,7 +12,8 @@ import MetalKit
 
 class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     var renderer: STLRRenderer?
-        
+    var resourceTree = ResourceTree(name: "Documents", isDirectory: true)
+    
     @IBOutlet weak var consoleSplitView: NSSplitView!
     @IBOutlet weak var navigationSplitView: NSSplitView!
     @IBOutlet weak var mtkView: MTKView!
@@ -23,13 +24,53 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     override func viewDidLoad() {
         metalView = mtkView
         super.viewDidLoad()
+        
         consoleSplitView.delegate = self
         navigationSplitView.delegate = self
         
         setupScene()
+        let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("/Assets")
+        loadResourceTree(at: documentsUrl, resourceTree: resourceTree)
         
         sceneOutlineView.delegate = self
         sceneOutlineView.dataSource = self
+        resourceOutlineView.delegate = self
+        resourceOutlineView.dataSource = self
+        
+        resourceOutlineView.reloadData()
+        
+        let filemgr = FileManager.default
+        let dirPaths = filemgr.urls(for: .documentDirectory, in: .userDomainMask)
+        let docsURL = dirPaths[0]
+        let newDir = docsURL.appendingPathComponent("Assets").path
+        do {
+            try filemgr.createDirectory(atPath: newDir,
+                        withIntermediateDirectories: true, attributes: nil)
+            } catch let error as NSError {
+                    print("Error: \(error.localizedDescription)")
+        }
+    }
+    
+    func loadResourceTree(at path: URL, resourceTree tree: ResourceTree) {
+        do {
+            let directoryContents = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil)
+            for path in directoryContents {
+                let isDirectory = (try? path.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory ?? false
+                if isDirectory {
+                    let child = ResourceTree(name: path.lastPathComponent, isDirectory: isDirectory)
+                    tree.add(child: child)
+                    loadResourceTree(at: path, resourceTree: child)
+                } else {
+                    if (path.lastPathComponent != ".DS_Store") {
+                        let child = ResourceTree(name: path.lastPathComponent, isDirectory: false)
+                        tree.add(child: child)
+                    }
+                }
+            }
+        } catch {
+            print(error)
+        }
+        
     }
     
     func setupScene() {
@@ -47,37 +88,70 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
 
 extension HomeViewController: NSOutlineViewDataSource {
     func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-        if let node = item as? STLRNode {
-            return node.children.count
+        if (outlineView == sceneOutlineView) {
+            if let node = item as? STLRNode {
+                return node.children.count
+            }
+            return 1
+        } else {
+            if let node = item as? ResourceTree {
+                return node.children.count
+            }
+            return resourceTree.children.count
         }
-        return 1
     }
     
     func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
-        if let node = item as? STLRNode {
-            return node.children[index]
+        if (outlineView == sceneOutlineView) {
+            if let node = item as? STLRNode {
+                return node.children[index]
+            }
+            return scene.rootNode
+        } else {
+            if let node = item as? ResourceTree {
+                return node.children[index]
+            }
+            return resourceTree.children[index]
         }
-        return scene.rootNode
     }
     
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        if let node = item as? STLRNode {
-            return node.children.count > 0
+        if (outlineView == sceneOutlineView) {
+            if let node = item as? STLRNode {
+                return node.children.count > 0
+            }
+            return false
+        } else {
+            if let node = item as? ResourceTree {
+                return node.isDirectory
+            }
+            return false
         }
-        return false
     }
 }
 
 extension HomeViewController: NSOutlineViewDelegate {
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-        let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sceneCell")
-        guard let cell = outlineView.makeView(withIdentifier: cellIdentifier, owner: self) as? NSTableCellView else { return nil }
-        if let node = item as? STLRNode {
-            if let textField = cell.textField {
-               textField.stringValue = node.name
-               textField.sizeToFit()
+        if (outlineView == sceneOutlineView) {
+            let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sceneCell")
+            guard let cell = outlineView.makeView(withIdentifier: cellIdentifier, owner: self) as? NSTableCellView else { return nil }
+            if let node = item as? STLRNode {
+                if let textField = cell.textField {
+                   textField.stringValue = node.name
+                   textField.sizeToFit()
+                }
             }
+            return cell
+        } else {
+            let cellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "resourceCell")
+            guard let cell = outlineView.makeView(withIdentifier: cellIdentifier, owner: self) as? NSTableCellView else { return nil }
+            if let node = item as? ResourceTree {
+                if let textField = cell.textField {
+                   textField.stringValue = node.name
+                   textField.sizeToFit()
+                }
+            }
+            return cell
         }
-        return cell
     }
 }

@@ -235,14 +235,14 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
     xy.y = 1 - xy.y;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
     
-    const int neighborWidth = 3;
-    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
-    
 //    float shadow_sample = shadowTexture.sample(s, xy);
 //    float current_sample = v.shadowPosition.z / v.shadowPosition.w;
 //    if (current_sample > shadow_sample ) {
 //        diffuseColor *= 0.5;
 //    }
+    
+    const int neighborWidth = 3;
+    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
     
     float mapSize = 4096;
     float texelSize = 1.0 / mapSize;
@@ -252,7 +252,7 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
             float shadow_sample = shadowTexture.sample(s, xy + float2(x, y) * texelSize);
             float current_sample = v.shadowPosition.z / v.shadowPosition.w;
             if (current_sample > shadow_sample) {
-                total += 2.0;
+                total += 1.0;
             }
         }
     }
@@ -262,7 +262,6 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
     
     color = color * float4(ambientColor + diffuseColor * lightFactor + specularColor, 1);
     
-    //return float4(diffuseColor * lightFactor, 1);
     return float4(color.r, color.g, color.b, 1.0);
 }
 

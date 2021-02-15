@@ -27,17 +27,18 @@
 		D941F59425D8035300DE2ACD /* StellarEngineMacOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D941F59325D8035300DE2ACD /* StellarEngineMacOSUITests.swift */; };
 		D94BB86425D834D800F159E0 /* StellarMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; };
 		D94BB86525D834D800F159E0 /* StellarMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D9589D0425DA24CC00755911 /* ResourceTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9589D0325DA24CC00755911 /* ResourceTree.swift */; };
 		D9EE1ED625D837EA00A6F4F8 /* MagicMouse.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841C22471B0900A78E9F /* MagicMouse.mtl */; };
 		D9EE1ED725D837EA00A6F4F8 /* MagicMouse.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841D22471B0A00A78E9F /* MagicMouse.obj */; };
 		D9EE1ED825D837EA00A6F4F8 /* Sword.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD68418224714A200A78E9F /* Sword.mtl */; };
 		D9EE1ED925D837EA00A6F4F8 /* Sword.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD68417224714A200A78E9F /* Sword.obj */; };
 		D9EE1EDA25D837EA00A6F4F8 /* Nade.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840822470E4D00A78E9F /* Nade.mtl */; };
 		D9EE1EDB25D837EA00A6F4F8 /* Nade.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840922470E4D00A78E9F /* Nade.obj */; };
-		D9EE1EDC25D837EA00A6F4F8 /* Mk2Grenade_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */; };
-		D9EE1EDD25D837EA00A6F4F8 /* Mk2Grenade_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */; };
-		D9EE1EDE25D837EA00A6F4F8 /* Mk2Grenade_Metalness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */; };
-		D9EE1EDF25D837EA00A6F4F8 /* Mk2Grenade_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */; };
-		D9EE1EE025D837EA00A6F4F8 /* Mk2Grenade_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */; };
+		D9EE1EDC25D837EA00A6F4F8 /* NadeAO.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841022470E6600A78E9F /* NadeAO.png */; };
+		D9EE1EDD25D837EA00A6F4F8 /* NadeBaseColor.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840C22470E6500A78E9F /* NadeBaseColor.png */; };
+		D9EE1EDE25D837EA00A6F4F8 /* NadeMetalness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840E22470E6600A78E9F /* NadeMetalness.png */; };
+		D9EE1EDF25D837EA00A6F4F8 /* NadeNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840D22470E6600A78E9F /* NadeNormal.png */; };
+		D9EE1EE025D837EA00A6F4F8 /* NadeRoughness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840F22470E6600A78E9F /* NadeRoughness.png */; };
 		D9EE1EE125D837EA00A6F4F8 /* Oil.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DF2558FF22479F02002CA9C3 /* Oil.mtl */; };
 		D9EE1EE225D837EA00A6F4F8 /* Oil.obj in Resources */ = {isa = PBXBuildFile; fileRef = DF25590022479F02002CA9C3 /* Oil.obj */; };
 		D9EE1EE325D837EA00A6F4F8 /* houseFloor1.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DF4402E2223DB52F00D5A7E3 /* houseFloor1.mtl */; };
@@ -186,11 +187,11 @@
 		DFBD313B20E6E41D009C2C03 /* cottage-normal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFBD313A20E6E41D009C2C03 /* cottage-normal.png */; };
 		DFD6840A22470E4D00A78E9F /* Nade.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840822470E4D00A78E9F /* Nade.mtl */; };
 		DFD6840B22470E4D00A78E9F /* Nade.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840922470E4D00A78E9F /* Nade.obj */; };
-		DFD6841122470E6600A78E9F /* Mk2Grenade_Base_Color.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */; };
-		DFD6841222470E6600A78E9F /* Mk2Grenade_Normal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */; };
-		DFD6841322470E6600A78E9F /* Mk2Grenade_Metalness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */; };
-		DFD6841422470E6600A78E9F /* Mk2Grenade_Roughness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */; };
-		DFD6841522470E6600A78E9F /* Mk2Grenade_AO.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */; };
+		DFD6841122470E6600A78E9F /* NadeBaseColor.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840C22470E6500A78E9F /* NadeBaseColor.png */; };
+		DFD6841222470E6600A78E9F /* NadeNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840D22470E6600A78E9F /* NadeNormal.png */; };
+		DFD6841322470E6600A78E9F /* NadeMetalness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840E22470E6600A78E9F /* NadeMetalness.png */; };
+		DFD6841422470E6600A78E9F /* NadeRoughness.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6840F22470E6600A78E9F /* NadeRoughness.png */; };
+		DFD6841522470E6600A78E9F /* NadeAO.png in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841022470E6600A78E9F /* NadeAO.png */; };
 		DFD68419224714A200A78E9F /* Sword.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD68417224714A200A78E9F /* Sword.obj */; };
 		DFD6841A224714A200A78E9F /* Sword.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD68418224714A200A78E9F /* Sword.mtl */; };
 		DFD6841E22471B0A00A78E9F /* MagicMouse.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841C22471B0900A78E9F /* MagicMouse.mtl */; };
@@ -296,6 +297,7 @@
 		D941F58F25D8035300DE2ACD /* StellarEngineMacOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StellarEngineMacOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D941F59325D8035300DE2ACD /* StellarEngineMacOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StellarEngineMacOSUITests.swift; sourceTree = "<group>"; };
 		D941F59525D8035300DE2ACD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D9589D0325DA24CC00755911 /* ResourceTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceTree.swift; sourceTree = "<group>"; };
 		D9EE1F2625D8385500A6F4F8 /* TestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
 		D9EE1F3625D886D400A6F4F8 /* axis.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = axis.obj; sourceTree = "<group>"; };
 		D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 1e6xsxnhzn0v.mtl; sourceTree = "<group>"; };
@@ -373,11 +375,11 @@
 		DFBD313A20E6E41D009C2C03 /* cottage-normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cottage-normal.png"; sourceTree = "<group>"; };
 		DFD6840822470E4D00A78E9F /* Nade.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nade.mtl; sourceTree = "<group>"; };
 		DFD6840922470E4D00A78E9F /* Nade.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nade.obj; sourceTree = "<group>"; };
-		DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Base_Color.png; sourceTree = "<group>"; };
-		DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Normal.png; sourceTree = "<group>"; };
-		DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Metalness.png; sourceTree = "<group>"; };
-		DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_Roughness.png; sourceTree = "<group>"; };
-		DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mk2Grenade_AO.png; sourceTree = "<group>"; };
+		DFD6840C22470E6500A78E9F /* NadeBaseColor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NadeBaseColor.png; sourceTree = "<group>"; };
+		DFD6840D22470E6600A78E9F /* NadeNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NadeNormal.png; sourceTree = "<group>"; };
+		DFD6840E22470E6600A78E9F /* NadeMetalness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NadeMetalness.png; sourceTree = "<group>"; };
+		DFD6840F22470E6600A78E9F /* NadeRoughness.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NadeRoughness.png; sourceTree = "<group>"; };
+		DFD6841022470E6600A78E9F /* NadeAO.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NadeAO.png; sourceTree = "<group>"; };
 		DFD68417224714A200A78E9F /* Sword.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sword.obj; sourceTree = "<group>"; };
 		DFD68418224714A200A78E9F /* Sword.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sword.mtl; sourceTree = "<group>"; };
 		DFD6841C22471B0900A78E9F /* MagicMouse.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MagicMouse.mtl; sourceTree = "<group>"; };
@@ -423,6 +425,7 @@
 		89B3850120D8B4CD00FAEDE4 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				D9589CFE25DA093C00755911 /* plane */,
 				D9EE1F2E25D886AB00A6F4F8 /* Axis */,
 				DFD6841B22471AFE00A78E9F /* AppleMouse */,
 				DFD684162247145200A78E9F /* Sword */,
@@ -441,8 +444,6 @@
 				DF1B2CD9223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.obj */,
 				DF440312223E38C100D5A7E3 /* SM_Bld_Village_05.obj */,
 				DFA06EDC2230F0DD00631585 /* irradiance.png */,
-				DF1B2CD0223F197B00831793 /* plane.mtl */,
-				DF1B2CD1223F197C00831793 /* plane.obj */,
 				DFA06ECB22309F5800631585 /* large-plane.mtl */,
 				DFA06ECC22309F5900631585 /* large-plane.obj */,
 				89B384FF20D8B4B700FAEDE4 /* grass.obj */,
@@ -524,6 +525,7 @@
 			children = (
 				D941F57525D8035200DE2ACD /* AppDelegate.swift */,
 				D941F57725D8035200DE2ACD /* ViewController.swift */,
+				D9589D0325DA24CC00755911 /* ResourceTree.swift */,
 				D9EE1F2625D8385500A6F4F8 /* TestScene.swift */,
 				D941F57925D8035300DE2ACD /* Assets.xcassets */,
 				D941F57B25D8035300DE2ACD /* Main.storyboard */,
@@ -549,6 +551,15 @@
 				D941F59525D8035300DE2ACD /* Info.plist */,
 			);
 			path = StellarEngineMacOSUITests;
+			sourceTree = "<group>";
+		};
+		D9589CFE25DA093C00755911 /* plane */ = {
+			isa = PBXGroup;
+			children = (
+				DF1B2CD0223F197B00831793 /* plane.mtl */,
+				DF1B2CD1223F197C00831793 /* plane.obj */,
+			);
+			path = plane;
 			sourceTree = "<group>";
 		};
 		D9EE1F2E25D886AB00A6F4F8 /* Axis */ = {
@@ -684,11 +695,11 @@
 			children = (
 				DFD6840822470E4D00A78E9F /* Nade.mtl */,
 				DFD6840922470E4D00A78E9F /* Nade.obj */,
-				DFD6841022470E6600A78E9F /* Mk2Grenade_AO.png */,
-				DFD6840C22470E6500A78E9F /* Mk2Grenade_Base_Color.png */,
-				DFD6840E22470E6600A78E9F /* Mk2Grenade_Metalness.png */,
-				DFD6840D22470E6600A78E9F /* Mk2Grenade_Normal.png */,
-				DFD6840F22470E6600A78E9F /* Mk2Grenade_Roughness.png */,
+				DFD6841022470E6600A78E9F /* NadeAO.png */,
+				DFD6840C22470E6500A78E9F /* NadeBaseColor.png */,
+				DFD6840E22470E6600A78E9F /* NadeMetalness.png */,
+				DFD6840D22470E6600A78E9F /* NadeNormal.png */,
+				DFD6840F22470E6600A78E9F /* NadeRoughness.png */,
 			);
 			path = Nade;
 			sourceTree = "<group>";
@@ -895,7 +906,7 @@
 				DFB84E27216B1CD1000195B9 /* Textures.xcassets in Resources */,
 				DF4402E8223DB52F00D5A7E3 /* houseGround4.mtl in Resources */,
 				DF4402B4223C7FE200D5A7E3 /* tree.mtl in Resources */,
-				DFD6841222470E6600A78E9F /* Mk2Grenade_Normal.png in Resources */,
+				DFD6841222470E6600A78E9F /* NadeNormal.png in Resources */,
 				DF4402F2223DB52F00D5A7E3 /* houseFloor2.mtl in Resources */,
 				DF440308223DB93900D5A7E3 /* grass03.obj in Resources */,
 				DFA06EDE2230F0DD00631585 /* irradiance.png in Resources */,
@@ -911,11 +922,11 @@
 				DF4402C5223C8C4100D5A7E3 /* rock3.obj in Resources */,
 				DFA06ECD22309F5900631585 /* large-plane.mtl in Resources */,
 				89B384F720D7C98C00FAEDE4 /* cottage-color.png in Resources */,
-				DFD6841322470E6600A78E9F /* Mk2Grenade_Metalness.png in Resources */,
+				DFD6841322470E6600A78E9F /* NadeMetalness.png in Resources */,
 				DF4402EB223DB52F00D5A7E3 /* houseGround2.obj in Resources */,
 				DF3EF502216AD367000F43F4 /* chest.mtl in Resources */,
 				DF4402E4223DB52F00D5A7E3 /* houseRoof1.obj in Resources */,
-				DFD6841422470E6600A78E9F /* Mk2Grenade_Roughness.png in Resources */,
+				DFD6841422470E6600A78E9F /* NadeRoughness.png in Resources */,
 				DF4402B3223C7FE200D5A7E3 /* tree.obj in Resources */,
 				DF4402F6223DB52F00D5A7E3 /* houseFloor1.mtl in Resources */,
 				DF3EF50D216AD508000F43F4 /* treefir.obj in Resources */,
@@ -927,7 +938,7 @@
 				DF440307223DB93900D5A7E3 /* grass04.obj in Resources */,
 				DF3EF506216AD3AB000F43F4 /* chest-roughness.png in Resources */,
 				DFBD313B20E6E41D009C2C03 /* cottage-normal.png in Resources */,
-				DFD6841122470E6600A78E9F /* Mk2Grenade_Base_Color.png in Resources */,
+				DFD6841122470E6600A78E9F /* NadeBaseColor.png in Resources */,
 				DF4402EC223DB52F00D5A7E3 /* houseGround1.mtl in Resources */,
 				DF3EF510216AD508000F43F4 /* train.obj in Resources */,
 				DF4402ED223DB52F00D5A7E3 /* houseFloor3.obj in Resources */,
@@ -955,7 +966,7 @@
 				DFEA65BB20E5BD4500F3C8A0 /* img110.png in Resources */,
 				DF4402C4223C8C4100D5A7E3 /* rock3.mtl in Resources */,
 				DF440313223E38C200D5A7E3 /* SM_Bld_Village_05.obj in Resources */,
-				DFD6841522470E6600A78E9F /* Mk2Grenade_AO.png in Resources */,
+				DFD6841522470E6600A78E9F /* NadeAO.png in Resources */,
 				DF4402F1223DB52F00D5A7E3 /* houseRoof1.mtl in Resources */,
 				89B384FA20D7CE8A00FAEDE4 /* green-grass.png in Resources */,
 				DF3EF50E216AD508000F43F4 /* treefir.mtl in Resources */,
@@ -975,11 +986,11 @@
 				D9EE1EDA25D837EA00A6F4F8 /* Nade.mtl in Resources */,
 				D9EE1EDB25D837EA00A6F4F8 /* Nade.obj in Resources */,
 				D9EE1F4625D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl in Resources */,
-				D9EE1EDC25D837EA00A6F4F8 /* Mk2Grenade_AO.png in Resources */,
-				D9EE1EDD25D837EA00A6F4F8 /* Mk2Grenade_Base_Color.png in Resources */,
-				D9EE1EDE25D837EA00A6F4F8 /* Mk2Grenade_Metalness.png in Resources */,
-				D9EE1EDF25D837EA00A6F4F8 /* Mk2Grenade_Normal.png in Resources */,
-				D9EE1EE025D837EA00A6F4F8 /* Mk2Grenade_Roughness.png in Resources */,
+				D9EE1EDC25D837EA00A6F4F8 /* NadeAO.png in Resources */,
+				D9EE1EDD25D837EA00A6F4F8 /* NadeBaseColor.png in Resources */,
+				D9EE1EDE25D837EA00A6F4F8 /* NadeMetalness.png in Resources */,
+				D9EE1EDF25D837EA00A6F4F8 /* NadeNormal.png in Resources */,
+				D9EE1EE025D837EA00A6F4F8 /* NadeRoughness.png in Resources */,
 				D9EE1EE125D837EA00A6F4F8 /* Oil.mtl in Resources */,
 				D9EE1EE225D837EA00A6F4F8 /* Oil.obj in Resources */,
 				D9EE1EE325D837EA00A6F4F8 /* houseFloor1.mtl in Resources */,
@@ -1096,6 +1107,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D941F57825D8035200DE2ACD /* ViewController.swift in Sources */,
+				D9589D0425DA24CC00755911 /* ResourceTree.swift in Sources */,
 				D9EE1F2725D8385500A6F4F8 /* TestScene.swift in Sources */,
 				D941F57625D8035200DE2ACD /* AppDelegate.swift in Sources */,
 			);
