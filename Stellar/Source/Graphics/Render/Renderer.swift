@@ -224,10 +224,6 @@ open class STLRRenderer: NSObject {
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         
-        scene.uniforms.viewMatrix = scene.camera.viewMatrix
-        scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
-        scene.fragmentUniforms.cameraPosition = scene.camera.position
-        
         renderEncoder.setFragmentTexture(shadowTexture, index: 5)
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         
@@ -315,6 +311,12 @@ extension STLRRenderer: MTKViewDelegate {
         STLRRenderer.commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()
         guard let scene = scene else { return }
         
+        STLRRenderer.commandBuffer?.addCompletedHandler({ buffer in
+            let deltaTime = buffer.gpuEndTime - buffer.gpuStartTime
+            scene.fps = Int(1 / deltaTime)
+            scene.update(deltaTime: 1 / Float(view.preferredFramesPerSecond))
+        })
+        
         // shadow pass
         guard let shadowEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPassDescriptor) else { return }
         renderShadowPass(renderEncoder: shadowEncoder)
@@ -388,11 +390,6 @@ extension STLRRenderer: MTKViewDelegate {
         }
         
         STLRRenderer.commandBuffer?.present(drawable)
-        STLRRenderer.commandBuffer?.addCompletedHandler({ buffer in
-            let deltaTime = buffer.gpuEndTime - buffer.gpuStartTime
-            scene.fps = Int(1 / deltaTime)
-            scene.update(deltaTime: Float(deltaTime))
-        })
         STLRRenderer.commandBuffer?.commit()
         //STLRRenderer.commandBuffer = nil
     }

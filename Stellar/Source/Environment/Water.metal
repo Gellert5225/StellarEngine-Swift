@@ -48,7 +48,7 @@ fragment float4 fragment_water(VertexOut vertex_in [[ stage_in ]],
     float y = vertex_in.position.y / height;
     
     float2 reflectionCoords = float2(x, 1 - y);
-    float2 uv = vertex_in.uv * 10; // 2 = huge ripple, 16 = small ripple
+    float2 uv = vertex_in.uv * 7; // 2 = huge ripple, 16 = small ripple
     
     float waveStrength = 0.07;
     float2 rippleX = float2(uv.x + timer, uv.y);

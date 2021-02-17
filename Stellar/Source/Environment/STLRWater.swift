@@ -31,7 +31,7 @@ open class STLRWater: STLRNode, Texturable {
         do {
             mesh = try MTKMesh(mesh: plane, device: STLRRenderer.metalDevice)
             let frameworkBundle = Bundle(for: STLRShape.self)
-            texture = try STLRWater.loadTexture(imageName: "ocean3", bundle: frameworkBundle)
+            texture = try STLRWater.loadTexture(imageName: "ocean2", bundle: frameworkBundle)
         } catch {
             fatalError(error.localizedDescription)
         }
