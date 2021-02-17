@@ -1,0 +1,39 @@
+# Blender MTL File: 'Cottage3.blend'
+# Material Count: 4
+
+newmtl glass
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.014114 0.013446 0.041016
+Ks 1.000000 1.000000 1.000000
+d 1
+illum 2
+map_Kd cottage-color.png
+map_tangentSpaceNormal cottage-normal.png
+
+newmtl roof
+Ns 1.0
+Ka 0.000000 0.000000 0.000000
+Kd 0.700000 0.000000 0.800000
+Ks 0.2 0.2 0.2
+d 1.000000
+illum 2
+map_tangentSpaceNormal cottage-normal.png
+
+newmtl wall
+Ns 100.0
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.800000 0.000000
+Ks 0.000000 0.000000 0.000000
+d 1.000000
+illum 1
+map_tangentSpaceNormal cottage-normal.png
+
+newmtl wood
+Ns 1.0
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.800000 0.750000
+Ks 0.2 0.2 0.2
+d 1.000000
+illum 2
+map_tangentSpaceNormal cottage-normal.png

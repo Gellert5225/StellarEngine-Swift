@@ -29,8 +29,10 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
         navigationSplitView.delegate = self
         
         setupScene()
-        let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("/Assets")
-        loadResourceTree(at: documentsUrl, resourceTree: resourceTree)
+        let docsPath = Bundle.main.resourcePath! + "/Assets.bundle"
+//        let fileManager = FileManager.default
+//        let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent("/Assets")
+        loadResourceTree(at: URL(string: docsPath)!, resourceTree: resourceTree)
         
         sceneOutlineView.delegate = self
         sceneOutlineView.dataSource = self
@@ -38,17 +40,6 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
         resourceOutlineView.dataSource = self
         
         resourceOutlineView.reloadData()
-        
-        let filemgr = FileManager.default
-        let dirPaths = filemgr.urls(for: .documentDirectory, in: .userDomainMask)
-        let docsURL = dirPaths[0]
-        let newDir = docsURL.appendingPathComponent("Assets").path
-        do {
-            try filemgr.createDirectory(atPath: newDir,
-                        withIntermediateDirectories: true, attributes: nil)
-            } catch let error as NSError {
-                    print("Error: \(error.localizedDescription)")
-        }
     }
     
     func loadResourceTree(at path: URL, resourceTree tree: ResourceTree) {

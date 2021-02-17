@@ -30,6 +30,8 @@
 		D9589D0425DA24CC00755911 /* ResourceTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9589D0325DA24CC00755911 /* ResourceTree.swift */; };
 		D97CB5E125DA5CEB005C9F18 /* RightPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97CB5E025DA5CEB005C9F18 /* RightPanelView.swift */; };
 		D97CB5E325DA5D17005C9F18 /* RightPanelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D97CB5E225DA5D17005C9F18 /* RightPanelView.xib */; };
+		D9BABC0225DCCCE6004C2FCB /* Assets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D9BABC0125DCCCE6004C2FCB /* Assets.bundle */; };
+		D9BABC0325DCCCE6004C2FCB /* Assets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D9BABC0125DCCCE6004C2FCB /* Assets.bundle */; };
 		D9EE1ED625D837EA00A6F4F8 /* MagicMouse.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841C22471B0900A78E9F /* MagicMouse.mtl */; };
 		D9EE1ED725D837EA00A6F4F8 /* MagicMouse.obj in Resources */ = {isa = PBXBuildFile; fileRef = DFD6841D22471B0A00A78E9F /* MagicMouse.obj */; };
 		D9EE1ED825D837EA00A6F4F8 /* Sword.mtl in Resources */ = {isa = PBXBuildFile; fileRef = DFD68418224714A200A78E9F /* Sword.mtl */; };
@@ -302,6 +304,7 @@
 		D9589D0325DA24CC00755911 /* ResourceTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceTree.swift; sourceTree = "<group>"; };
 		D97CB5E025DA5CEB005C9F18 /* RightPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightPanelView.swift; sourceTree = "<group>"; };
 		D97CB5E225DA5D17005C9F18 /* RightPanelView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RightPanelView.xib; sourceTree = "<group>"; };
+		D9BABC0125DCCCE6004C2FCB /* Assets.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Assets.bundle; sourceTree = "<group>"; };
 		D9EE1F2625D8385500A6F4F8 /* TestScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestScene.swift; sourceTree = "<group>"; };
 		D9EE1F3625D886D400A6F4F8 /* axis.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = axis.obj; sourceTree = "<group>"; };
 		D9EE1F4425D8924F00A6F4F8 /* 1e6xsxnhzn0v.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 1e6xsxnhzn0v.mtl; sourceTree = "<group>"; };
@@ -474,6 +477,7 @@
 			children = (
 				D941F55725D7FDCE00DE2ACD /* Stellar.xcodeproj */,
 				89B3850120D8B4CD00FAEDE4 /* Assets */,
+				D9BABC0125DCCCE6004C2FCB /* Assets.bundle */,
 				89FFCAD220CC7A6000C6DB28 /* StellarEngineiOS */,
 				D941F57425D8035200DE2ACD /* StellarEngineMacOS */,
 				D941F58725D8035300DE2ACD /* StellarEngineMacOSTests */,
@@ -903,6 +907,7 @@
 				DFA06ECE22309F5900631585 /* large-plane.obj in Resources */,
 				DF4402E6223DB52F00D5A7E3 /* houseGround4.obj in Resources */,
 				DFD6841A224714A200A78E9F /* Sword.mtl in Resources */,
+				D9BABC0225DCCCE6004C2FCB /* Assets.bundle in Resources */,
 				DFA06EDD2230F0DD00631585 /* cube-sky.png in Resources */,
 				89FFCADE20CC7A6100C6DB28 /* LaunchScreen.storyboard in Resources */,
 				DF1B2CDA223F252500831793 /* Cartoon_lowpoly_landscape_scene_obj.mtl in Resources */,
@@ -995,6 +1000,7 @@
 				D9EE1EDC25D837EA00A6F4F8 /* NadeAO.png in Resources */,
 				D9EE1EDD25D837EA00A6F4F8 /* NadeBaseColor.png in Resources */,
 				D9EE1EDE25D837EA00A6F4F8 /* NadeMetalness.png in Resources */,
+				D9BABC0325DCCCE6004C2FCB /* Assets.bundle in Resources */,
 				D9EE1EDF25D837EA00A6F4F8 /* NadeNormal.png in Resources */,
 				D9EE1EE025D837EA00A6F4F8 /* NadeRoughness.png in Resources */,
 				D9EE1EE125D837EA00A6F4F8 /* Oil.mtl in Resources */,

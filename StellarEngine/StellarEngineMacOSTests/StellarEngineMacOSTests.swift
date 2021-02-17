@@ -9,19 +9,32 @@
 import XCTest
 @testable import StellarEngineMacOS
 
+var tree: ResourceTree!
+
 class StellarEngineMacOSTests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        super.setUp()
+        tree = ResourceTree(name: "root", isDirectory: true)
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testTree() throws {
+        let child_1 = ResourceTree(name: "dir_1", isDirectory: true)
+        let child_2 = ResourceTree(name: "dir_2", isDirectory: true)
+        let child_3 = ResourceTree(name: "file_1", isDirectory: false)
+        
+        child_1.add(child: child_3)
+        
+        tree.add(child: child_1)
+        tree.add(child: child_2)
+        
+        XCTAssertEqual(tree.children[0].name, "dir_1", "Test failed. Expected value: dir_1, actual: \(tree.children[0].name)")
+        XCTAssertEqual(tree.children[1].name, "dir_2", "Test failed. Expected value: dir_1, actual: \(tree.children[1].name)")
+        XCTAssertEqual(tree.children[0].children[0].name, "file_1", "Test failed. Expected value: dir_1, actual: \(tree.children[0].children[0].name)")
     }
 
     func testPerformanceExample() throws {
