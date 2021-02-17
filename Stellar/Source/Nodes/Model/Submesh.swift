@@ -88,7 +88,9 @@ private extension STLRSubmesh.Textures {
             guard let property = material?.property(with: semantic),
                 property.type == .string,
                 let filename = property.stringValue,
-                let texture = ((try? STLRSubmesh.loadTexture(imageName: filename, bundle: Bundle.main)) as MTLTexture??) else {
+                let bundleURL = Bundle.main.url(forResource: "Assets", withExtension: "bundle"),
+                let bundle = Bundle(url: bundleURL),
+                let texture = ((try? STLRSubmesh.loadTexture(imageName: filename, bundle: bundle)) as MTLTexture??) else {
                     return nil
             }
             return texture

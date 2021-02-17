@@ -89,7 +89,6 @@ open class STLRRenderer: NSObject {
             fatalError("Could not load default library from specified bundle")
         }
         STLRRenderer.library = defaultLibrary
-        print("Metal Device: \(device.name)")
                 
         renderPassDescriptor = MTLRenderPassDescriptor()
         
@@ -405,8 +404,9 @@ extension STLRRenderer: MTKViewDelegate {
         renderEncoder.setVertexBytes(&scene.uniforms, length: MemoryLayout<STLRUniforms>.stride, index: 11)
         renderEncoder.setVertexBuffer(model.mesh?.vertexBuffers[0].buffer, offset: 0, index: 0)
         renderEncoder.setFragmentSamplerState(model.samplerState, index: 0)
+        guard let modelSubmeshes = model.submeshes else { return }
         
-        for modelSubmesh in model.submeshes! {
+        for modelSubmesh in modelSubmeshes {
             let submesh = modelSubmesh.submesh
             var material = modelSubmesh.material
             renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: 0)

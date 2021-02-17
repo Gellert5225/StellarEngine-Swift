@@ -43,7 +43,6 @@ open class STLRMorph: STLRNode {
                                                             bufferIndex: 0)
         offset += MemoryLayout<simd_float2>.stride
         vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
-        print("Vertex descriptor stride: \((vertexDescriptor.layouts[0] as! MDLVertexBufferLayout).stride)")
         return vertexDescriptor
     }()
     

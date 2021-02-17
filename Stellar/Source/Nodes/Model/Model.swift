@@ -122,8 +122,10 @@ open class STLRModel: STLRNode {
     }
     
     func loadModel(modelName: String, vertexFunctionName: String, fragmentFunctionName: String) {
-        guard let assetURL = Bundle.main.url(forResource: modelName, withExtension: "obj") else {
-            fatalError("Asset \(modelName) does not exist")
+        guard let bundleURL = Bundle.main.url(forResource: "Assets", withExtension: "bundle") else { return }
+        guard let assetURL = recursivePathsForResource(name: modelName, extensionName: "obj", in: bundleURL.path) else {
+            STLRLog.CORE_ERROR("Failed to load model: \(modelName), file does not exist!")
+            return
         }
         STLRLog.CORE_INFO("Loaded model: \(modelName)")
         let descriptor = MTKModelIOVertexDescriptorFromMetal(STLRModel.vertexDescriptor)
@@ -151,14 +153,13 @@ open class STLRModel: STLRNode {
             mesh = try MTKMesh(mesh: mdlMesh, device: STLRRenderer.metalDevice)
             submeshes = mdlMesh.submeshes?.enumerated().compactMap {index, submesh in
                 (submesh as? MDLSubmesh).map {
-                    //print($0.material?.name ?? "unknown")
                     return STLRSubmesh(submesh: (mesh?.submeshes[index])!,
                                        mdlSubmesh: $0, vertexFunctionName: vertexFunctionName, fragmentFunctionName: fragmentFunctionName)
                 }
             }
             ?? []
         } catch {
-            print("Mesh error: \(error.localizedDescription)")
+            STLRLog.CORE_ERROR("Mesh error: \(error.localizedDescription)")
         }
     }
     

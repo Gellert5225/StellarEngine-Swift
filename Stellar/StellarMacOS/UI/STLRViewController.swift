@@ -62,7 +62,6 @@ open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegat
     }
     
     public func gestureRecognizer(_ gestureRecognizer: NSGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: NSGestureRecognizer) -> Bool {
-        print(gestureRecognizer)
         return true
     }
     

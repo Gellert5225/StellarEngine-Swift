@@ -19,16 +19,17 @@ extension Texturable {
              .SRGB: false,
              .generateMipmaps: NSNumber(booleanLiteral: true)]
         let fileExtension =
-            URL(fileURLWithPath: imageName).pathExtension.isEmpty ?
-                "png" : nil
-        guard let url = bundle.url(forResource: imageName, withExtension: fileExtension)
+            (URL(fileURLWithPath: imageName).pathExtension.isEmpty ?
+                "png" : nil) ?? ""
+        
+        guard let url = recursivePathsForResource(name: imageName, extensionName: fileExtension, in: bundle.bundleURL.path)
             else {
-                // print("Failed to load \(imageName)\n - loading from Assets Catalog")
+            STLRLog.CORE_WARNING("Failed to load \(imageName)\n - loading from Assets Catalog")
                 return try textureLoader.newTexture(name: imageName, scaleFactor: 1.0,
                                                     bundle: bundle, options: nil)
         }
         
-        let texture = try textureLoader.newTexture(URL: url, options: textureLoaderOptions)
+        let texture = try textureLoader.newTexture(URL: url.absoluteURL, options: textureLoaderOptions)
         STLRLog.CORE_INFO("Loaded Texture: \(url.lastPathComponent)")
         return texture
     }
