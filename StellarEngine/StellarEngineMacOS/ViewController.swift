@@ -65,7 +65,7 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     }
     
     func setupScene() {
-        let testScene = TestScene()
+        let testScene = TestScene(name: "Test Scene")
         scene = testScene
         
         panEnabled = true

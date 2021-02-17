@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		89157F7B20D20CE600299CB6 /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89157F7A20D20CE600299CB6 /* Renderable.swift */; };
-		8924FDE220D7781500D52908 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Types.swift */; };
+		8924FDE220D7781500D52908 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Utilities.swift */; };
 		89267CDD20D742780024085C /* STLRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89267CDC20D742780024085C /* STLRViewController.swift */; };
 		89B34CA020D2F20F00873A28 /* Texturable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B34C9F20D2F20F00873A28 /* Texturable.swift */; };
 		89B384EA20D78AB700FAEDE4 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384E920D78AB700FAEDE4 /* Node.swift */; };
@@ -55,7 +55,7 @@
 		D9B33EAC25D7D67700B8BCF3 /* Texturable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B34C9F20D2F20F00873A28 /* Texturable.swift */; };
 		D9B33EAD25D7D67700B8BCF3 /* BRDF.metal in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EDF2230F57300631585 /* BRDF.metal */; };
 		D9B33EAE25D7D67700B8BCF3 /* RendererBRDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA06EE02230F57300631585 /* RendererBRDF.swift */; };
-		D9B33EAF25D7D67700B8BCF3 /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Types.swift */; };
+		D9B33EAF25D7D67700B8BCF3 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Utilities.swift */; };
 		D9B33EB025D7D67700B8BCF3 /* MatrixMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384F120D7B9E600FAEDE4 /* MatrixMath.swift */; };
 		D9B33EB125D7D67700B8BCF3 /* Transform.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4402AF223C737000D5A7E3 /* Transform.swift */; };
 		D9B33EBB25D7D68500B8BCF3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9B33EBA25D7D68500B8BCF3 /* MetalKit.framework */; };
@@ -110,7 +110,7 @@
 
 /* Begin PBXFileReference section */
 		89157F7A20D20CE600299CB6 /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
-		8924FDE120D7781500D52908 /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		8924FDE120D7781500D52908 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		89267CDC20D742780024085C /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
 		89B34C9F20D2F20F00873A28 /* Texturable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texturable.swift; sourceTree = "<group>"; };
 		89B384E920D78AB700FAEDE4 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
@@ -301,7 +301,7 @@
 			children = (
 				DFA06EDF2230F57300631585 /* BRDF.metal */,
 				DFA06EE02230F57300631585 /* RendererBRDF.swift */,
-				8924FDE120D7781500D52908 /* Types.swift */,
+				8924FDE120D7781500D52908 /* Utilities.swift */,
 				89B384F120D7B9E600FAEDE4 /* MatrixMath.swift */,
 				DF4402AF223C737000D5A7E3 /* Transform.swift */,
 				D96CE0DD25D9781400468A56 /* Log.swift */,
@@ -627,7 +627,7 @@
 				DF4402B0223C737000D5A7E3 /* Transform.swift in Sources */,
 				89FFCABD20CC79B500C6DB28 /* Shaders.metal in Sources */,
 				89267CDD20D742780024085C /* STLRViewController.swift in Sources */,
-				8924FDE220D7781500D52908 /* Types.swift in Sources */,
+				8924FDE220D7781500D52908 /* Utilities.swift in Sources */,
 				DF4402CD223C9C6F00D5A7E3 /* Morph.metal in Sources */,
 				DFEF7BA0223FDCD6006711DE /* Gbuffer.metal in Sources */,
 				DFA06EC422309A5A00631585 /* Skybox.metal in Sources */,
@@ -682,7 +682,7 @@
 				D9B33EAC25D7D67700B8BCF3 /* Texturable.swift in Sources */,
 				D9B33EAD25D7D67700B8BCF3 /* BRDF.metal in Sources */,
 				D9B33EAE25D7D67700B8BCF3 /* RendererBRDF.swift in Sources */,
-				D9B33EAF25D7D67700B8BCF3 /* Types.swift in Sources */,
+				D9B33EAF25D7D67700B8BCF3 /* Utilities.swift in Sources */,
 				D9B33EB025D7D67700B8BCF3 /* MatrixMath.swift in Sources */,
 				D9B33EB125D7D67700B8BCF3 /* Transform.swift in Sources */,
 			);

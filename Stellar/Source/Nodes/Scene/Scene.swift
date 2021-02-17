@@ -10,6 +10,7 @@ import MetalKit
 
 open class STLRScene {
     
+    open var name: String = "Untitled Scene"
     open var camera = STLRArcballCamera()
     open var lights = [Light]()
     open var skybox: STLRSkybox?
@@ -28,15 +29,6 @@ open class STLRScene {
         return light
     }()
     
-    var lightConstants = STLRLightConstants()
-    var uniforms = STLRUniforms()
-    var fragmentUniforms = STLRFragmentUniforms()
-    var axis: STLRModel?
-    
-    var reflectionCamera = STLRArcballCamera()
-    
-    var fps: Int?
-    
     open lazy var ambientLight: Light = {
         var light = buildDefaultLight()
         light.color = [0.7, 0.7, 0.7]
@@ -46,12 +38,22 @@ open class STLRScene {
         return light
     }()
     
-    public init() {
+    var lightConstants = STLRLightConstants()
+    var uniforms = STLRUniforms()
+    var fragmentUniforms = STLRFragmentUniforms()
+    var axis: STLRModel?
+    
+    var reflectionCamera = STLRArcballCamera()
+    
+    var fps: Int?
+    
+    public init(name: String = "Untitled Scene") {
+        self.name = name
+        rootNode.name = name
         add(node: camera, render: false)
-        axis = STLRModel(modelName: "axis")
+        // axis = STLRModel(modelName: "axis")
         //add(node: axis!, render: true)
         camera.transform.position = [10, 2, 35]
-        
     }
     
     open func updateScene(deltaTime: Float) {

@@ -9,8 +9,8 @@
 import StellarMacOS
 
 class TestScene: STLRScene {
-    override init() {
-        super.init()
+    override init(name: String = "Untitled Scene") {
+        super.init(name: name)
         setupScene()
     }
     

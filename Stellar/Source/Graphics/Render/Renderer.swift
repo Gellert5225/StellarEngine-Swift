@@ -81,6 +81,7 @@ open class STLRRenderer: NSObject {
         
         metalView.depthStencilPixelFormat = .depth32Float
         metalView.delegate = self
+        
         mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
         metalView.framebufferOnly = false
         
@@ -312,12 +313,7 @@ extension STLRRenderer: MTKViewDelegate {
     public func draw(in view: MTKView) {
         guard let descriptor = view.currentRenderPassDescriptor else {return}
         STLRRenderer.commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()
-        
         guard let scene = scene else { return }
-        
-        let deltaTime = 1 / Float(view.preferredFramesPerSecond)
-        scene.fps = view.preferredFramesPerSecond
-        scene.update(deltaTime: deltaTime)
         
         // shadow pass
         guard let shadowEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPassDescriptor) else { return }
@@ -392,6 +388,11 @@ extension STLRRenderer: MTKViewDelegate {
         }
         
         STLRRenderer.commandBuffer?.present(drawable)
+        STLRRenderer.commandBuffer?.addCompletedHandler({ buffer in
+            let deltaTime = buffer.gpuEndTime - buffer.gpuStartTime
+            scene.fps = Int(1 / deltaTime)
+            scene.update(deltaTime: Float(deltaTime))
+        })
         STLRRenderer.commandBuffer?.commit()
         //STLRRenderer.commandBuffer = nil
     }

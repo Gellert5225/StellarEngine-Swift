@@ -712,14 +712,14 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <splitView arrangesAllSubviews="NO" dividerStyle="thin" translatesAutoresizingMaskIntoConstraints="NO" id="jai-s1-Exn">
-                                                <rect key="frame" x="0.0" y="-48" width="214" height="563"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="214" height="563"/>
                                                 <subviews>
                                                     <customView misplaced="YES" id="Rmu-sv-wjB">
                                                         <rect key="frame" x="0.0" y="0.0" width="214" height="281"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hbP-Ak-lW4">
-                                                                <rect key="frame" x="18" y="285" width="45" height="17"/>
+                                                                <rect key="frame" x="18" y="309" width="45" height="17"/>
                                                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Scene" id="ide-Vz-Pjy">
                                                                     <font key="font" metaFont="system" size="14"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -727,7 +727,7 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                             <scrollView autohidesScrollers="YES" horizontalLineScroll="16" horizontalPageScroll="10" verticalLineScroll="16" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NbI-MD-NDu">
-                                                                <rect key="frame" x="0.0" y="-24" width="214" height="306"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="214" height="306"/>
                                                                 <clipView key="contentView" id="59W-yh-aav">
                                                                     <rect key="frame" x="1" y="1" width="212" height="304"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -810,7 +810,7 @@
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <subviews>
                                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dqc-Iz-RF3">
-                                                                <rect key="frame" x="18" y="189" width="76" height="17"/>
+                                                                <rect key="frame" x="18" y="213" width="76" height="17"/>
                                                                 <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" alignment="center" title="Resources" id="deX-a9-N8S">
                                                                     <font key="font" metaFont="system" size="14"/>
                                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -818,7 +818,7 @@
                                                                 </textFieldCell>
                                                             </textField>
                                                             <scrollView autohidesScrollers="YES" horizontalLineScroll="16" horizontalPageScroll="10" verticalLineScroll="16" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yU9-ca-cWX">
-                                                                <rect key="frame" x="0.0" y="-24" width="214" height="210"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="214" height="210"/>
                                                                 <clipView key="contentView" id="mwb-Ps-Fel">
                                                                     <rect key="frame" x="1" y="1" width="212" height="208"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -915,7 +915,7 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <splitView arrangesAllSubviews="NO" dividerStyle="thin" translatesAutoresizingMaskIntoConstraints="NO" id="pU0-3I-Ook">
-                                                <rect key="frame" x="0.0" y="-48" width="860" height="563"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="860" height="563"/>
                                                 <subviews>
                                                     <customView id="FCE-jo-koo" customClass="MTKView">
                                                         <rect key="frame" x="0.0" y="0.0" width="860" height="417"/>
@@ -930,7 +930,7 @@
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                         <subviews>
                                                             <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" scrollerKnobStyle="dark" translatesAutoresizingMaskIntoConstraints="NO" id="YxZ-a3-eqw">
-                                                                <rect key="frame" x="0.0" y="-12" width="860" height="121"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="860" height="121"/>
                                                                 <clipView key="contentView" drawsBackground="NO" id="285-D1-psR">
                                                                     <rect key="frame" x="0.0" y="0.0" width="845" height="121"/>
                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -956,7 +956,7 @@
                                                                 </scroller>
                                                             </scrollView>
                                                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="65f-5b-9dP">
-                                                                <rect key="frame" x="17" y="109" width="141" height="23"/>
+                                                                <rect key="frame" x="17" y="121" width="141" height="23"/>
                                                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="capsule" trackingMode="selectOne" id="QIO-25-syZ">
                                                                     <font key="font" metaFont="system"/>
                                                                     <segments>

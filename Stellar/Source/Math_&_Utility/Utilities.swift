@@ -21,3 +21,34 @@ func recursivePathsForResource(name: String, extensionName: String, in directory
     }
     return nil
 }
+
+class FPSCounter {
+    var updateInterval: Float = 0.5
+    var accum: Float = 0.0
+    var frames: Int = 0;
+    var timeLeft: Float = 0;
+    var previousTime: Float = 0;
+    
+    init(interval: Float) {
+        self.updateInterval = interval
+        self.timeLeft = interval
+    }
+    
+    func getFPS(time: Float) -> Float {
+        let deltaTime = time - previousTime
+        previousTime = time
+        
+        timeLeft -= deltaTime
+        accum += 1 / deltaTime
+        frames += 1
+        
+        var fps: Float = 0
+        if(timeLeft <= 0.0) {
+            fps = accum / Float(frames)
+            timeLeft = updateInterval
+            accum = 0
+            frames = 0
+        }
+        return fps
+    }
+}
