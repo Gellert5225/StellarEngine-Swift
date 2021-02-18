@@ -40,8 +40,7 @@ open class STLRRenderer: NSObject {
     var depthTexture_AA: MTLTexture!
     
     var gBufferPipelineState: MTLRenderPipelineState!
-    var gBufferRenderPassDescriptor: MTLRenderPassDescriptor!
-    //var gBufferRenderPipelineDescriptor: MTLRenderPipelineDescriptor!
+    var gBufferRenderPass: RenderPass!
     
     var compositionPipelineState: MTLRenderPipelineState!
     
@@ -74,7 +73,6 @@ open class STLRRenderer: NSObject {
     
     public init(metalView: MTKView) {
         self.metalView = metalView
-        print(metalView.sampleCount)
         metalView.device = MTLCreateSystemDefaultDevice()
         guard let device = metalView.device else {
             fatalError("Device not created. Run on a physical device")
@@ -105,7 +103,7 @@ open class STLRRenderer: NSObject {
         buildShadowTexture(size: self.metalView.drawableSize)
         buildShadowPipelineState()
         
-        buildGBufferRenderPassDescriptor(size: self.metalView.drawableSize)
+        gBufferRenderPass = RenderPass(name: "G-Buffer Pass", size: self.metalView.frame.size, multiplier: 1.0)
         buildGbufferPipelineState(withFragmentFunctionName: "fragment_PBR")
         
         quadVerticesBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: quadVertices, length: MemoryLayout<Float>.size * quadVertices.count, options: [])
@@ -166,35 +164,6 @@ open class STLRRenderer: NSObject {
         } catch {
             fatalError(error.localizedDescription)
         }
-    }
-    
-    func buildGbufferTextures(size: CGSize) {
-//        albedoTexture = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo")
-//        normalTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal")
-//        positionTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position")
-//        depthTexture = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth")
-        
-        albedoTexture = buildResolveTexture(pixelFormat: .bgra8Unorm, size: size)
-        normalTexture = buildResolveTexture(pixelFormat: .rgba16Float, size: size)
-        positionTexture = buildResolveTexture(pixelFormat: .rgba16Float, size: size)
-        depthTexture = buildResolveTexture(pixelFormat: .depth32Float, size: size)
-        
-        albedoTexture_AA = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo_AA", antiAliased: true)
-        normalTexture_AA = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal_AA", antiAliased: true)
-        positionTexture_AA = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position_AA", antiAliased: true)
-        depthTexture_AA = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth_AA", antiAliased: true)
-    }
-    
-    func buildGBufferRenderPassDescriptor(size: CGSize) {
-        gBufferRenderPassDescriptor = MTLRenderPassDescriptor()
-        buildGbufferTextures(size: size)
-        let textures: [MTLTexture] = [albedoTexture, normalTexture, positionTexture]
-        let textures_AA: [MTLTexture] = [albedoTexture_AA, normalTexture_AA, positionTexture_AA]
-        for i in 0..<3 {
-            gBufferRenderPassDescriptor.setUpColorAttachment(position: i, texture: textures_AA[i], resolveTexture: textures[i])
-        }
-
-        gBufferRenderPassDescriptor.setUpDepthAttachment(texture: depthTexture_AA, resolveTexture: depthTexture)
     }
     
     func buildGbufferPipelineState(withFragmentFunctionName name: String) {
@@ -279,9 +248,9 @@ open class STLRRenderer: NSObject {
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
-        renderEncoder.setFragmentTexture(albedoTexture, index: 0)
-        renderEncoder.setFragmentTexture(normalTexture, index: 1)
-        renderEncoder.setFragmentTexture(positionTexture, index: 2)
+        renderEncoder.setFragmentTexture(gBufferRenderPass.texture_resolve, index: 0)
+        renderEncoder.setFragmentTexture(gBufferRenderPass.normal_resolve, index: 1)
+        renderEncoder.setFragmentTexture(gBufferRenderPass.position_resolve, index: 2)
         
         guard let scene = scene else { return }
         
@@ -320,7 +289,8 @@ extension STLRRenderer: MTKViewDelegate {
         guard let scene = scene else {return}
         scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
-        buildGBufferRenderPassDescriptor(size: size)
+        //buildGBufferRenderPassDescriptor(size: size)
+        gBufferRenderPass.updateTextures(size: size)
         for water in scene.waters {
             water.reflectionRenderPass.updateTextures(size: size)
         }
@@ -351,7 +321,7 @@ extension STLRRenderer: MTKViewDelegate {
             scene.uniforms.cameraPosition = scene.camera.transform.position
 
             // Render reflection
-            reflectEncoder.setDepthStencilState(depthStencilState)
+            //reflectEncoder.setDepthStencilState(depthStencilState)
             scene.reflectionCamera.transform = scene.camera.transform
             scene.reflectionCamera.transform.position.y = -scene.camera.transform.position.y
             scene.reflectionCamera.transform.rotation.x = -scene.camera.transform.rotation.x
@@ -383,7 +353,7 @@ extension STLRRenderer: MTKViewDelegate {
         scene.uniforms.clipPlane = float4(0, -1, 0, 1000)
         
         // gbuffer pass
-        guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPassDescriptor) else {return}
+        guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor) else {return}
         
         scene.skybox?.update(renderEncoder: gBufferEncoder)
         renderGbufferPass(renderEncoder: gBufferEncoder)

@@ -13,34 +13,36 @@ class RenderPass {
     var depthTexture_resolve: MTLTexture
     
     let name: String
+    let multiplier: Float
     
     var textures: [MTLTexture]
     var resolveTextures: [MTLTexture]
 
-    init(name: String, size: CGSize, sample: Bool = true) {
+    init(name: String, size: CGSize, multiplier: Float, sample: Bool = true) {
         self.name = name
-        texture = RenderPass.buildTexture(size: size, label: name, pixelFormat: .bgra8Unorm)
-        normal = RenderPass.buildTexture(size: size, label: name, pixelFormat: .rgba16Float)
-        position = RenderPass.buildTexture(size: size, label: name, pixelFormat: .rgba16Float)
-        depthTexture = RenderPass.buildTexture(size: size, label: name, pixelFormat: .depth32Float)
-        texture_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .bgra8Unorm)
-        normal_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .rgba16Float)
-        position_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .rgba16Float)
-        depthTexture_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .depth32Float)
+        self.multiplier = multiplier
+        texture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Albedo Texture", pixelFormat: .bgra8Unorm, sample: true)
+        normal = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Normal Texture", pixelFormat: .rgba16Float, sample: true)
+        position = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Position Texture", pixelFormat: .rgba16Float, sample: true)
+        depthTexture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture", pixelFormat: .depth32Float, sample: true)
+        texture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Albedo Texture - Resolved", pixelFormat: .bgra8Unorm)
+        normal_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Normal Texture - Resolved", pixelFormat: .rgba16Float)
+        position_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Position Texture - Resolved", pixelFormat: .rgba16Float)
+        depthTexture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture - Resolved", pixelFormat: .depth32Float)
         textures = [texture, normal, position]
         resolveTextures = [texture_resolve, normal_resolve, position_resolve]
         descriptor = RenderPass.setupRenderPassDescriptor(textures: textures, resolveTextures: resolveTextures, depthTexture: depthTexture, depthTextureResolve: depthTexture_resolve)
     }
 
     func updateTextures(size: CGSize) {
-        texture = RenderPass.buildTexture(size: size, label: name, pixelFormat: .bgra8Unorm)
-        normal = RenderPass.buildTexture(size: size, label: name, pixelFormat: .rgba16Float)
-        position = RenderPass.buildTexture(size: size, label: name, pixelFormat: .rgba16Float)
-        depthTexture = RenderPass.buildTexture(size: size, label: name, pixelFormat: .depth32Float)
-        texture_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .bgra8Unorm)
-        normal_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .rgba16Float)
-        position_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .rgba16Float)
-        depthTexture_resolve = RenderPass.buildResolveTexture(size: size, pixelFormat: .depth32Float)
+        texture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .bgra8Unorm, sample: true)
+        normal = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .rgba16Float, sample: true)
+        position = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .rgba16Float, sample: true)
+        depthTexture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .depth32Float, sample: true)
+        texture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Albedo Texture - Resolved", pixelFormat: .bgra8Unorm)
+        normal_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Normal Texture - Resolved", pixelFormat: .rgba16Float)
+        position_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Position Texture - Resolved", pixelFormat: .rgba16Float)
+        depthTexture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture - Resolved", pixelFormat: .depth32Float)
         resolveTextures = [texture_resolve, normal_resolve, position_resolve]
         textures = [texture, normal, position]
         resolveTextures = [texture_resolve, normal_resolve, position_resolve]
@@ -56,30 +58,17 @@ class RenderPass {
         return descriptor
     }
     
-    static func buildResolveTexture(size: CGSize, pixelFormat: MTLPixelFormat) -> MTLTexture {
+    static func buildTexture(size: CGSize, multiplier: Float, label: String, pixelFormat: MTLPixelFormat, sample: Bool = false) -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat,
-                                                                  width: Int(size.width * 0.5),
-                                                                  height: Int(size.height * 0.5),
-                                                                  mipmapped: true)
-        descriptor.textureType = .type2D
-        descriptor.sampleCount = 1
-        descriptor.storageMode = .private
-        guard let texture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor) else {
-            fatalError("Texture not created")
+                                                                  width: Int(size.width * CGFloat(multiplier)),
+                                                                  height: Int(size.height * CGFloat(multiplier)),
+                                                                  mipmapped: !sample)
+        if (sample) {
+            descriptor.textureType = .type2DMultisample
+            descriptor.sampleCount = 4
+            descriptor.usage = [.renderTarget, .shaderRead]
         }
-        return texture
-    }
-    
-    static func buildTexture(size: CGSize, label: String, pixelFormat: MTLPixelFormat, sample: Bool = false) -> MTLTexture {
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat,
-                                                                  width: Int(size.width * 0.5),
-                                                                  height: Int(size.height * 0.5),
-                                                                  mipmapped: false)
-        descriptor.textureType = .type2DMultisample
-        descriptor.sampleCount = 4
         descriptor.storageMode = .private
-        //descriptor.textureType = .type2D
-        descriptor.usage = [.renderTarget, .shaderRead]
         guard let texture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor) else {
             fatalError("Texture not created")
         }

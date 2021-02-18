@@ -20,7 +20,7 @@ open class STLRWater: STLRNode, Texturable {
     var mesh: MTKMesh?
     
     public override init() {
-        reflectionRenderPass = RenderPass(name: "reflection", size: STLRRenderer.drawableSize)
+        reflectionRenderPass = RenderPass(name: "reflection", size: STLRRenderer.drawableSize, multiplier: 0.5)
         super.init()
         
         name = "Water"
