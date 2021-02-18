@@ -70,7 +70,7 @@ private extension STLRSubmesh {
         pipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
         pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-        //pipelineDescriptor.sampleCount = 4
+        pipelineDescriptor.sampleCount = 4
         do {
             pipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch let error {

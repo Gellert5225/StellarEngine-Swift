@@ -134,7 +134,7 @@ open class STLRMorph: STLRNode {
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertex
         pipelineDescriptor.fragmentFunction = fragment
-        //pipelineDescriptor.sampleCount = 4;
+        pipelineDescriptor.sampleCount = 4;
         pipelineDescriptor.vertexDescriptor = STLRMorph.mtlVertexDescriptor
         pipelineDescriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float

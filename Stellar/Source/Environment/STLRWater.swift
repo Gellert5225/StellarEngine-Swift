@@ -45,7 +45,7 @@ open class STLRWater: STLRNode, Texturable {
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[1].pixelFormat = .rgba16Float
         descriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        //descriptor.sampleCount = 4;
+        descriptor.sampleCount = 4;
         descriptor.depthAttachmentPixelFormat = .depth32Float
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_water")
         descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "fragment_water")
@@ -73,7 +73,7 @@ open class STLRWater: STLRNode, Texturable {
         var frag = fragmentUniform
         
         renderEncoder.setVertexBytes(&uniform, length: MemoryLayout<STLRUniforms>.stride, index: Int(BufferIndexUniforms.rawValue))
-        renderEncoder.setFragmentTexture(reflectionRenderPass.texture, index: 0)
+        renderEncoder.setFragmentTexture(reflectionRenderPass.texture_resolve, index: 0)
         renderEncoder.setFragmentTexture(texture, index: 2)
         renderEncoder.setFragmentBytes(&timer, length: MemoryLayout<Float>.size, index: 3)
         renderEncoder.setFragmentBytes(&frag, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)

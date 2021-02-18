@@ -43,7 +43,7 @@ open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegat
     override open func viewDidLoad() {
         super.viewDidLoad()
         STLRLog.delegate = self
-        //metalView.sampleCount = 4
+        metalView.sampleCount = 4
         renderer = STLRRenderer(metalView: metalView)
         panGesture = NSPanGestureRecognizer(target: self, action: #selector(handlePan))
     }

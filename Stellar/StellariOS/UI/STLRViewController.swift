@@ -48,7 +48,7 @@ open class STLRViewController: UIViewController {
     override open func viewDidLoad() {
         super.viewDidLoad()
 
-        //metalView.sampleCount = 4
+        metalView.sampleCount = 4
         renderer = STLRRenderer(metalView: metalView)
         print("renderer has been init");
         

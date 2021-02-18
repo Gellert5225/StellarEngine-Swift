@@ -35,12 +35,12 @@ class TestScene: STLRScene {
         add(node: chest, parent: ground)
         chest.position = [0, 0, -1]
         chest.scale = [0.2, 0.2, 0.2]
-        
+
         let mouse = STLRModel(modelName: "MagicMouse")
         add(node: mouse, parent: ground)
         mouse.scale = [0.005, 0.005, 0.005]
         mouse.position = [-1, 0, 0]
-        
+
         let car = STLRModel(modelName: "racing-car")
         car.scale = [0.2, 0.2, 0.2]
         car.position = [1, 0, 0]

@@ -356,8 +356,7 @@ float3 renderGbuffer(Lighting lighting) {
     float Ds;
     if (specularRoughness >= 1.0) {
         Ds = 1.0 / pi;
-    }
-    else {
+    } else {
         float roughnessSqr = specularRoughness * specularRoughness;
         float d = (NoH * roughnessSqr - NoH) * NoH + 1;
         Ds = roughnessSqr / (pi * d * d);

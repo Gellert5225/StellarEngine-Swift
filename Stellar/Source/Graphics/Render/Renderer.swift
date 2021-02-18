@@ -18,20 +18,26 @@ open class STLRRenderer: NSObject {
     static var commandQueue: MTLCommandQueue!
     static var commandBuffer: MTLCommandBuffer?
     static var drawableSize: CGSize!
-    
+        
+    var metalView: MTKView!
     var renderPassDescriptor: MTLRenderPassDescriptor!
     
     var metalLayer: CAMetalLayer!
     var depthStencilState: MTLDepthStencilState!
     
     var shadowTexture: MTLTexture!
+    var shadowTexture_AA: MTLTexture!
     let shadowRenderPassDescriptor = MTLRenderPassDescriptor()
     var shadowPipelineState: MTLRenderPipelineState!
     
     var albedoTexture: MTLTexture!
+    var albedoTexture_AA: MTLTexture!
     var normalTexture: MTLTexture!
+    var normalTexture_AA: MTLTexture!
     var positionTexture: MTLTexture!
+    var positionTexture_AA: MTLTexture!
     var depthTexture: MTLTexture!
+    var depthTexture_AA: MTLTexture!
     
     var gBufferPipelineState: MTLRenderPipelineState!
     var gBufferRenderPassDescriptor: MTLRenderPassDescriptor!
@@ -67,6 +73,8 @@ open class STLRRenderer: NSObject {
     var scene: STLRScene?
     
     public init(metalView: MTKView) {
+        self.metalView = metalView
+        print(metalView.sampleCount)
         metalView.device = MTLCreateSystemDefaultDevice()
         guard let device = metalView.device else {
             fatalError("Device not created. Run on a physical device")
@@ -94,10 +102,10 @@ open class STLRRenderer: NSObject {
         renderPassDescriptor = MTLRenderPassDescriptor()
         
         buildDepthStencilState()
-        buildShadowTexture(size: metalView.drawableSize)
+        buildShadowTexture(size: self.metalView.drawableSize)
         buildShadowPipelineState()
         
-        buildGBufferRenderPassDescriptor(size: metalView.drawableSize)
+        buildGBufferRenderPassDescriptor(size: self.metalView.drawableSize)
         buildGbufferPipelineState(withFragmentFunctionName: "fragment_PBR")
         
         quadVerticesBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: quadVertices, length: MemoryLayout<Float>.size * quadVertices.count, options: [])
@@ -116,10 +124,23 @@ open class STLRRenderer: NSObject {
         depthStencilState = STLRRenderer.metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
     }
     
-    func buildTexture(pixelFormat: MTLPixelFormat, size: CGSize, label: String) -> MTLTexture {
+    func buildResolveTexture(pixelFormat: MTLPixelFormat, size: CGSize) -> MTLTexture {
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: true)
+        //descriptor.usage = [.shaderRead, .renderTarget]
+        descriptor.storageMode = .private
+        
+        guard let texture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor) else {
+            fatalError()
+        }
+        return texture
+    }
+    
+    func buildTexture(pixelFormat: MTLPixelFormat, size: CGSize, label: String, antiAliased: Bool = false) -> MTLTexture {
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: false)
         descriptor.usage = [.shaderRead, .renderTarget]
         descriptor.storageMode = .private
+        descriptor.textureType = .type2DMultisample
+        descriptor.sampleCount = 4
         guard let texture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor) else {
             fatalError()
         }
@@ -128,8 +149,9 @@ open class STLRRenderer: NSObject {
     }
     
     func buildShadowTexture(size: CGSize) {
-        shadowTexture = buildTexture(pixelFormat: .depth32Float, size: size, label: "Shadow")
-        shadowRenderPassDescriptor.setUpDepthAttachment(texture: shadowTexture)
+        shadowTexture = buildResolveTexture(pixelFormat: .depth32Float, size: size)
+        shadowTexture_AA = buildTexture(pixelFormat: .depth32Float, size: size, label: "Shadow_AA", antiAliased: true)
+        shadowRenderPassDescriptor.setUpDepthAttachment(texture: shadowTexture_AA, resolveTexture: shadowTexture)
     }
     
     func buildShadowPipelineState() {
@@ -138,6 +160,7 @@ open class STLRRenderer: NSObject {
         pipelineDescriptor.colorAttachments[0].pixelFormat = .invalid
         pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+        pipelineDescriptor.sampleCount = 4
         do {
             shadowPipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch {
@@ -146,21 +169,32 @@ open class STLRRenderer: NSObject {
     }
     
     func buildGbufferTextures(size: CGSize) {
-        albedoTexture = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo")
-        normalTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal")
-        positionTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position")
-        depthTexture = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth")
+//        albedoTexture = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo")
+//        normalTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal")
+//        positionTexture = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position")
+//        depthTexture = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth")
+        
+        albedoTexture = buildResolveTexture(pixelFormat: .bgra8Unorm, size: size)
+        normalTexture = buildResolveTexture(pixelFormat: .rgba16Float, size: size)
+        positionTexture = buildResolveTexture(pixelFormat: .rgba16Float, size: size)
+        depthTexture = buildResolveTexture(pixelFormat: .depth32Float, size: size)
+        
+        albedoTexture_AA = buildTexture(pixelFormat: .bgra8Unorm, size: size, label: "Albedo_AA", antiAliased: true)
+        normalTexture_AA = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Normal_AA", antiAliased: true)
+        positionTexture_AA = buildTexture(pixelFormat: .rgba16Float, size: size, label: "Position_AA", antiAliased: true)
+        depthTexture_AA = buildTexture(pixelFormat: .depth32Float, size: size, label: "Depth_AA", antiAliased: true)
     }
     
     func buildGBufferRenderPassDescriptor(size: CGSize) {
         gBufferRenderPassDescriptor = MTLRenderPassDescriptor()
         buildGbufferTextures(size: size)
         let textures: [MTLTexture] = [albedoTexture, normalTexture, positionTexture]
-        for (index, texture) in textures.enumerated() {
-            gBufferRenderPassDescriptor.setUpColorAttachment(position: index, texture: texture)
+        let textures_AA: [MTLTexture] = [albedoTexture_AA, normalTexture_AA, positionTexture_AA]
+        for i in 0..<3 {
+            gBufferRenderPassDescriptor.setUpColorAttachment(position: i, texture: textures_AA[i], resolveTexture: textures[i])
         }
 
-        gBufferRenderPassDescriptor.setUpDepthAttachment(texture: depthTexture)
+        gBufferRenderPassDescriptor.setUpDepthAttachment(texture: depthTexture_AA, resolveTexture: depthTexture)
     }
     
     func buildGbufferPipelineState(withFragmentFunctionName name: String) {
@@ -169,6 +203,7 @@ open class STLRRenderer: NSObject {
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[1].pixelFormat = .rgba16Float
         descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        descriptor.sampleCount = 4
         descriptor.depthAttachmentPixelFormat = .depth32Float
         descriptor.label = "GBuffer state"
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_main")
@@ -266,7 +301,7 @@ open class STLRRenderer: NSObject {
         //descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         
         descriptor.depthAttachmentPixelFormat = .depth32Float
-        //descriptor.sampleCount = 4
+        descriptor.sampleCount = 4
         descriptor.label = "Composition state"
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "composition_vert")
         descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "composition_frag")
@@ -279,24 +314,9 @@ open class STLRRenderer: NSObject {
     }
 }
 
-private extension MTLRenderPassDescriptor {
-    func setUpDepthAttachment(texture: MTLTexture) {
-        depthAttachment.texture = texture
-        depthAttachment.loadAction = .clear
-        depthAttachment.storeAction = .store
-        depthAttachment.clearDepth = 1
-    }
-    
-    func setUpColorAttachment(position: Int, texture: MTLTexture) {
-        colorAttachments[position].texture = texture
-        colorAttachments[position].loadAction = .clear
-        colorAttachments[position].storeAction = .store
-        colorAttachments[position].clearColor = MTLClearColorMake(0.66, 0.9, 0.96, 1)
-    }
-}
-
 extension STLRRenderer: MTKViewDelegate {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        self.metalView = view
         guard let scene = scene else {return}
         scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
@@ -385,7 +405,6 @@ extension STLRRenderer: MTKViewDelegate {
         renderCompositionPass(renderEncoder: compositionEncoder)
         
         guard let drawable = view.currentDrawable else {
-            //STLRRenderer.commandBuffer?.commit()
             return
         }
         

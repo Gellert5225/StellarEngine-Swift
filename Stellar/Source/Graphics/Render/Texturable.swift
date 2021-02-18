@@ -67,6 +67,7 @@ extension Texturable {
         descriptor.width = textures[0].width
         descriptor.height = textures[0].height
         descriptor.arrayLength = textures.count
+        descriptor.sampleCount = 4
         let arrayTexture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor)!
         let commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()!
         let blitEncoder = commandBuffer.makeBlitCommandEncoder()!

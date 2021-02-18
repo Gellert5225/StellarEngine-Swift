@@ -10,19 +10,23 @@
     A lightweight rendering engine written in Swift
 </h4>
 
-Featuring:
+## Featuring:
 - Physically based rendering
 - Image based lighting
 - Dynamic reflection
 - Procedural skybox
 
-Planning to implement:
+## Planning to implement:
 - Collision detection
 - SSAO
 - Global illumination
 - Ray tracing (non real time)
 
-Demo:
+## Current State: 
+Simple GUI for macOS.
+![](./Images/current.png)
+
+## Demo:
 
 ![](./Images/1.png)
 ![](./Images/2.png)
