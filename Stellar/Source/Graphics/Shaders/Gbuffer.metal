@@ -29,9 +29,9 @@ struct VertexOut {
 };
 
 struct GbufferOut {
-    float4 albedo   [[ color(0) ]];
-    float4 normal   [[ color(1) ]];
-    float4 position [[ color(2) ]];
+    float4 albedo   [[ color(Albedo) ]];
+    float4 normal   [[ color(Normal) ]];
+    float4 position [[ color(Position) ]];
 };
 
 float3 gbufferLighting(float3 normal,
@@ -85,12 +85,12 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
                                     constant Material &material         [[ buffer(13) ]],
-                                    texture2d<float> texture            [[ texture(0) ]],
-                                    texture2d<float> normalTexture      [[ texture(1) ]],
-                                    texture2d<float> roughnessTexture   [[ texture(2) ]],
-                                    texture2d<float> metallicTexture    [[ texture(3) ]],
-                                    texture2d<float> aoTexture          [[ texture(4) ]],
-                                    depth2d<float> shadow_texture       [[ texture(5) ]]) {
+                                    texture2d<float> texture            [[ texture(BaseColorTexture) ]],
+                                    texture2d<float> normalTexture      [[ texture(NormalTexture) ]],
+                                    texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]],
+                                    texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]],
+                                    texture2d<float> aoTexture          [[ texture(AOTexture) ]],
+                                    depth2d<float> shadow_texture       [[ texture(Shadow) ]]) {
     GbufferOut out;
 
     out.albedo.a = 0;
@@ -181,17 +181,6 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
-//    float shadow_sample = shadow_texture.sample(s, xy);
-//    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-//    if (current_sample > shadow_sample ) {
-//        out.albedo.a = 1;
-//    }
-//
-//    float shadow = out.albedo.a;
-//    if (shadow > 0) {
-//        diffuseColor *= 0.5;
-//    }
-    
     const int neighborWidth = 3;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
     
@@ -211,7 +200,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     total /= neighbors;
     float lightFactor = 1.0 - (total * in.shadowPosition.w);
     
-    float4 specDiffuse = float4(specularOutput + diffuseColor.xyz, out.albedo.a) * ambientOcclusion * lightFactor;
+    float4 specDiffuse = float4(specularOutput + diffuseColor.xyz + ambientColor, out.albedo.a) * ambientOcclusion * lightFactor;
 
     out.albedo = specDiffuse;
 
@@ -223,42 +212,42 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
                                     constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
                                     constant Material &material         [[ buffer(13) ]],
-                                    texture2d<float> texture            [[ texture(0) ]],
-                                    texture2d<float> normalTexture      [[ texture(1) ]],
-                                    texture2d<float> roughnessTexture   [[ texture(2) ]],
-                                    texture2d<float> metallicTexture    [[ texture(3) ]],
-                                    texture2d<float> aoTexture          [[ texture(4) ]],
-                                    depth2d<float> shadow_texture       [[ texture(5) ]],
+                                    texture2d<float> texture            [[ texture(BaseColorTexture) ]],
+                                    texture2d<float> normalTexture      [[ texture(NormalTexture) ]],
+                                    texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]],
+                                    texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]],
+                                    texture2d<float> aoTexture          [[ texture(AOTexture) ]],
+                                    depth2d<float> shadow_texture       [[ texture(Shadow) ]],
                                     texturecube<float> skybox           [[ texture(BufferIndexSkybox) ]],
                                     texturecube<float> skyboxDiffuse    [[ texture(BufferIndexSkyboxDiffuse) ]],
                                     texture2d<float> brdfLut            [[ texture(BufferIndexBRDFLut) ]]) {
     
     GbufferOut out;
-    
+
     out.albedo.a = 0;
     out.normal = float4(normalize(in.normal), 1.0);
     out.position = float4(in.worldPosition, 1.0);
-    
+
     float4 baseColor;
-    
+
     if (!is_null_texture(texture)) {
         float4 colorAlpha = texture.sample(sampler2d, in.textureCoordinates * 1);
         baseColor = float4(texture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
-        
+
         if (colorAlpha.a < 0.2) {
             discard_fragment();
         }
     } else {
         baseColor = float4(material.baseColor, 1.0);
     }
-    
+
     float metallic = material.metallic;
     if (!is_null_texture(metallicTexture)) {
         metallic = metallicTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         metallic = material.metallic;
     }
-    
+
     // extract roughness
     float roughness;
     if (!is_null_texture(roughnessTexture)) {
@@ -266,7 +255,7 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     } else {
         roughness = material.roughness;
     }
-    
+
     // extract ambient occlusion
     float ambientOcclusion;
     if (!is_null_texture(aoTexture)) {
@@ -274,7 +263,7 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     } else {
         ambientOcclusion = 1.0;
     }
-    
+
     float3 normal;
     if (!is_null_texture(normalTexture)) {
         float3 normalValue = normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
@@ -283,31 +272,20 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     } else {
         normal = in.normal;
     }
-    
+
     normal = normalize(normal);
-    
+
     float4 diffuse = skyboxDiffuse.sample(sampler2d, normal);
     diffuse = mix(pow(diffuse, 0.5), diffuse, metallic);
-    
-    //shadow
-//    float2 xy = in.shadowPosition.xy;
-//    xy = xy * 0.5 + 0.5;
-//    xy.y = 1 - xy.y;
-//    constexpr sampler sShadow(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
-//    float shadow_sample = shadow_texture.sample(sShadow, xy);
-//    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-//    if (current_sample > shadow_sample) {
-//        diffuse *= 0.5;
-//    }
-    
+
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
     constexpr sampler shadow_s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
-    
+
     const int neighborWidth = 3;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
-    
+
     float mapSize = 4096;
     float texelSize = 1.0 / mapSize;
     float total = 0.0;
@@ -320,10 +298,10 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
             }
         }
     }
-    
+
     total /= neighbors;
     float lightFactor = 1.0 - (total * in.shadowPosition.w);
-    
+
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition.xyz);
     float3 textureCoordinates = -normalize(reflect(viewDirection, normal));
     constexpr sampler s(filter::linear, mip_filter::linear);
@@ -335,9 +313,9 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     float3 specular = prefilteredColor * specularIBL;
     float4 color = diffuse * baseColor + float4(specular, 1);
     color *= ambientOcclusion * lightFactor;
-    
+
     out.albedo = color;
-    
+
     return out;
 }
 

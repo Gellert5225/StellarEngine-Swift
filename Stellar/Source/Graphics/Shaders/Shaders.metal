@@ -101,7 +101,7 @@ fragment float4 grayScale_fragment(VertexOut v [[ stage_in ]]) {
 // texture fragment
 fragment half4 textured_fragment(VertexOut v [[ stage_in ]],
                                  sampler sampler2d [[ sampler(0) ]],
-                                 texture2d<float> texture [[ texture(0) ]]) {
+                                 texture2d<float> texture [[ texture(BaseColorTexture) ]]) {
     float4 color = texture.sample(sampler2d, v.textureCoordinates);
     color = color * v.materialColor;
     
@@ -193,9 +193,9 @@ float3 diffuseLighting(float3 normal,
 fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
                                       sampler sampler2d [[ sampler(0) ]],
                                       constant Light *lights [[ buffer(3) ]],
-                                      texture2d<float> texture [[ texture(0),  function_constant(hasColorTexture) ]],
-                                      texture2d<float> normalTexture [[ texture(1),  function_constant(hasNormalTexture) ]],
-                                      depth2d<float> shadowTexture [[ texture(5) ]],
+                                      texture2d<float> texture [[ texture(BaseColorTexture),  function_constant(hasColorTexture) ]],
+                                      texture2d<float> normalTexture [[ texture(NormalTexture),  function_constant(hasNormalTexture) ]],
+                                      depth2d<float> shadowTexture [[ texture(Shadow) ]],
                                       constant Material &material [[ buffer(13) ]],
                                       constant STLRLightConstants &lightConstants [[ buffer(14) ]],
                                       constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
@@ -270,12 +270,12 @@ float3 render(Lighting lighting);
 fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
                              sampler sampler2d [[ sampler(0) ]],
                              constant Light *lights [[ buffer(3) ]],
-                             texture2d<float> texture [[ texture(0), function_constant(hasColorTexture) ]],
-                             texture2d<float> normalTexture [[ texture(1), function_constant(hasNormalTexture) ]],
-                             texture2d<float> roughnessTexture [[texture(2), function_constant(hasRoughnessTexture) ]],
-                             texture2d<float> metallicTexture [[ texture(3), function_constant(hasMetallicTexture) ]],
-                             texture2d<float> aoTexture [[ texture(4), function_constant(hasAOTexture)]],
-                             depth2d<float> shadowTexture [[ texture(5) ]],
+                             texture2d<float> texture [[ texture(BaseColorTexture), function_constant(hasColorTexture) ]],
+                             texture2d<float> normalTexture [[ texture(NormalTexture), function_constant(hasNormalTexture) ]],
+                             texture2d<float> roughnessTexture [[texture(RoughnessTexture), function_constant(hasRoughnessTexture) ]],
+                             texture2d<float> metallicTexture [[ texture(MetallicTexture), function_constant(hasMetallicTexture) ]],
+                             texture2d<float> aoTexture [[ texture(AOTexture), function_constant(hasAOTexture)]],
+                             depth2d<float> shadowTexture [[ texture(Shadow) ]],
                              constant Material &material [[ buffer(13) ]],
                              constant STLRLightConstants &lightConstants [[ buffer(14) ]],
                              constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {

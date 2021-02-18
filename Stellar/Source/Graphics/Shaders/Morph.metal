@@ -51,7 +51,7 @@ vertex VertexOut vertex_morph(constant VertexIn *in [[ buffer(0) ]],
 constant float3 sunlight = float3(2, 4, -4);
 
 fragment float4 fragment_morph(VertexOut in [[ stage_in ]],
-                                texture2d_array<float> baseColorTexture [[ texture(0) ]],
+                                texture2d_array<float> baseColorTexture [[ texture(BaseColorTexture) ]],
                                 constant STLRFragmentUniforms &fragmentUniforms [[buffer(BufferIndexFragmentConstants)]]
                                 ){
     constexpr sampler s(filter::linear);

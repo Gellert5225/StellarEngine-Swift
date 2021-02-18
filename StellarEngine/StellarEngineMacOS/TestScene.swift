@@ -49,8 +49,9 @@ class TestScene: STLRScene {
         camera.fovDegrees = 60
         
         sunLignt.position = float3(0, 20, -15)
+        sunLignt.intensity = 1.0
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
-        ambientLight.intensity = 0.1
+        ambientLight.intensity = 0.01
         
         lights.append(sunLignt)
         lights.append(ambientLight)

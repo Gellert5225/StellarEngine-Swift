@@ -83,15 +83,19 @@ typedef struct {
 } Light;
 
 typedef enum {
-    BaseColorTexture = 0,
-    NormalTexture = 1,
-    RoughnessTexture = 2,
-    MetallicTexture = 3,
-    AOTexture = 4,
-    DepthTexture = 5,
-    AlbedoTexture = 6,
-    PositionTexture = 7
+    BaseColorTexture = 4,
+    NormalTexture = 5,
+    RoughnessTexture = 6,
+    MetallicTexture = 7,
+    AOTexture = 8
 } Textures;
+
+typedef enum {
+    Albedo = 0,
+    Normal = 1,
+    Position = 2,
+    Shadow = 3
+} GBufferTextures;
 
 typedef enum {
     BufferIndexVertices = 0,

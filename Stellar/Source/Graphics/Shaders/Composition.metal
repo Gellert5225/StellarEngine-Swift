@@ -65,16 +65,16 @@ float3 compositionLighting(float3 normal,
             ambientColor += light.color * light.intensity;
         }
     }
-    return diffuseColor;
+    return diffuseColor + ambientColor;
 }
 
 fragment float4 composition_frag(VertexOut in [[ stage_in ]],
                                  constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
                                  constant Light *lightsBuffer                   [[ buffer(2) ]],
-                                 depth2d<float> shadowTexture                   [[ texture(4) ]],
-                                 texture2d<float> albedoTexture                 [[ texture(0) ]],
-                                 texture2d<float> normalTexture                 [[ texture(1) ]],
-                                 texture2d<float> positionTexture               [[ texture(2) ]]) {
+                                 depth2d<float> shadowTexture                   [[ texture(Shadow) ]],
+                                 texture2d<float> albedoTexture                 [[ texture(Albedo) ]],
+                                 texture2d<float> normalTexture                 [[ texture(Normal) ]],
+                                 texture2d<float> positionTexture               [[ texture(Position) ]]) {
     constexpr sampler s(min_filter::linear, mag_filter::linear);
     float4 albedo = albedoTexture.sample(s, in.texCoords);
     float3 normal = normalTexture.sample(s, in.texCoords).xyz;
@@ -85,5 +85,5 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
     if (shadow > 0) {
         diffuseColor *= 0.5;
     }
-    return albedo;
+    return albedo;//float4(diffuseColor, 1);
 }

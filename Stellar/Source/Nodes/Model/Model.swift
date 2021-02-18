@@ -188,11 +188,11 @@ extension STLRModel: Renderable {
         for mesh in submeshes! {
             commandEncoder.setRenderPipelineState(mesh.pipelineState)
             
-            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: 0)
-            commandEncoder.setFragmentTexture(mesh.textures.normal, index: 1)
-            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: 2)
-            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: 3)
-            commandEncoder.setFragmentTexture(mesh.textures.ao, index: 4)
+            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
+            commandEncoder.setFragmentTexture(mesh.textures.normal, index: Int(NormalTexture.rawValue))
+            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
+            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: Int(MetallicTexture.rawValue))
+            commandEncoder.setFragmentTexture(mesh.textures.ao, index: Int(AOTexture.rawValue))
             var material = mesh.material
             commandEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
 

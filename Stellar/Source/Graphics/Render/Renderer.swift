@@ -228,7 +228,7 @@ open class STLRRenderer: NSObject {
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         
-        renderEncoder.setFragmentTexture(shadowTexture, index: 5)
+        renderEncoder.setFragmentTexture(shadowTexture, index: Int(Shadow.rawValue))
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         
         for child in scene.renderables {
@@ -248,9 +248,9 @@ open class STLRRenderer: NSObject {
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
-        renderEncoder.setFragmentTexture(gBufferRenderPass.texture_resolve, index: 0)
-        renderEncoder.setFragmentTexture(gBufferRenderPass.normal_resolve, index: 1)
-        renderEncoder.setFragmentTexture(gBufferRenderPass.position_resolve, index: 2)
+        renderEncoder.setFragmentTexture(gBufferRenderPass.texture_resolve, index: Int(Albedo.rawValue))
+        renderEncoder.setFragmentTexture(gBufferRenderPass.normal_resolve, index: Int(Normal.rawValue))
+        renderEncoder.setFragmentTexture(gBufferRenderPass.position_resolve, index: Int(Position.rawValue))
         
         guard let scene = scene else { return }
         
@@ -396,11 +396,11 @@ extension STLRRenderer: MTKViewDelegate {
         for modelSubmesh in modelSubmeshes {
             let submesh = modelSubmesh.submesh
             var material = modelSubmesh.material
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: 0)
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.normal, index: 1)
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.roughness, index: 2)
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.metallic, index: 3)
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.ao, index: 4)
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.normal, index: Int(NormalTexture.rawValue))
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.metallic, index: Int(MetallicTexture.rawValue))
+            renderEncoder.setFragmentTexture(modelSubmesh.textures.ao, index: Int(AOTexture.rawValue))
             renderEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
             renderEncoder.drawIndexedPrimitives(type: .triangle,
                                                 indexCount: submesh.indexCount,
