@@ -34,48 +34,36 @@ struct GbufferOut {
     float4 position [[ color(Position) ]];
 };
 
+constant float2 poissonDisk[16] = {
+   float2( -0.94201624, -0.39906216 ),
+   float2( 0.94558609, -0.76890725 ),
+   float2( -0.094184101, -0.92938870 ),
+   float2( 0.34495938, 0.29387760 ),
+   float2( -0.91588581, 0.45771432 ),
+   float2( -0.81544232, -0.87912464 ),
+   float2( -0.38277543, 0.27676845 ),
+   float2( 0.97484398, 0.75648379 ),
+   float2( 0.44323325, -0.97511554 ),
+   float2( 0.53742981, -0.47373420 ),
+   float2( -0.26496911, -0.41893023 ),
+   float2( 0.79197514, 0.19090188 ),
+   float2( -0.24188840, 0.99706507 ),
+   float2( -0.81409955, 0.91437590 ),
+   float2( 0.19984126, 0.78641367 ),
+   float2( 0.14383161, -0.14100790 )
+};
+
 float3 gbufferLighting(float3 normal,
                        float3 position,
                        constant STLRFragmentUniforms &fragmentUniforms,
                        constant Light *lights,
-                       float3 baseColor) {
-    float3 diffuseColor = 0;
-    float3 ambientColor = 0;
-    float3 normalDirection = normalize(normal);
-    
-    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
-        Light light = lights[i];
-        if (light.type == Sunlight) {
-            float3 lightDirection = normalize(light.position);
-            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-            diffuseColor += light.color * light.intensity * baseColor * diffuseIntensity;
-        } else if (light.type == Pointlight) {
-            float d = distance(light.position, position);
-            float3 lightDirection = normalize(light.position - position);
-            float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
-            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-            float3 color = light.color * baseColor * diffuseIntensity;
-            color *= attenuation;
-            diffuseColor += color;
-        } else if (light.type == Spotlight) {
-            float d = distance(light.position, position);
-            float3 lightDirection = normalize(light.position - position);
-            float3 coneDirection = normalize(-light.coneDirection);
-            float spotResult = (dot(lightDirection, coneDirection));
-            if (spotResult > cos(light.coneAngle)) {
-                float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
-                attenuation *= pow(spotResult, light.coneAttenuation);
-                float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-                float3 color = light.color * baseColor * diffuseIntensity;
-                color *= attenuation;
-                diffuseColor += color;
-            }
-        } else if (light.type == Ambientlight) {
-            ambientColor += light.color * light.intensity;
-            ambientColor *= baseColor;
-        }
-    }
-    return diffuseColor;
+                       float3 baseColor);
+
+// Returns a random number based on a vec3 and an int.
+float random(float3 seed, int i){
+    float4 seed4 = float4(seed,i);
+    float dot_product = dot(seed4, float4(12.9898,78.233,45.164,94.673));
+    return fract(sin(dot_product) * 43758.5453);
 }
 
 float3 renderGbuffer(Lighting lighting);
@@ -153,7 +141,6 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         Light light = lightsBuffer[i];
         if (light.type == 1) {
             float3 lightDirection = normalize(light.position);
-            lightDirection = light.position;
 
             // all the necessary components are in place
             Lighting lighting;
@@ -168,10 +155,6 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
             lighting.intensity = light.intensity;
 
             specularOutput = renderGbuffer(lighting);
-        } else if (light.type == Pointlight){
-
-        } else {
-            ambientColor += light.color * light.intensity;
         }
     }
 
@@ -180,27 +163,40 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
+    
+    float bias = 0.005;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
     const int neighborWidth = 3;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
-    
+
     float mapSize = 4096;
     float texelSize = 1.0 / mapSize;
     float total = 0.0;
     for (int x = -neighborWidth; x <= neighborWidth; x++) {
         for (int y = -neighborWidth; y <= neighborWidth; y++) {
             float shadow_sample = shadow_texture.sample(s, xy + float2(x, y) * texelSize);
-            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+            float current_sample = (in.shadowPosition.z - bias) / in.shadowPosition.w;
             if (current_sample > shadow_sample) {
                 total += 1.0;
             }
         }
     }
-    
+
     total /= neighbors;
     float lightFactor = 1.0 - (total * in.shadowPosition.w);
     
-    float4 specDiffuse = float4(specularOutput + diffuseColor.xyz + ambientColor, out.albedo.a) * ambientOcclusion * lightFactor;
+    //float visibility = 1.0;
+    float current_sample = (in.shadowPosition.z - bias) / in.shadowPosition.w;
+    
+    for (int i = 0; i < 4; i++) {
+        int index = int(16.0 * random(floor(in.worldPosition.xyz * 1000.0), i)) % 16;
+        if ( shadow_texture.sample(s, xy + poissonDisk[index] / 700.0 ) < current_sample ) {
+            lightFactor -= 0.08;
+            //visibility -= 0.2 * (1.0 - shadow_texture.sample(s, xy + poissonDisk[index] / 700.0, current_sample));
+        }
+    }
+    
+    float4 specDiffuse = float4(specularOutput * lightFactor + diffuseColor.xyz * lightFactor + ambientColor, out.albedo.a) * ambientOcclusion;
 
     out.albedo = specDiffuse;
 
@@ -224,7 +220,7 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     
     GbufferOut out;
 
-    out.albedo.a = 0;
+    out.albedo.a = 1;
     out.normal = float4(normalize(in.normal), 1.0);
     out.position = float4(in.worldPosition, 1.0);
 
@@ -282,25 +278,31 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     xy = xy * 0.5 + 0.5;
     xy.y = 1 - xy.y;
     constexpr sampler shadow_s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
-
-    const int neighborWidth = 3;
-    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
-
-    float mapSize = 4096;
-    float texelSize = 1.0 / mapSize;
-    float total = 0.0;
-    for (int x = -neighborWidth; x <= neighborWidth; x++) {
-        for (int y = -neighborWidth; y <= neighborWidth; y++) {
-            float shadow_sample = shadow_texture.sample(shadow_s, xy + float2(x, y) * texelSize);
-            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-            if (current_sample > shadow_sample) {
-                total += 1.0;
-            }
-        }
+    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+    
+    for (int i = 0; i < 4; i++) {
+      if ( shadow_texture.sample(shadow_s, xy + poissonDisk[i]/700.0 ) < current_sample ){
+          out.albedo -= 0.2;
+      }
     }
-
-    total /= neighbors;
-    float lightFactor = 1.0 - (total * in.shadowPosition.w);
+//    const int neighborWidth = 3;
+//    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
+//
+//    float mapSize = 4096;
+//    float texelSize = 1.0 / mapSize;
+//    float total = 0.0;
+//    for (int x = -neighborWidth; x <= neighborWidth; x++) {
+//        for (int y = -neighborWidth; y <= neighborWidth; y++) {
+//            float shadow_sample = shadow_texture.sample(shadow_s, xy + float2(x, y) * texelSize);
+//            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+//            if (current_sample > shadow_sample) {
+//                total += 1.0;
+//            }
+//        }
+//    }
+//
+//    total /= neighbors;
+//    float lightFactor = 1.0 - (total * in.shadowPosition.w);
 
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition.xyz);
     float3 textureCoordinates = -normalize(reflect(viewDirection, normal));
@@ -312,13 +314,14 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     float3 specularIBL = f0 * envBRDF.r + envBRDF.g;
     float3 specular = prefilteredColor * specularIBL;
     float4 color = diffuse * baseColor + float4(specular, 1);
-    color *= ambientOcclusion * lightFactor;
+    //color *= ambientOcclusion * lightFactor;
 
     out.albedo = color;
 
     return out;
 }
 
+// calculate specularOutput
 float3 renderGbuffer(Lighting lighting) {
     // Rendering equation courtesy of Apple et al.
     float NoL = saturate(dot(lighting.normal, lighting.lightDirection));
@@ -357,4 +360,49 @@ float3 renderGbuffer(Lighting lighting) {
     float3 specularColor = mix(lighting.lightColor, lighting.baseColor.rgb, lighting.metallic);
     float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion * lighting.intensity;
     return specularOutput;
+}
+
+float3 gbufferLighting(float3 normal,
+                       float3 position,
+                       constant STLRFragmentUniforms &fragmentUniforms,
+                       constant Light *lights,
+                       float3 baseColor) {
+    float3 diffuseColor = 0;
+    float3 ambientColor = 0;
+    float3 normalDirection = normalize(normal);
+    
+    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
+        Light light = lights[i];
+        if (light.type == Sunlight) {
+            float3 lightDirection = normalize(light.position);
+            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
+            diffuseColor += light.color * light.intensity * baseColor * diffuseIntensity;
+        } else if (light.type == Pointlight) {
+            float d = distance(light.position, position);
+            float3 lightDirection = normalize(light.position - position);
+            float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
+            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
+            float3 color = light.color * baseColor * diffuseIntensity;
+            color *= attenuation;
+            diffuseColor += color;
+        } else if (light.type == Spotlight) {
+            float d = distance(light.position, position);
+            float3 lightDirection = normalize(light.position - position);
+            float3 coneDirection = normalize(-light.coneDirection);
+            float spotResult = (dot(lightDirection, coneDirection));
+            if (spotResult > cos(light.coneAngle)) {
+                float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
+                attenuation *= pow(spotResult, light.coneAttenuation);
+                float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
+                float3 color = light.color * baseColor * diffuseIntensity;
+                color *= attenuation;
+                diffuseColor += color;
+            }
+        } else if (light.type == Ambientlight) {
+            ambientColor += light.color * light.intensity;
+            ambientColor *= baseColor;
+            diffuseColor += ambientColor;
+        }
+    }
+    return diffuseColor;
 }

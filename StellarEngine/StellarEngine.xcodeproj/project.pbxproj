@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		89267CDF20D744EA0024085C /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89267CDE20D744EA0024085C /* GameViewController.swift */; };
+		898CD01325DF6904000765BA /* StellarMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; };
+		898CD01425DF6904000765BA /* StellarMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		89B384FC20D871A200FAEDE4 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384FB20D871A200FAEDE4 /* GameScene.swift */; };
 		89B3850C20D8C9E600FAEDE4 /* TestScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B3850B20D8C9E600FAEDE4 /* TestScene.swift */; };
 		89FFCAD420CC7A6000C6DB28 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89FFCAD320CC7A6000C6DB28 /* AppDelegate.swift */; };
@@ -22,8 +24,6 @@
 		D941F57D25D8035300DE2ACD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D941F57B25D8035300DE2ACD /* Main.storyboard */; };
 		D941F58925D8035300DE2ACD /* StellarEngineMacOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D941F58825D8035300DE2ACD /* StellarEngineMacOSTests.swift */; };
 		D941F59425D8035300DE2ACD /* StellarEngineMacOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D941F59325D8035300DE2ACD /* StellarEngineMacOSUITests.swift */; };
-		D94BB86425D834D800F159E0 /* StellarMacOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; };
-		D94BB86525D834D800F159E0 /* StellarMacOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D941F56125D7FDCE00DE2ACD /* StellarMacOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D9589D0425DA24CC00755911 /* ResourceTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9589D0325DA24CC00755911 /* ResourceTree.swift */; };
 		D97CB5E125DA5CEB005C9F18 /* RightPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97CB5E025DA5CEB005C9F18 /* RightPanelView.swift */; };
 		D97CB5E325DA5D17005C9F18 /* RightPanelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D97CB5E225DA5D17005C9F18 /* RightPanelView.xib */; };
@@ -86,6 +86,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		898CD01525DF6904000765BA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				898CD01425DF6904000765BA /* StellarMacOS.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		89FFCAEF20CC7B6E00C6DB28 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -93,17 +104,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				D941F56825D801B000DE2ACD /* StellariOS.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D94BB86625D834D800F159E0 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D94BB86525D834D800F159E0 /* StellarMacOS.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,7 +162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D94BB86425D834D800F159E0 /* StellarMacOS.framework in Frameworks */,
+				898CD01325DF6904000765BA /* StellarMacOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,6 +183,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		898CD01225DF6904000765BA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		89B3850320D8B50D00FAEDE4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -204,6 +211,7 @@
 				D941F58725D8035300DE2ACD /* StellarEngineMacOSTests */,
 				D941F59225D8035300DE2ACD /* StellarEngineMacOSUITests */,
 				89FFCAD120CC7A6000C6DB28 /* Products */,
+				898CD01225DF6904000765BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -312,7 +320,7 @@
 				D941F56F25D8035200DE2ACD /* Sources */,
 				D941F57025D8035200DE2ACD /* Frameworks */,
 				D941F57125D8035200DE2ACD /* Resources */,
-				D94BB86625D834D800F159E0 /* Embed Frameworks */,
+				898CD01525DF6904000765BA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -366,7 +374,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = Gellert;
 				TargetAttributes = {
 					89FFCACF20CC7A6000C6DB28 = {
@@ -600,6 +608,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -625,7 +634,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -660,6 +670,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -679,7 +690,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -696,7 +708,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = XS2QV44L5G;
 				INFOPLIST_FILE = StellarEngineiOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -716,7 +728,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = XS2QV44L5G;
 				INFOPLIST_FILE = StellarEngineiOS/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -735,6 +747,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_ENTITLEMENTS = StellarEngineMacOS/StellarEngineMacOS.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XS2QV44L5G;
@@ -744,7 +757,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.StellarEngineMacOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -760,6 +773,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_ENTITLEMENTS = StellarEngineMacOS/StellarEngineMacOS.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = XS2QV44L5G;
@@ -769,7 +783,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.StellarEngineMacOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -793,7 +807,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.StellarEngineMacOSTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -818,7 +832,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.StellarEngineMacOSTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -842,7 +856,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.StellarEngineMacOSUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -866,7 +880,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 11.3;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.JiaheLi.StellarEngineMacOSUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

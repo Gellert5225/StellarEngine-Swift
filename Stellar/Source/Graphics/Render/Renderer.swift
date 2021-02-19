@@ -123,7 +123,7 @@ open class STLRRenderer: NSObject {
     }
     
     func buildResolveTexture(pixelFormat: MTLPixelFormat, size: CGSize) -> MTLTexture {
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: true)
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width * 2), height: Int(size.height * 2), mipmapped: true)
         //descriptor.usage = [.shaderRead, .renderTarget]
         descriptor.storageMode = .private
         
@@ -134,7 +134,7 @@ open class STLRRenderer: NSObject {
     }
     
     func buildTexture(pixelFormat: MTLPixelFormat, size: CGSize, label: String, antiAliased: Bool = false) -> MTLTexture {
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: false)
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width * 2), height: Int(size.height * 2), mipmapped: false)
         descriptor.usage = [.shaderRead, .renderTarget]
         descriptor.storageMode = .private
         descriptor.textureType = .type2DMultisample
@@ -198,11 +198,14 @@ open class STLRRenderer: NSObject {
         renderEncoder.setCullMode(.none)
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setDepthBias(0.01, slopeScale: 1.0, clamp: 0.01)
-        scene.uniforms.projectionMatrix = float4x4(orthoLeft: -15, right: 15, bottom: -15, top: 15, near: 0.1, far: 30)
-        let position: simd_float3 = [-scene.sunLignt.position.x, -scene.sunLignt.position.y, -scene.sunLignt.position.z]
+        
+        // shadow matrix
+        let position: simd_float3 = [scene.sunLignt.position.x, scene.sunLignt.position.y, scene.sunLignt.position.z]
         let center: simd_float3 = [0, 0, 0]
         let lookAt = float4x4(eye: position, center: center, up: [0, 1, 0])
-        scene.uniforms.viewMatrix = float4x4(translation: [0, 0, 7]) * lookAt
+        
+        scene.uniforms.projectionMatrix = float4x4(orthoLeft: -15, right: 15, bottom: -15, top: 15, near: 0.1, far: 30)
+        scene.uniforms.viewMatrix = lookAt
         scene.uniforms.shadowMatrix = scene.uniforms.projectionMatrix * scene.uniforms.viewMatrix
         
         renderEncoder.setRenderPipelineState(shadowPipelineState)
@@ -328,11 +331,9 @@ extension STLRRenderer: MTKViewDelegate {
             if let reflectionCam = scene.reflectionCamera as? STLRArcballCamera, let cam = scene.camera as? STLRArcballCamera {
                 reflectionCam.distance = cam.distance
                 scene.reflectionCamera = reflectionCam
-                scene.uniforms.viewMatrix = reflectionCam.updateViewMatrix()
-            }
-            if let reflectionCam = scene.reflectionCamera as? STLRCamera {
                 scene.uniforms.viewMatrix = reflectionCam.viewMatrix
             }
+
             scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
 
             scene.skybox?.update(renderEncoder: reflectEncoder)

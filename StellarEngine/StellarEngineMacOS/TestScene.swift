@@ -23,7 +23,7 @@ class TestScene: STLRScene {
         
         let ground = STLRModel(modelName: "plane")
         ground.scale = [10, 10, 10]
-        ground.position = [10, 1, 10]
+        ground.position = [0, 1, 0]
         add(node: ground)
         
         let train = STLRModel(modelName: "train")

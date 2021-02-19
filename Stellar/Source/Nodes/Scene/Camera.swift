@@ -97,3 +97,10 @@ open class STLRArcballCamera: STLRCamera {
         viewMatrix = updateViewMatrix()
     }
 }
+
+public enum STLRCameraType {
+    case Arcball
+    case FPP
+    case TPP
+    case Ortho
+}

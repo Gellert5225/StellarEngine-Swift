@@ -122,15 +122,15 @@ extension float4x4 {
     
     // left-handed LookAt
     init(eye: simd_float3, center: simd_float3, up: simd_float3) {
-        let z = normalize(eye - center)
+        let z = normalize(center-eye)
         let x = normalize(cross(up, z))
         let y = cross(z, x)
-        let w = float3(dot(x, -eye), dot(y, -eye), dot(z, -eye))
         
         let X = float4(x.x, y.x, z.x, 0)
         let Y = float4(x.y, y.y, z.y, 0)
         let Z = float4(x.z, y.z, z.z, 0)
-        let W = float4(w.x, w.y, x.z, 1)
+        let W = float4(-dot(x, eye), -dot(y, eye), -dot(z, eye), 1)
+        
         self.init()
         columns = (X, Y, Z, W)
     }
