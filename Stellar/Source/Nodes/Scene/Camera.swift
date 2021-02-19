@@ -78,7 +78,7 @@ open class STLRArcballCamera: STLRCamera {
         let translateMatrix = float4x4(translation: [target.x, target.y, target.z - distance])
         let rotateMatrix = float4x4(rotationYXZ: [-transform.rotation.x, transform.rotation.y, 0])
         let matrix = (rotateMatrix * translateMatrix).inverse
-        //transform.position = rotateMatrix.upperLeft() * -matrix.columns.3.xyz
+        transform.position = rotateMatrix.upperLeft() * -matrix.columns.3.xyz
         
         return matrix
     }

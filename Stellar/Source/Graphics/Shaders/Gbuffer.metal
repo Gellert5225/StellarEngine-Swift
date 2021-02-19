@@ -81,7 +81,6 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     depth2d<float> shadow_texture       [[ texture(Shadow) ]]) {
     GbufferOut out;
 
-    out.albedo.a = 0;
     out.normal = float4(normalize(in.normal), 1.0);
     out.position = float4(in.worldPosition, 1.0);
     
@@ -132,9 +131,9 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     normal = normalize(normal);
 
-    float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition);
+    float3 viewDirection = normalize(fragmentUniforms.cameraPosition);
     float3 specularOutput = 0;
-    float3 diffuseColor = 0;
+    float3 diffuseColor = baseColor.xyz;
     float3 ambientColor = 0;
 
     for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
@@ -158,7 +157,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         }
     }
 
-    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    //diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
     
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -196,7 +195,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         }
     }
     
-    float4 specDiffuse = float4(specularOutput * lightFactor + diffuseColor.xyz * lightFactor + ambientColor, out.albedo.a) * ambientOcclusion;
+    float4 specDiffuse = float4(specularOutput * lightFactor + diffuseColor * lightFactor + ambientColor, 0) * ambientOcclusion;
 
     out.albedo = specDiffuse;
 

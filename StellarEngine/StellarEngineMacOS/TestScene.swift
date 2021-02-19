@@ -55,7 +55,7 @@ class TestScene: STLRScene {
         
         lights.append(sunLignt)
         lights.append(ambientLight)
-        createPointLights(count: 40, min: [-8, 0.5, -8], max: [8, 4, 8])
+        //createPointLights(count: 20, min: [-8, 0.5, -8], max: [8, 4, 8])
     }
     
     func printNodes(root: STLRNode, level: Int) {

@@ -63,9 +63,11 @@ float3 compositionLighting(float3 normal,
             }
         } else if (light.type == Ambientlight) {
             ambientColor += light.color * light.intensity;
+            ambientColor *= baseColor;
+            diffuseColor += ambientColor;
         }
     }
-    return diffuseColor + ambientColor;
+    return diffuseColor;
 }
 
 fragment float4 composition_frag(VertexOut in [[ stage_in ]],
@@ -81,9 +83,52 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
     float3 position = positionTexture.sample(s, in.texCoords).xyz;
     float3 baseColor = albedo.rgb;
     float3 diffuseColor = compositionLighting(normal, position, fragmentUniforms, lightsBuffer, baseColor);
-    float shadow = albedo.a;
-    if (shadow > 0) {
-        diffuseColor *= 0.5;
-    }
-    return albedo;//float4(diffuseColor, 1);
+//    float shadow = albedo.a;
+//    if (shadow > 0) {
+//       // diffuseColor *= 0.5;
+//    }
+    return float4(diffuseColor, 0);
 }
+
+
+/*
+ #define SAMPLES_COUNT 32
+ #define INV_SAMPLES_COUNT (1.0f / SAMPLES_COUNT)
+ 
+ uniform sampler2D decal;  // decal texture
+ uniform sampler2D spot;   // projected spotlight image
+ uniform sampler2DShadow shadowMap;  // shadow map
+ uniform float fwidth;
+ uniform vec2 offsets[SAMPLES_COUNT];
+ 
+ // these are passed down from vertex shader
+ varying vec4 shadowMapPos;
+ varying vec3 normal;
+ varying vec2 texCoord;
+ varying vec3 lightVec;
+ varying vec3 view;
+ 
+ void main(void)  {
+    float shadow = 0;
+    float fsize = shadowMapPos.w * fwidth;
+    vec4 smCoord = shadowMapPos;
+ 
+    for (int i = 0; i<SAMPLES_COUNT; i++) {
+        smCoord.xy = offsets[i] * fsize + shadowMapPos;
+        shadow += texture2DProj(shadowMap, smCoord) * INV_SAMPLES_COUNT;
+    }
+ 
+    vec3 N = normalize(normal);
+    vec3 L = normalize(lightVec);
+    vec3 V = normalize(view);
+    vec3 R = reflect(-V, N);
+ 
+    // calculate diffuse dot product
+    float NdotL = max(dot(N, L), 0);
+ 
+    // modulate lighting with the computed shadow value
+    vec3 color = texture2D(decal, texCoord).xyz;
+ 
+    gl_FragColor.xyz = (color * NdotL + pow(max(dot(R, L), 0), 64)) * shadow * texture2DProj(spot, shadowMapPos) + color * 0.1;
+ }
+ */
