@@ -8,7 +8,12 @@
 
 import MetalKit
 
-open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegate {
+open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegate, STLRSceneDelegate {
+    open func updpateFPS() {
+        fps = scene.fps
+    }
+    
+    open var fps: Int = 0
     open var scene: STLRScene {
         set {
             renderer.scene = newValue
@@ -43,6 +48,7 @@ open class STLRViewControllerMacOS: NSViewController, NSGestureRecognizerDelegat
     override open func viewDidLoad() {
         super.viewDidLoad()
         STLRLog.delegate = self
+        STLRScene.delegate = self
         metalView.sampleCount = 4
         renderer = STLRRenderer(metalView: metalView)
         panGesture = NSPanGestureRecognizer(target: self, action: #selector(handlePan))

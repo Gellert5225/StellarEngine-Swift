@@ -86,6 +86,13 @@ extension MTLRenderPassDescriptor {
         depthAttachment.clearDepth = 1
     }
     
+    func setUpStencilAttachment(texture: MTLTexture, resolveTexture: MTLTexture) {
+        stencilAttachment.texture = texture
+        stencilAttachment.resolveTexture = resolveTexture
+        stencilAttachment.loadAction = .clear
+        stencilAttachment.storeAction = .multisampleResolve
+    }
+    
     func setUpColorAttachment(position: Int, texture: MTLTexture, resolveTexture: MTLTexture) {
         colorAttachments[position].texture = texture
         colorAttachments[position].resolveTexture = resolveTexture

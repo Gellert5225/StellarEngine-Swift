@@ -25,26 +25,31 @@ class TestScene: STLRScene {
         ground.scale = [10, 10, 10]
         ground.position = [0, 1, 0]
         add(node: ground)
+//
+//        let train = STLRModel(modelName: "train")
+//        add(node: train, parent: ground)
+//        train.scale = [0.1, 0.1, 0.1]
+//        train.position = [0, 0, 0]
+//
+//        let chest = STLRModel(modelName: "chest")
+//        add(node: chest, parent: ground)
+//        chest.position = [0, 0, -1]
+//        chest.scale = [0.2, 0.2, 0.2]
+//
+//        let mouse = STLRModel(modelName: "MagicMouse")
+//        add(node: mouse, parent: ground)
+//        mouse.scale = [0.005, 0.005, 0.005]
+//        mouse.position = [-1, 0, 0]
+//
+//        let car = STLRModel(modelName: "racing-car")
+//        car.scale = [0.2, 0.2, 0.2]
+//        car.position = [1, 0, 0]
+//        add(node: car, parent: ground)
         
-        let train = STLRModel(modelName: "train")
-        add(node: train, parent: ground)
-        train.scale = [0.1, 0.1, 0.1]
-        train.position = [0, 0, 0]
-        
-        let chest = STLRModel(modelName: "chest")
-        add(node: chest, parent: ground)
-        chest.position = [0, 0, -1]
-        chest.scale = [0.2, 0.2, 0.2]
-
-        let mouse = STLRModel(modelName: "MagicMouse")
-        add(node: mouse, parent: ground)
-        mouse.scale = [0.005, 0.005, 0.005]
-        mouse.position = [-1, 0, 0]
-
-        let car = STLRModel(modelName: "racing-car")
-        car.scale = [0.2, 0.2, 0.2]
-        car.position = [1, 0, 0]
-        add(node: car, parent: ground)
+        let temple = STLRModel(modelName: "Temple")
+        temple.scale = float3(repeating: 0.001)
+        temple.position = [0.0, 0.01, 0.0]
+        add(node: temple, parent: ground)
         
         camera.fovDegrees = 60
         
@@ -55,7 +60,7 @@ class TestScene: STLRScene {
         
         lights.append(sunLignt)
         lights.append(ambientLight)
-        //createPointLights(count: 20, min: [-8, 0.5, -8], max: [8, 4, 8])
+        createPointLights(count: 100, min: [-10, 1.3, -10], max: [10, 10, 10])
     }
     
     func printNodes(root: STLRNode, level: Int) {
@@ -105,8 +110,8 @@ class TestScene: STLRScene {
             let z = Float(random(range: Int(newMin.z)...Int(newMax.z))) * 0.01
             light.position = [x, y, z]
             light.color = colors[random(range: 0...colors.count)]
-            light.intensity = 5.0
-            light.attenuation = float3(0.4, 0.4, 0.4)
+            light.intensity = 2
+            light.attenuation = float3(2, 2, 2)
             lights.append(light)
         }
     }

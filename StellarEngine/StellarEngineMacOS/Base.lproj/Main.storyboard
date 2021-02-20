@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18121" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18121"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -786,7 +787,7 @@
                                                                     </subviews>
                                                                 </clipView>
                                                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="4ia-Jv-fkL">
-                                                                    <rect key="frame" x="1" y="318" width="212" height="15"/>
+                                                                    <rect key="frame" x="1" y="290" width="212" height="15"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                 </scroller>
                                                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="tpN-NS-Iqz">
@@ -877,7 +878,7 @@
                                                                     </subviews>
                                                                 </clipView>
                                                                 <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="0Kb-OT-enq">
-                                                                    <rect key="frame" x="1" y="236" width="212" height="15"/>
+                                                                    <rect key="frame" x="1" y="194" width="212" height="15"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                 </scroller>
                                                                 <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="MvS-DV-yXM">
@@ -920,9 +921,21 @@
                                                     <customView id="FCE-jo-koo" customClass="MTKView">
                                                         <rect key="frame" x="0.0" y="0.0" width="860" height="417"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <subviews>
+                                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZUL-gV-T3R">
+                                                                <rect key="frame" x="18" y="381" width="37" height="16"/>
+                                                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="59a-4v-Kwt">
+                                                                    <font key="font" usesAppearanceFont="YES"/>
+                                                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                                </textFieldCell>
+                                                            </textField>
+                                                        </subviews>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="Vd3-Nt-6to"/>
                                                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="200" id="jM7-JI-n9P"/>
+                                                            <constraint firstItem="ZUL-gV-T3R" firstAttribute="leading" secondItem="FCE-jo-koo" secondAttribute="leading" constant="20" symbolic="YES" id="mFn-3L-jQz"/>
+                                                            <constraint firstItem="ZUL-gV-T3R" firstAttribute="top" secondItem="FCE-jo-koo" secondAttribute="top" constant="20" symbolic="YES" id="z1V-oq-w6R"/>
                                                         </constraints>
                                                     </customView>
                                                     <customView id="Er5-je-Gxz">
@@ -1010,6 +1023,7 @@
                     </view>
                     <connections>
                         <outlet property="consoleSplitView" destination="pU0-3I-Ook" id="lVO-1G-EIh"/>
+                        <outlet property="fpsLabel" destination="ZUL-gV-T3R" id="LLF-xv-HUg"/>
                         <outlet property="mtkView" destination="FCE-jo-koo" id="l2y-ng-98a"/>
                         <outlet property="navigationSplitView" destination="LMn-7a-udk" id="GqB-Oy-Ui6"/>
                         <outlet property="outputTextView" destination="tnv-mg-yVu" id="HSR-Ur-6EJ"/>

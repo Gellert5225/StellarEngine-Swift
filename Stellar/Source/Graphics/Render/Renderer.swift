@@ -98,6 +98,8 @@ open class STLRRenderer: NSObject {
         STLRRenderer.library = defaultLibrary
                 
         renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
+        renderPassDescriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
         
         buildDepthStencilState()
         buildShadowTexture(size: self.metalView.drawableSize)
@@ -236,7 +238,6 @@ open class STLRRenderer: NSObject {
         
         for child in scene.renderables {
             if let renderable = child as? STLRModel {
-                //renderable.doRender(commandEncoder: renderEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
                 draw(renderEncoder: renderEncoder, model: renderable)
             }
         }
@@ -270,7 +271,6 @@ open class STLRRenderer: NSObject {
     func buildCompositionPipelineState() {
         let descriptor = MTLRenderPipelineDescriptor()
         descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
-        //descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         
         descriptor.depthAttachmentPixelFormat = .depth32Float
         descriptor.sampleCount = 4
@@ -292,22 +292,27 @@ extension STLRRenderer: MTKViewDelegate {
         guard let scene = scene else {return}
         scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
-        //buildGBufferRenderPassDescriptor(size: size)
         gBufferRenderPass.updateTextures(size: size)
+//        renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
+//        if let descriptor = view.currentRenderPassDescriptor, let drawable = view.currentDrawable {
+//            descriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: drawable.texture)
+//            descriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
+//        }
         for water in scene.waters {
             water.reflectionRenderPass.updateTextures(size: size)
         }
     }
     
     public func draw(in view: MTKView) {
-        guard let descriptor = view.currentRenderPassDescriptor else {return}
         STLRRenderer.commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()
         guard let scene = scene else { return }
         
         STLRRenderer.commandBuffer?.addCompletedHandler({ buffer in
-            let deltaTime = buffer.gpuEndTime - buffer.gpuStartTime
-            scene.fps = Int(1 / deltaTime)
-            scene.update(deltaTime: 1 / Float(view.preferredFramesPerSecond))
+            DispatchQueue.main.async {
+                let deltaTime = buffer.gpuEndTime - buffer.gpuStartTime
+                scene.fps = Int(1 / deltaTime)
+                scene.update(deltaTime: 1 / Float(view.preferredFramesPerSecond))
+            }
         })
         
         // shadow pass
@@ -357,8 +362,8 @@ extension STLRRenderer: MTKViewDelegate {
         guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor) else {return}
         
         scene.skybox?.update(renderEncoder: gBufferEncoder)
-        renderGbufferPass(renderEncoder: gBufferEncoder)
         scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
+        renderGbufferPass(renderEncoder: gBufferEncoder)
         for water in scene.waters {
             water.update()
             water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
@@ -371,13 +376,22 @@ extension STLRRenderer: MTKViewDelegate {
         gBufferEncoder.endEncoding()
         gBufferEncoder.popDebugGroup()
         
-        // composition pass
-        guard let compositionEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: descriptor) else {return}
-        renderCompositionPass(renderEncoder: compositionEncoder)
+        // skybox pass
+//        guard let mainEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: (scene.skybox?.renderPass.descriptor)!) else {return}
+//        scene.skybox?.update(renderEncoder: mainEncoder)
+//        scene.skybox?.render(renderEncoder: mainEncoder, uniforms: scene.uniforms)
+//        mainEncoder.endEncoding()
+//        mainEncoder.popDebugGroup()
         
         guard let drawable = view.currentDrawable else {
             return
         }
+        
+        // composition pass
+        guard let descriptor = view.currentRenderPassDescriptor else {return}
+        //descriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: drawable.layer.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: drawable.texture)
+        guard let compositionEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: descriptor) else {return}
+        renderCompositionPass(renderEncoder: compositionEncoder)
         
         STLRRenderer.commandBuffer?.present(drawable)
         STLRRenderer.commandBuffer?.commit()

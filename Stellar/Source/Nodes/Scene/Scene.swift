@@ -10,6 +10,8 @@ import MetalKit
 
 open class STLRScene {
     
+    public static var delegate: STLRSceneDelegate?
+    
     open var name: String = "Untitled Scene"
     open var camera = STLRArcballCamera()
     open var lights = [Light]()
@@ -62,11 +64,16 @@ open class STLRScene {
     
     var reflectionCamera = STLRArcballCamera()
     
-    var fps: Int?
+    open var fps: Int {
+        didSet {
+            STLRScene.delegate?.updpateFPS()
+        }
+    }
     
     public init(name: String = "Untitled Scene") {
         self.name = name
         self.rootNode.name = name
+        self.fps = 60
         
         //self.cameraType = cameraType
         add(node: camera, render: false)
@@ -149,4 +156,8 @@ open class STLRScene {
             update(nodes: node.children, deltaTime: deltaTime)
         }
     }
+}
+
+public protocol STLRSceneDelegate {
+    func updpateFPS()
 }

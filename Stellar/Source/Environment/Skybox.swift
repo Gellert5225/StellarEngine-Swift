@@ -19,7 +19,7 @@ open class STLRSkybox {
     let pipelineState: MTLRenderPipelineState
     let depthStencilState: MTLDepthStencilState?
     
-    var renderPass: RenderPass?
+    var renderPass: RenderPass
     
     public struct SkySettings {
         var turbidity: Float = 0.5597
@@ -40,7 +40,7 @@ open class STLRSkybox {
     public static var SunSet = SkySettings(turbidity: 0.6778, sunElevation: 0.4551, upperAtmosphereScattering: 0.0497, groundAlbedo: 0.0)
     
     public init(textureName: String?) {
-        //renderPass = RenderPass(name: "skyBoxPass", size: STLRRenderer.drawableSize, sample: false)
+        renderPass = RenderPass(name: "skybox", size: STLRRenderer.drawableSize, multiplier: 1.0)
         let allocator = MTKMeshBufferAllocator(device: STLRRenderer.metalDevice)
         let cube = MDLMesh(boxWithExtent: [1, 1, 1], segments: [1, 1, 1], inwardNormals: true, geometryType: .triangles, allocator: allocator)
         do {

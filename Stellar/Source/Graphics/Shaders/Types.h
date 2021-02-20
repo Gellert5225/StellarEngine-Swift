@@ -14,6 +14,7 @@
 #define sunLight vector_float3(0, -1000, -1000)
 #define near 0.1
 #define far 100.0
+#define pi 3.1415926535897932384626433832795
 
 typedef matrix_float4x4 float4x4;
 typedef matrix_float3x3 float3x3;
@@ -94,7 +95,8 @@ typedef enum {
     Albedo = 0,
     Normal = 1,
     Position = 2,
-    Shadow = 3
+    Shadow = 3,
+    Specular = 4
 } GBufferTextures;
 
 typedef enum {

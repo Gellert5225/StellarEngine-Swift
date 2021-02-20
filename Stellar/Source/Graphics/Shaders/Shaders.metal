@@ -19,8 +19,6 @@ constant bool hasRoughnessTexture [[function_constant(2)]];
 constant bool hasMetallicTexture [[function_constant(3)]];
 constant bool hasAOTexture [[function_constant(4)]];
 
-constant float pi = 3.1415926535897932384626433832795;
-
 struct VertexIn{
     float4 position [[ attribute(0) ]];
     float3 normal [[ attribute(1) ]];

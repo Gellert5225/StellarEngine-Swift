@@ -32,7 +32,7 @@ float3 compositionLighting(float3 normal,
                            float3 baseColor) {
     float3 diffuseColor = 0;
     float3 ambientColor = 0;
-    float3 normalDirection = normalize(normal);
+    float3 normalDirection = normal;
     
     for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
         Light light = lights[i];
@@ -76,7 +76,8 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
                                  depth2d<float> shadowTexture                   [[ texture(Shadow) ]],
                                  texture2d<float> albedoTexture                 [[ texture(Albedo) ]],
                                  texture2d<float> normalTexture                 [[ texture(Normal) ]],
-                                 texture2d<float> positionTexture               [[ texture(Position) ]]) {
+                                 texture2d<float> positionTexture               [[ texture(Position) ]],
+                                 texture2d<float> specularTexture               [[ texture(Specular) ]]) {
     constexpr sampler s(min_filter::linear, mag_filter::linear);
     float4 albedo = albedoTexture.sample(s, in.texCoords);
     float3 normal = normalTexture.sample(s, in.texCoords).xyz;
@@ -87,7 +88,7 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
 //    if (shadow > 0) {
 //       // diffuseColor *= 0.5;
 //    }
-    return float4(diffuseColor, 0);
+    return albedo;//float4(diffuseColor, 0);
 }
 
 

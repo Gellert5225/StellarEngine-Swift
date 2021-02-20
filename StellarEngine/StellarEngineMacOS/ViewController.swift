@@ -13,6 +13,7 @@ import MetalKit
 class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     var renderer: STLRRenderer?
     var resourceTree = ResourceTree(name: "Documents", isDirectory: true)
+    var attributes: [NSAttributedString.Key : Any]!
     
     @IBOutlet weak var consoleSplitView: NSSplitView!
     @IBOutlet weak var navigationSplitView: NSSplitView!
@@ -20,9 +21,22 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     @IBOutlet weak var sceneOutlineView: NSOutlineView!
     @IBOutlet weak var resourceOutlineView: NSOutlineView!
     
+    @IBOutlet weak var fpsLabel: NSTextField!
     @IBOutlet var outputTextView: NSTextView!
     override func viewDidLoad() {
         metalView = mtkView
+        
+        let font = NSFont.systemFont(ofSize: 15)
+        let shadow = NSShadow()
+        shadow.shadowColor = NSColor.black
+        shadow.shadowBlurRadius = 5
+
+        attributes = [
+            .font: font,
+            .foregroundColor: NSColor.white,
+            .shadow: shadow
+        ]
+        
         super.viewDidLoad()
         
         consoleSplitView.delegate = self
@@ -74,6 +88,10 @@ class HomeViewController: STLRViewControllerMacOS, NSSplitViewDelegate {
     
     override func flushToConsole() {
         outputTextView.textStorage?.append(STLRLog.logBuffer[STLRLog.logBuffer.count - 1])
+    }
+    
+    override func updpateFPS() {
+        fpsLabel.attributedStringValue = NSAttributedString(string: String(scene.fps), attributes: attributes)
     }
 }
 

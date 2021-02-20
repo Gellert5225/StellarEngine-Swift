@@ -10,8 +10,6 @@
 using namespace metal;
 #import "Types.h"
 
-constant float pi = 3.1415926535897932384626433832795;
-
 constant bool hasColorTexture       [[ function_constant(0) ]];
 constant bool hasNormalTexture      [[ function_constant(1) ]];
 constant bool hasRoughnessTexture   [[ function_constant(2) ]];
@@ -66,7 +64,7 @@ float random(float3 seed, int i){
     return fract(sin(dot_product) * 43758.5453);
 }
 
-float3 renderGbuffer(Lighting lighting);
+float3 calculateSpecularOutput(Lighting lighting);
 
 fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     sampler sampler2d [[ sampler(0) ]],
@@ -80,8 +78,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     texture2d<float> aoTexture          [[ texture(AOTexture) ]],
                                     depth2d<float> shadow_texture       [[ texture(Shadow) ]]) {
     GbufferOut out;
-
-    out.normal = float4(normalize(in.normal), 1.0);
+    
     out.position = float4(in.worldPosition, 1.0);
     
     float4 baseColor;
@@ -130,11 +127,11 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     }
     
     normal = normalize(normal);
+    out.normal = float4(normal, 1.0);
 
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition);
     float3 specularOutput = 0;
     float3 diffuseColor = baseColor.xyz;
-    float3 ambientColor = 0;
 
     for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
         Light light = lightsBuffer[i];
@@ -153,11 +150,11 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
             lighting.lightColor = light.color;
             lighting.intensity = light.intensity;
 
-            specularOutput = renderGbuffer(lighting);
+            specularOutput = calculateSpecularOutput(lighting);
         }
     }
-
-    //diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    
+    diffuseColor = gbufferLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
     
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -165,7 +162,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     float bias = 0.005;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
-    const int neighborWidth = 3;
+    const int neighborWidth = 7;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
 
     float mapSize = 4096;
@@ -189,13 +186,15 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     for (int i = 0; i < 4; i++) {
         int index = int(16.0 * random(floor(in.worldPosition.xyz * 1000.0), i)) % 16;
-        if ( shadow_texture.sample(s, xy + poissonDisk[index] / 700.0 ) < current_sample ) {
+        if ( shadow_texture.sample(s, xy + poissonDisk[index] / 500.0 ) < current_sample ) {
             lightFactor -= 0.08;
             //visibility -= 0.2 * (1.0 - shadow_texture.sample(s, xy + poissonDisk[index] / 700.0, current_sample));
         }
     }
     
-    float4 specDiffuse = float4(specularOutput * lightFactor + diffuseColor * lightFactor + ambientColor, 0) * ambientOcclusion;
+    out.albedo.a = lightFactor;
+    
+    float4 specDiffuse = float4(specularOutput * lightFactor + diffuseColor * lightFactor, 1) * ambientOcclusion;
 
     out.albedo = specDiffuse;
 
@@ -321,7 +320,7 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
 }
 
 // calculate specularOutput
-float3 renderGbuffer(Lighting lighting) {
+float3 calculateSpecularOutput(Lighting lighting) {
     // Rendering equation courtesy of Apple et al.
     float NoL = saturate(dot(lighting.normal, lighting.lightDirection));
     float3 H = normalize(lighting.lightDirection + lighting.viewDirection); // half vector
@@ -360,6 +359,7 @@ float3 renderGbuffer(Lighting lighting) {
     float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion * lighting.intensity;
     return specularOutput;
 }
+
 
 float3 gbufferLighting(float3 normal,
                        float3 position,
