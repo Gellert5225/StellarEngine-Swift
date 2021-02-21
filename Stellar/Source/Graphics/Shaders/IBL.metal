@@ -38,6 +38,14 @@ constant bool hasRoughnessTexture [[ function_constant(2) ]];
 constant bool hasMetallicTexture [[ function_constant(3) ]];
 constant bool hasAOTexture [[ function_constant(4) ]];
 
+struct STLRGBufferTextures {
+    texture2d<float> baseColorTexture   [[ texture(BaseColorTexture) ]];
+    texture2d<float> normalTexture      [[ texture(NormalTexture) ]];
+    texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]];
+    texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]];
+    texture2d<float> aoTexture          [[ texture(AOTexture) ]];
+};
+
 struct VertexOut {
     float4 position [[position]];
     float4 color;
@@ -53,94 +61,84 @@ struct VertexOut {
     float3 worldBitangent;
     float4 shadowPosition;
 };
-fragment float4 fragment_IBL(VertexOut in [[ stage_in ]],
-                             sampler textureSampler [[ sampler(0) ]],
-                             constant Material &material [[ buffer(BufferIndexMaterials) ]],
-                             constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentConstants) ]],
-                             texture2d<float> baseColorTexture [[ texture(BaseColorTexture), function_constant(hasColorTexture) ]],
-                             texture2d<float> normalTexture [[ texture(NormalTexture), function_constant(hasNormalTexture) ]],
-                             texture2d<float> roughnessTexture [[ texture(RoughnessTexture), function_constant(hasRoughnessTexture) ]],
-                             texture2d<float> metallicTexture [[ texture(MetallicTexture), function_constant(hasMetallicTexture) ]],
-                             texture2d<float> aoTexture [[ texture(AOTexture), function_constant(hasAOTexture) ]],
-                             depth2d<float> shadowTexture [[ texture(Shadow) ]],
-                             texturecube<float> skybox [[ texture(BufferIndexSkybox) ]],
-                             texturecube<float> skyboxDiffuse [[ texture(BufferIndexSkyboxDiffuse) ]],
-                             texture2d<float> brdfLut [[ texture(BufferIndexBRDFLut) ]]){
-    // extract color
-    float3 baseColor;
-    if (hasColorTexture) {
-        float4 color = baseColorTexture.sample(textureSampler, in.textureCoordinates * fragmentUniforms.tiling);
-        if (color.a < 0.2) {
+fragment float4 fragment_IBL(VertexOut in                                       [[ stage_in ]],
+                             sampler textureSampler                             [[ sampler(0) ]],
+                             constant Material &material                        [[ buffer(BufferIndexMaterials) ]],
+                             constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentConstants) ]],
+                             constant STLRGBufferTextures &textures             [[ buffer(STLRGBufferTexturesIndex) ]],
+                             depth2d<float> shadowTexture                       [[ texture(Shadow) ]],
+                             texturecube<float> skybox                          [[ texture(BufferIndexSkybox) ]],
+                             texturecube<float> skyboxDiffuse                   [[ texture(BufferIndexSkyboxDiffuse) ]],
+                             texture2d<float> brdfLut                           [[ texture(BufferIndexBRDFLut) ]]){
+    float4 baseColor;
+
+    if (!is_null_texture(textures.baseColorTexture)) {
+        float4 colorAlpha = textures.baseColorTexture.sample(textureSampler, in.textureCoordinates * 1);
+        baseColor = float4(textures.baseColorTexture.sample(textureSampler, in.textureCoordinates * 1).rgb, 1);
+
+        if (colorAlpha.a < 0.2) {
             discard_fragment();
         }
-        baseColor = color.rgb;
     } else {
-        baseColor = material.baseColor;
+        baseColor = float4(material.baseColor, 1.0);
     }
-    // extract metallic
-    float metallic;
-    if (hasMetallicTexture) {
-        metallic = metallicTexture.sample(textureSampler, in.textureCoordinates).r;
+
+    float metallic = material.metallic;
+    if (!is_null_texture(textures.metallicTexture)) {
+        metallic = textures.metallicTexture.sample(textureSampler, in.textureCoordinates).r;
     } else {
         metallic = material.metallic;
     }
+
     // extract roughness
     float roughness;
-    if (hasRoughnessTexture) {
-        roughness = roughnessTexture.sample(textureSampler, in.textureCoordinates).r;
+    if (!is_null_texture(textures.roughnessTexture)) {
+        roughness = textures.roughnessTexture.sample(textureSampler, in.textureCoordinates).r;
     } else {
         roughness = material.roughness;
     }
+
     // extract ambient occlusion
     float ambientOcclusion;
-    if (hasAOTexture) {
-        ambientOcclusion = aoTexture.sample(textureSampler, in.textureCoordinates).r;
+    if (!is_null_texture(textures.aoTexture)) {
+        ambientOcclusion = textures.aoTexture.sample(textureSampler, in.textureCoordinates).r;
     } else {
         ambientOcclusion = 1.0;
     }
-    
-    // normal map
+
     float3 normal;
-    if (hasNormalTexture) {
-        float3 normalValue = normalTexture.sample(textureSampler, in.textureCoordinates * fragmentUniforms.tiling).xyz * 2.0 - 1.0;
-        normal = in.normal * normalValue.z
-        + in.worldTangent * normalValue.x
-        + in.worldBitangent * normalValue.y;
-        
+    if (!is_null_texture(textures.normalTexture)) {
+        float3 normalValue = textures.normalTexture.sample(textureSampler, in.textureCoordinates * 1).rgb;
+        normalValue = normalValue * 2 - 1;
+        normal = in.normal * normalValue.z + in.worldTangent * normalValue.x + in.worldBitangent * normalValue.y;
     } else {
         normal = in.normal;
     }
+
     normal = normalize(normal);
+
     float4 diffuse = skyboxDiffuse.sample(textureSampler, normal);
     diffuse = mix(pow(diffuse, 0.5), diffuse, metallic);
-    
-    //shadow
-    float2 xy = in.shadowPosition.xy;
-    xy = xy * 0.5 + 0.5;
-    xy.y = 1 - xy.y;
-    constexpr sampler sShadow(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
-//    float shadow_sample = shadowTexture.sample(sShadow, xy);
-//    float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-//    if (current_sample > shadow_sample) {
-//        diffuse *= 0.5;
+
+//    const int neighborWidth = 3;
+//    const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
+//
+//    float mapSize = 4096;
+//    float texelSize = 1.0 / mapSize;
+//    float total = 0.0;
+//    for (int x = -neighborWidth; x <= neighborWidth; x++) {
+//        for (int y = -neighborWidth; y <= neighborWidth; y++) {
+//            float shadow_sample = shadow_texture.sample(shadow_s, xy + float2(x, y) * texelSize);
+//            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
+//            if (current_sample > shadow_sample) {
+//                total += 1.0;
+//            }
+//        }
 //    }
-    const int neighborWidth = 3;
-    const float neighbors = (neighborWidth * 2.0 + 1.0) * (neighborWidth * 2.0 + 1.0);
-    
-    float mapSize = 4096;
-    float texelSize = 1.0 / mapSize;
-    float total = 0.0;
-    for (int i = -neighborWidth; i <= neighborWidth; i++) {
-        for (int j = -neighborWidth; j <= neighborWidth; j++) {
-            float shadow_sample = shadowTexture.sample(sShadow, xy + float2(i, j) * texelSize);
-            float current_sample = in.shadowPosition.z / in.shadowPosition.w;
-            if (current_sample > shadow_sample) total += 1.0;
-        }
-    }
-    total /= neighbors;
-    float lightFactor = 1.0 - (total * in.shadowPosition.w);
-    diffuse *= lightFactor;
-    
+//
+//    total /= neighbors;
+//    float lightFactor = 1.0 - (total * in.shadowPosition.w);
+
     float3 viewDirection = normalize(fragmentUniforms.cameraPosition - in.worldPosition.xyz);
     float3 textureCoordinates = -normalize(reflect(viewDirection, normal));
     constexpr sampler s(filter::linear, mip_filter::linear);
@@ -150,9 +148,8 @@ fragment float4 fragment_IBL(VertexOut in [[ stage_in ]],
     float3 f0 = mix(0.04, baseColor.rgb, metallic);
     float3 specularIBL = f0 * envBRDF.r + envBRDF.g;
     float3 specular = prefilteredColor * specularIBL;
-    float4 color = diffuse * float4(baseColor, 1) + float4(specular, 1);
+    float4 color = diffuse * baseColor + float4(specular, 1);
     color *= ambientOcclusion;
-    
+
     return color;
 }
-

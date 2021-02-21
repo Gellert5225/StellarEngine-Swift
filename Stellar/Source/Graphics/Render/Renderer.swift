@@ -413,11 +413,27 @@ extension STLRRenderer: MTKViewDelegate {
         for modelSubmesh in modelSubmeshes {
             let submesh = modelSubmesh.submesh
             var material = modelSubmesh.material
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.normal, index: Int(NormalTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.metallic, index: Int(MetallicTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.ao, index: Int(AOTexture.rawValue))
+//            renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
+//            renderEncoder.setFragmentTexture(modelSubmesh.textures.normal, index: Int(NormalTexture.rawValue))
+//            renderEncoder.setFragmentTexture(modelSubmesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
+//            renderEncoder.setFragmentTexture(modelSubmesh.textures.metallic, index: Int(MetallicTexture.rawValue))
+//            renderEncoder.setFragmentTexture(modelSubmesh.textures.ao, index: Int(AOTexture.rawValue))
+            renderEncoder.setFragmentBuffer(modelSubmesh.textureBuffer, offset: 0, index: Int(STLRGBufferTexturesIndex.rawValue))
+            if let colorTexture = modelSubmesh.textures.baseColor {
+                renderEncoder.useResource(colorTexture, usage: .read)
+            }
+            if let normalTexture = modelSubmesh.textures.normal {
+                renderEncoder.useResource(normalTexture, usage: .read)
+            }
+            if let roughnessTexture = modelSubmesh.textures.roughness {
+                renderEncoder.useResource(roughnessTexture, usage: .read)
+            }
+            if let metallicTexture = modelSubmesh.textures.metallic {
+                renderEncoder.useResource(metallicTexture, usage: .read)
+            }
+            if let aoTexture = modelSubmesh.textures.ao {
+                renderEncoder.useResource(aoTexture, usage: .read)
+            }
             renderEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
             renderEncoder.drawIndexedPrimitives(type: .triangle,
                                                 indexCount: submesh.indexCount,

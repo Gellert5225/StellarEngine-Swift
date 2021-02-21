@@ -22,11 +22,56 @@ class STLRSubmesh {
     let material: Material
     let pipelineState: MTLRenderPipelineState!
     
+    var fragmentFunction: MTLFunction
+    var vertexFunction: MTLFunction
+    
+    var textureBuffer: MTLBuffer?
+    
     init(submesh: MTKSubmesh, mdlSubmesh: MDLSubmesh, vertexFunctionName: String, fragmentFunctionName: String) {
         self.submesh = submesh
         textures = Textures(material: mdlSubmesh.material)
         material = Material(material: mdlSubmesh.material)
-        pipelineState = STLRSubmesh.makePipelineState(textures: textures, vertexFunctionName: vertexFunctionName, fragmentFunctionName: fragmentFunctionName)
+        
+        let library = STLRRenderer.library
+        let functionConstants = STLRSubmesh.makeFunctionConstants(textures: textures)
+        vertexFunction = (library?.makeFunction(name: vertexFunctionName))!
+        
+        do {
+            fragmentFunction = try library!.makeFunction(name: fragmentFunctionName, constantValues: functionConstants)
+        } catch {
+            fatalError("No metal function exists")
+        }
+        
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        
+        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
+        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
+        pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        pipelineDescriptor.colorAttachments[3].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+        pipelineDescriptor.sampleCount = 4
+        do {
+            pipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        } catch let error {
+            fatalError(error.localizedDescription)
+        }
+        
+        initializeTextures()
+    }
+    
+    func initializeTextures() {
+        let textureEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: Int(STLRGBufferTexturesIndex.rawValue))
+        textureBuffer = STLRRenderer.metalDevice.makeBuffer(length: textureEncoder.encodedLength, options: [])!
+        textureBuffer?.label = "TextureBuffer"
+        textureEncoder.setArgumentBuffer(textureBuffer, offset: 0)
+        textureEncoder.setTexture(textures.baseColor, index: 0)
+        textureEncoder.setTexture(textures.normal, index: 1)
+        textureEncoder.setTexture(textures.roughness, index: 2)
+        textureEncoder.setTexture(textures.metallic, index: 3)
+        textureEncoder.setTexture(textures.ao, index: 4)
     }
 }
 
@@ -48,18 +93,7 @@ private extension STLRSubmesh {
             return functionConstants
     }
     
-    static func makePipelineState(textures: Textures, vertexFunctionName: String, fragmentFunctionName: String) -> MTLRenderPipelineState {
-        let library = STLRRenderer.library
-        let functionConstants = makeFunctionConstants(textures: textures)
-        let vertexFunction = library?.makeFunction(name: vertexFunctionName)
-        
-        let fragmentFunction: MTLFunction?
-        do {
-            fragmentFunction = try library?.makeFunction(name: fragmentFunctionName, constantValues: functionConstants)
-        } catch {
-            fatalError("No metal function exists")
-        }
-        
+    func makePipelineState(textures: Textures) -> MTLRenderPipelineState {
         var pipelineState: MTLRenderPipelineState
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction

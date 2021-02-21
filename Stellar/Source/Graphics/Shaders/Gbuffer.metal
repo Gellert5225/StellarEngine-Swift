@@ -32,6 +32,14 @@ struct GbufferOut {
     float4 position [[ color(Position) ]];
 };
 
+struct STLRGBufferTextures {
+    texture2d<float> baseColorTexture   [[ texture(BaseColorTexture) ]];
+    texture2d<float> normalTexture      [[ texture(NormalTexture) ]];
+    texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]];
+    texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]];
+    texture2d<float> aoTexture          [[ texture(AOTexture) ]];
+};
+
 constant float2 poissonDisk[16] = {
    float2( -0.94201624, -0.39906216 ),
    float2( 0.94558609, -0.76890725 ),
@@ -70,23 +78,18 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     sampler sampler2d [[ sampler(0) ]],
                                     constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
-                                    constant Material &material         [[ buffer(13) ]],
-                                    texture2d<float> texture            [[ texture(BaseColorTexture) ]],
-                                    texture2d<float> normalTexture      [[ texture(NormalTexture) ]],
-                                    texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]],
-                                    texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]],
-                                    texture2d<float> aoTexture          [[ texture(AOTexture) ]],
-                                    depth2d<float> shadow_texture       [[ texture(Shadow) ]]) {
+                                    constant Material &material                     [[ buffer(13) ]],
+                                    depth2d<float> shadow_texture                   [[ texture(Shadow) ]],
+                                    constant STLRGBufferTextures &textures          [[ buffer(STLRGBufferTexturesIndex) ]]) {
     GbufferOut out;
     
     out.position = float4(in.worldPosition, 1.0);
     
     float4 baseColor;
 
-    if (!is_null_texture(texture)) {
-        float4 colorAlpha = texture.sample(sampler2d, in.textureCoordinates * 1);
-        baseColor = float4(texture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
-
+    if (!is_null_texture(textures.baseColorTexture)) {
+        float4 colorAlpha = textures.baseColorTexture.sample(sampler2d, in.textureCoordinates * 1);
+        baseColor = float4(textures.baseColorTexture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
         if (colorAlpha.a < 0.2) {
             discard_fragment();
         }
@@ -95,31 +98,31 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     }
 
     float metallic = material.metallic;
-    if (!is_null_texture(metallicTexture)) {
-        metallic = metallicTexture.sample(sampler2d, in.textureCoordinates).r;
+    if (!is_null_texture(textures.metallicTexture)) {
+        metallic = textures.metallicTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         metallic = material.metallic;
     }
 
     // extract roughness
     float roughness;
-    if (!is_null_texture(roughnessTexture)) {
-        roughness = roughnessTexture.sample(sampler2d, in.textureCoordinates).r;
+    if (!is_null_texture(textures.roughnessTexture)) {
+        roughness = textures.roughnessTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         roughness = material.roughness;
     }
 
     // extract ambient occlusion
     float ambientOcclusion;
-    if (!is_null_texture(aoTexture)) {
-        ambientOcclusion = aoTexture.sample(sampler2d, in.textureCoordinates).r;
+    if (!is_null_texture(textures.aoTexture)) {
+        ambientOcclusion = textures.aoTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         ambientOcclusion = 1.0;
     }
 
     float3 normal;
-    if (!is_null_texture(normalTexture)) {
-        float3 normalValue = normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
+    if (!is_null_texture(textures.normalTexture)) {
+        float3 normalValue = textures.normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
         normalValue = normalValue * 2 - 1;
         normal = in.normal * normalValue.z + in.worldTangent * normalValue.x + in.worldBitangent * normalValue.y;
     } else {
@@ -186,7 +189,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     for (int i = 0; i < 4; i++) {
         int index = int(16.0 * random(floor(in.worldPosition.xyz * 1000.0), i)) % 16;
-        if ( shadow_texture.sample(s, xy + poissonDisk[index] / 500.0 ) < current_sample ) {
+        if (shadow_texture.sample(s, xy + poissonDisk[index] / 500.0 ) < current_sample) {
             lightFactor -= 0.08;
             //visibility -= 0.2 * (1.0 - shadow_texture.sample(s, xy + poissonDisk[index] / 700.0, current_sample));
         }
@@ -205,16 +208,12 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
                                     sampler sampler2d [[ sampler(0) ]],
                                     constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
-                                    constant Material &material         [[ buffer(13) ]],
-                                    texture2d<float> texture            [[ texture(BaseColorTexture) ]],
-                                    texture2d<float> normalTexture      [[ texture(NormalTexture) ]],
-                                    texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]],
-                                    texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]],
-                                    texture2d<float> aoTexture          [[ texture(AOTexture) ]],
-                                    depth2d<float> shadow_texture       [[ texture(Shadow) ]],
-                                    texturecube<float> skybox           [[ texture(BufferIndexSkybox) ]],
-                                    texturecube<float> skyboxDiffuse    [[ texture(BufferIndexSkyboxDiffuse) ]],
-                                    texture2d<float> brdfLut            [[ texture(BufferIndexBRDFLut) ]]) {
+                                    constant Material &material                     [[ buffer(13) ]],
+                                    constant STLRGBufferTextures &textures          [[ buffer(STLRGBufferTexturesIndex) ]],
+                                    depth2d<float> shadow_texture                   [[ texture(Shadow) ]],
+                                    texturecube<float> skybox                       [[ texture(BufferIndexSkybox) ]],
+                                    texturecube<float> skyboxDiffuse                [[ texture(BufferIndexSkyboxDiffuse) ]],
+                                    texture2d<float> brdfLut                        [[ texture(BufferIndexBRDFLut) ]]) {
     
     GbufferOut out;
 
@@ -224,9 +223,9 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
 
     float4 baseColor;
 
-    if (!is_null_texture(texture)) {
-        float4 colorAlpha = texture.sample(sampler2d, in.textureCoordinates * 1);
-        baseColor = float4(texture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
+    if (!is_null_texture(textures.baseColorTexture)) {
+        float4 colorAlpha = textures.baseColorTexture.sample(sampler2d, in.textureCoordinates * 1);
+        baseColor = float4(textures.baseColorTexture.sample(sampler2d, in.textureCoordinates * 1).rgb, 1);
 
         if (colorAlpha.a < 0.2) {
             discard_fragment();
@@ -236,31 +235,31 @@ fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
     }
 
     float metallic = material.metallic;
-    if (!is_null_texture(metallicTexture)) {
-        metallic = metallicTexture.sample(sampler2d, in.textureCoordinates).r;
+    if (!is_null_texture(textures.metallicTexture)) {
+        metallic = textures.metallicTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         metallic = material.metallic;
     }
 
     // extract roughness
     float roughness;
-    if (!is_null_texture(roughnessTexture)) {
-        roughness = roughnessTexture.sample(sampler2d, in.textureCoordinates).r;
+    if (!is_null_texture(textures.roughnessTexture)) {
+        roughness = textures.roughnessTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         roughness = material.roughness;
     }
 
     // extract ambient occlusion
     float ambientOcclusion;
-    if (!is_null_texture(aoTexture)) {
-        ambientOcclusion = aoTexture.sample(sampler2d, in.textureCoordinates).r;
+    if (!is_null_texture(textures.aoTexture)) {
+        ambientOcclusion = textures.aoTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
         ambientOcclusion = 1.0;
     }
 
     float3 normal;
-    if (!is_null_texture(normalTexture)) {
-        float3 normalValue = normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
+    if (!is_null_texture(textures.normalTexture)) {
+        float3 normalValue = textures.normalTexture.sample(sampler2d, in.textureCoordinates * 1).rgb;
         normalValue = normalValue * 2 - 1;
         normal = in.normal * normalValue.z + in.worldTangent * normalValue.x + in.worldBitangent * normalValue.y;
     } else {
