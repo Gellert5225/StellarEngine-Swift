@@ -99,9 +99,9 @@ open class STLRRenderer: NSObject {
                 
         renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
-        renderPassDescriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
+//        renderPassDescriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
         
-        buildDepthStencilState()
+        depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .less)
         buildShadowTexture(size: self.metalView.drawableSize)
         buildShadowPipelineState()
         
@@ -117,11 +117,11 @@ open class STLRRenderer: NSObject {
         buildCompositionPipelineState()
     }
     
-    fileprivate func buildDepthStencilState() {
+    fileprivate func buildDepthStencilState(depthWrite: Bool, compareFunction: MTLCompareFunction) -> MTLDepthStencilState? {
         let depthStencilDescriptor = MTLDepthStencilDescriptor()
-        depthStencilDescriptor.depthCompareFunction = .less
-        depthStencilDescriptor.isDepthWriteEnabled = true
-        depthStencilState = STLRRenderer.metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
+        depthStencilDescriptor.depthCompareFunction = compareFunction
+        depthStencilDescriptor.isDepthWriteEnabled = depthWrite
+        return STLRRenderer.metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
     }
     
     func buildResolveTexture(pixelFormat: MTLPixelFormat, size: CGSize) -> MTLTexture {
@@ -220,11 +220,11 @@ open class STLRRenderer: NSObject {
         renderEncoder.popDebugGroup()
     }
     
-    func renderGbufferPass(renderEncoder: MTLRenderCommandEncoder) {
+    func renderGbufferPass(renderEncoder: MTLRenderCommandEncoder, label: String = "G-Buffer") {
         guard let scene = scene else { return }
         
-        renderEncoder.pushDebugGroup("Gbuffer pass")
-        renderEncoder.label = "Gbuffer encoder"
+        renderEncoder.pushDebugGroup("\(label) pass")
+        renderEncoder.label = "\(label) encoder"
         
         renderEncoder.setRenderPipelineState(gBufferPipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
@@ -247,8 +247,11 @@ open class STLRRenderer: NSObject {
         renderEncoder.pushDebugGroup("Composition Pass")
         renderEncoder.label = "Composition encoder"
         
+        let depthStencilState = buildDepthStencilState(depthWrite: false, compareFunction: .always)
+        
         renderEncoder.setRenderPipelineState(compositionPipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
+        renderEncoder.setStencilReferenceValue(128)
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
@@ -293,7 +296,7 @@ extension STLRRenderer: MTKViewDelegate {
         scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
         gBufferRenderPass.updateTextures(size: size)
-//        renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
+        //renderPassDescriptor.setUpColorAttachment(position: 0, texture: gBufferRenderPass.texture, resolveTexture: gBufferRenderPass.texture_resolve)
 //        if let descriptor = view.currentRenderPassDescriptor, let drawable = view.currentDrawable {
 //            descriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: drawable.texture)
 //            descriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
@@ -342,7 +345,7 @@ extension STLRRenderer: MTKViewDelegate {
             scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
 
             scene.skybox?.update(renderEncoder: reflectEncoder)
-            renderGbufferPass(renderEncoder: reflectEncoder)
+            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
 
             scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
 
@@ -363,11 +366,11 @@ extension STLRRenderer: MTKViewDelegate {
         
         scene.skybox?.update(renderEncoder: gBufferEncoder)
         scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
-        renderGbufferPass(renderEncoder: gBufferEncoder)
         for water in scene.waters {
             water.update()
             water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
         }
+        renderGbufferPass(renderEncoder: gBufferEncoder)
         
 //        for terrain in scene.terrains {
 //            terrain.doRender(commandEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
@@ -389,7 +392,6 @@ extension STLRRenderer: MTKViewDelegate {
         
         // composition pass
         guard let descriptor = view.currentRenderPassDescriptor else {return}
-        //descriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: drawable.layer.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: drawable.texture)
         guard let compositionEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: descriptor) else {return}
         renderCompositionPass(renderEncoder: compositionEncoder)
         

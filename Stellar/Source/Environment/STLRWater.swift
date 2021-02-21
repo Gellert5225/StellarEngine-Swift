@@ -62,7 +62,7 @@ open class STLRWater: STLRNode, Texturable {
             fatalError("Could not load water mesh")
         }
         
-        renderEncoder.pushDebugGroup("Water encoder")
+        renderEncoder.pushDebugGroup("Water Pass")
         
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: 0)

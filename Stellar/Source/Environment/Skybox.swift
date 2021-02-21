@@ -8,7 +8,11 @@
 
 import MetalKit
 
-open class STLRSkybox {
+open class STLRSkybox: Renderable {
+    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
+        
+    }
+    
     var texture: MTLTexture?
     var diffuseTexture: MTLTexture?
     var brdfLut: MTLTexture?
@@ -88,16 +92,15 @@ open class STLRSkybox {
     private static func buildDepthStencilState() -> MTLDepthStencilState? {
         let descriptor = MTLDepthStencilDescriptor()
         descriptor.depthCompareFunction = .lessEqual
-        descriptor.isDepthWriteEnabled = true
+        descriptor.isDepthWriteEnabled = false
         return STLRRenderer.metalDevice.makeDepthStencilState(descriptor: descriptor)
     }
     
     func render(renderEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms) {
         renderEncoder.pushDebugGroup("Skybox pass")
-        renderEncoder.label = "Skybox"
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
-        //renderEncoder.setCullMode(.front)
+        renderEncoder.setCullMode(.back)
         
 //        for (index, vertexBuffer) in mesh.vertexBuffers.enumerated() {
 //            renderEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
