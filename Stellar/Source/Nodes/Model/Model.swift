@@ -168,41 +168,41 @@ open class STLRModel: STLRNode {
 extension STLRModel: Renderable {
     
     public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
-        var fragConsts = fragmentUniforms
-        fragConsts.tiling = tiling
-        var vertexUniform = uniforms
-        vertexUniform.modelMatrix = worldTransform
-        vertexUniform.normalMatrix = float3x3(normalFrom4x4: modelMatrix)
-        
-        commandEncoder.setVertexBuffer(instanceBuffer, offset: 0, index: Int(BufferIndexInstances.rawValue))
-        
-        commandEncoder.setFragmentSamplerState(samplerState, index: 0)
-        
-        commandEncoder.setFragmentBytes(&fragConsts, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
-        commandEncoder.setVertexBytes(&vertexUniform, length: MemoryLayout<STLRUniforms>.stride, index: 11)
-        
-        for (index, vertexBuffer) in (mesh?.vertexBuffers.enumerated())! {
-            commandEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
-        }
-        
-        for mesh in submeshes! {
-            commandEncoder.setRenderPipelineState(mesh.pipelineState)
-            
-            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.normal, index: Int(NormalTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: Int(MetallicTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.ao, index: Int(AOTexture.rawValue))
-            var material = mesh.material
-            commandEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
-
-            commandEncoder.drawIndexedPrimitives(type: mesh.submesh.primitiveType,
-                                                 indexCount: mesh.submesh.indexCount,
-                                                 indexType: mesh.submesh.indexType,
-                                                 indexBuffer: mesh.submesh.indexBuffer.buffer,
-                                                 indexBufferOffset: mesh.submesh.indexBuffer.offset,
-                                                 instanceCount: instanceCount)
-        }
+//        var fragConsts = fragmentUniforms
+//        fragConsts.tiling = tiling
+//        var vertexUniform = uniforms
+//        vertexUniform.modelMatrix = worldTransform
+//        vertexUniform.normalMatrix = float3x3(normalFrom4x4: modelMatrix)
+//        
+//        commandEncoder.setVertexBuffer(instanceBuffer, offset: 0, index: Int(BufferIndexInstances.rawValue))
+//        
+//        commandEncoder.setFragmentSamplerState(samplerState, index: 0)
+//        
+//        commandEncoder.setFragmentBytes(&fragConsts, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
+//        commandEncoder.setVertexBytes(&vertexUniform, length: MemoryLayout<STLRUniforms>.stride, index: 11)
+//        
+//        for (index, vertexBuffer) in (mesh?.vertexBuffers.enumerated())! {
+//            commandEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
+//        }
+//        
+//        for mesh in submeshes! {
+//            commandEncoder.setRenderPipelineState(mesh.pipelineState)
+//            
+//            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.normal, index: Int(NormalTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: Int(MetallicTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.ao, index: Int(AOTexture.rawValue))
+//            var material = mesh.material
+//            commandEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
+//
+//            commandEncoder.drawIndexedPrimitives(type: mesh.submesh.primitiveType,
+//                                                 indexCount: mesh.submesh.indexCount,
+//                                                 indexType: mesh.submesh.indexType,
+//                                                 indexBuffer: mesh.submesh.indexBuffer.buffer,
+//                                                 indexBufferOffset: mesh.submesh.indexBuffer.offset,
+//                                                 instanceCount: instanceCount)
+//        }
     }
     
 }

@@ -12,11 +12,11 @@ class STLRSubmesh {
     let submesh: MTKSubmesh
     
     struct Textures {
-        let baseColor: MTLTexture?
-        let normal: MTLTexture?
-        let roughness: MTLTexture?
-        let metallic: MTLTexture?
-        let ao: MTLTexture?
+        let baseColor: Int?
+        let normal: Int?
+        let roughness: Int?
+        let metallic: Int?
+        let ao: Int?
     }
     let textures: Textures
     let material: Material
@@ -67,11 +67,21 @@ class STLRSubmesh {
         textureBuffer = STLRRenderer.metalDevice.makeBuffer(length: textureEncoder.encodedLength, options: [])!
         textureBuffer?.label = "TextureBuffer"
         textureEncoder.setArgumentBuffer(textureBuffer, offset: 0)
-        textureEncoder.setTexture(textures.baseColor, index: 0)
-        textureEncoder.setTexture(textures.normal, index: 1)
-        textureEncoder.setTexture(textures.roughness, index: 2)
-        textureEncoder.setTexture(textures.metallic, index: 3)
-        textureEncoder.setTexture(textures.ao, index: 4)
+        if let index = textures.baseColor {
+            textureEncoder.setTexture(STLRTextureController.textures[index], index: 0)
+        }
+        if let index = textures.normal {
+            textureEncoder.setTexture(STLRTextureController.textures[index], index: 1)
+        }
+        if let index = textures.roughness {
+            textureEncoder.setTexture(STLRTextureController.textures[index], index: 2)
+        }
+        if let index = textures.metallic {
+            textureEncoder.setTexture(STLRTextureController.textures[index], index: 3)
+        }
+        if let index = textures.ao {
+            textureEncoder.setTexture(STLRTextureController.textures[index], index: 4)
+        }
     }
 }
 
@@ -130,11 +140,11 @@ private extension STLRSubmesh.Textures {
             }
             return texture
         }
-        baseColor = property(with: .baseColor)
-        normal = property(with: .tangentSpaceNormal)
-        roughness = property(with: .roughness)
-        metallic = property(with: .metallic)
-        ao = property(with: .ambientOcclusion)
+        baseColor = STLRTextureController.addTexture(texture: property(with: .baseColor))
+        normal = STLRTextureController.addTexture(texture: property(with: .tangentSpaceNormal))
+        roughness = STLRTextureController.addTexture(texture: property(with: .roughness))
+        metallic = STLRTextureController.addTexture(texture: property(with: .metallic))
+        ao = STLRTextureController.addTexture(texture: property(with: .ambientOcclusion))
     }
 }
 

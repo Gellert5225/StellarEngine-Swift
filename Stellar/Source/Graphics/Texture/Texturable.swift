@@ -100,4 +100,3 @@ fileprivate func convertToOptionalMTKTextureLoaderOptionDictionary(_ input: [Str
     guard let input = input else { return nil }
     return Dictionary(uniqueKeysWithValues: input.map { key, value in (MTKTextureLoader.Option(rawValue: key), value)})
 }
-
