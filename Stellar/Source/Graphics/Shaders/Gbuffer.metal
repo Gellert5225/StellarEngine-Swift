@@ -136,7 +136,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     float bias = 0.005;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
-    const int neighborWidth = 7;
+    const int neighborWidth = 3;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
 
     float mapSize = 4096;
@@ -168,7 +168,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     //out.albedo.a = lightFactor;
     
-    float4 specDiffuse = float4(specularOutput + diffuseColor, 1) * ambientOcclusion;
+    float4 specDiffuse = float4(specularOutput * lightFactor + diffuseColor * lightFactor, 1) * ambientOcclusion;
 
     out.albedo = specDiffuse;
 
