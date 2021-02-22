@@ -48,7 +48,7 @@ class STLRTextureController {
             descriptor.storageMode = heapDescriptor.storageMode
             return heap.makeTexture(descriptor: descriptor)!
         } // empty texture resources on heap
-        
+                
         guard let commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer(),
               let blitEncoder = commandBuffer.makeBlitCommandEncoder()
         else { fatalError("Failed to creat blit encoder") }

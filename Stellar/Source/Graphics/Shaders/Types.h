@@ -60,10 +60,10 @@ typedef struct {
 typedef struct {
     matrix_float4x4 modelMatrix;
     uint tiling;
-    Material material;
 } STLRModelParams;
 
 typedef struct {
+    matrix_float4x4 modelMatrix;
     matrix_float4x4 viewMatrix;
     matrix_float4x4 projectionMatrix;
     matrix_float3x3 normalMatrix;
@@ -81,7 +81,6 @@ typedef struct {
 typedef struct {
     float3 cameraPosition;
     uint lightCount;
-    Material material;
 } STLRFragmentUniforms;
 
 typedef struct {
@@ -89,11 +88,11 @@ typedef struct {
 } STLRLightConstants;
 
 typedef enum {
-    BaseColorTexture = 4,
-    NormalTexture = 5,
-    RoughnessTexture = 6,
-    MetallicTexture = 7,
-    AOTexture = 8
+    BaseColorTexture = 0,
+    NormalTexture = 1,
+    RoughnessTexture = 2,
+    MetallicTexture = 3,
+    AOTexture = 4
 } Textures;
 
 typedef enum {

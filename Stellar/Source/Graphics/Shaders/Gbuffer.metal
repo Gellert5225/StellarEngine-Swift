@@ -39,13 +39,15 @@ struct STLRBufferMaterials {
     float shininess             [[id(5)]];
 };
 
+struct STLRShadowTexture {
+    depth2d<float> shadowTexture  [[ texture(0) ]];
+};
 
 fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
-                                    
                                     constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentUniforms) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
                                     constant STLRBufferMaterials &material          [[ buffer(BufferIndexMaterials) ]],
-                                    //depth2d<float> shadow_texture                   [[ texture(Shadow) ]],
+                                    constant STLRShadowTexture &shadowTexture       [[ buffer(Shadow) ]],
                                     constant STLRGBufferTextures &textures          [[ buffer(STLRGBufferTexturesIndex) ]],
                                     constant STLRModelParams *modelParamsArray      [[ buffer(BufferIndexModelParams) ]]) {
     GbufferOut out;
@@ -133,36 +135,36 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     xy.y = 1 - xy.y;
     
     float bias = 0.005;
-    constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func:: less);
+    constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
     const int neighborWidth = 7;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
 
-//    float mapSize = 4096;
-//    float texelSize = 1.0 / mapSize;
-//    float total = 0.0;
-//    for (int x = -neighborWidth; x <= neighborWidth; x++) {
-//        for (int y = -neighborWidth; y <= neighborWidth; y++) {
-//            float shadow_sample = shadow_texture.sample(s, xy + float2(x, y) * texelSize);
-//            float current_sample = (in.shadowPosition.z - bias) / in.shadowPosition.w;
-//            if (current_sample > shadow_sample) {
-//                total += 1.0;
-//            }
-//        }
-//    }
+    float mapSize = 4096;
+    float texelSize = 1.0 / mapSize;
+    float total = 0.0;
+    for (int x = -neighborWidth; x <= neighborWidth; x++) {
+        for (int y = -neighborWidth; y <= neighborWidth; y++) {
+            float shadow_sample = shadowTexture.shadowTexture.sample(s, xy + float2(x, y) * texelSize);
+            float current_sample = (in.shadowPosition.z - bias) / in.shadowPosition.w;
+            if (current_sample > shadow_sample) {
+                total += 1.0;
+            }
+        }
+    }
 
-//    total /= neighbors;
-//    float lightFactor = 1.0 - (total * in.shadowPosition.w);
+    total /= neighbors;
+    float lightFactor = 1.0 - (total * in.shadowPosition.w);
     
     //float visibility = 1.0;
     float current_sample = (in.shadowPosition.z - bias) / in.shadowPosition.w;
     
-//    for (int i = 0; i < 4; i++) {
-//        int index = int(16.0 * random(floor(in.worldPosition.xyz * 1000.0), i)) % 16;
-//        if (shadow_texture.sample(s, xy + poissonDisk[index] / 500.0 ) < current_sample) {
-//            lightFactor -= 0.08;
-//            //visibility -= 0.2 * (1.0 - shadow_texture.sample(s, xy + poissonDisk[index] / 700.0, current_sample));
-//        }
-//    }
+    for (int i = 0; i < 4; i++) {
+        int index = int(16.0 * random(floor(in.worldPosition.xyz * 1000.0), i)) % 16;
+        if (shadowTexture.shadowTexture.sample(s, xy + poissonDisk[index] / 500.0 ) < current_sample) {
+            lightFactor -= 0.08;
+            //visibility -= 0.2 * (1.0 - shadow_texture.sample(s, xy + poissonDisk[index] / 700.0, current_sample));
+        }
+    }
     
     //out.albedo.a = lightFactor;
     
