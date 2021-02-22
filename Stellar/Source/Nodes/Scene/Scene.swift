@@ -60,6 +60,7 @@ open class STLRScene {
     var lightConstants = STLRLightConstants()
     var uniforms = STLRUniforms()
     var fragmentUniforms = STLRFragmentUniforms()
+    var modelParams = STLRModelParams()
     var axis: STLRModel?
     
     var reflectionCamera = STLRArcballCamera()

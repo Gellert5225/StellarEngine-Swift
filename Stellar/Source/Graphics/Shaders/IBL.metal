@@ -44,6 +44,16 @@ struct STLRGBufferTextures {
     texture2d<float> roughnessTexture   [[ texture(RoughnessTexture) ]];
     texture2d<float> metallicTexture    [[ texture(MetallicTexture) ]];
     texture2d<float> aoTexture          [[ texture(AOTexture) ]];
+    device Material* material           [[ buffer(5) ]];
+};
+
+struct STLRBufferMaterials {
+    float3 baseColor            [[id(0)]];
+    float3 specularColor        [[id(1)]];
+    float roughness             [[id(2)]];
+    float metallic              [[id(3)]];
+    float3 ambientOcclusion     [[id(4)]];
+    float shininess             [[id(5)]];
 };
 
 struct VertexOut {
@@ -63,7 +73,7 @@ struct VertexOut {
 };
 fragment float4 fragment_IBL(VertexOut in                                       [[ stage_in ]],
                              sampler textureSampler                             [[ sampler(0) ]],
-                             constant Material &material                        [[ buffer(BufferIndexMaterials) ]],
+                             constant STLRBufferMaterials &material             [[ buffer(BufferIndexMaterials) ]],
                              constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentUniforms) ]],
                              constant STLRGBufferTextures &textures             [[ buffer(STLRGBufferTexturesIndex) ]],
                              depth2d<float> shadowTexture                       [[ texture(Shadow) ]],

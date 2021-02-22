@@ -11,12 +11,19 @@ import MetalKit
 // for a larger project, make this into an instance per scene
 class STLRTextureController {
     static var textures: [MTLTexture] = []
+    static var materials: [MDLMaterial] = []
     static var heap: MTLHeap?
     
     static func addTexture(texture: MTLTexture?) -> Int? {
         guard let texture = texture else { return nil }
         STLRTextureController.textures.append(texture)
         return STLRTextureController.textures.count - 1;
+    }
+    
+    static func addMaterial(material: MDLMaterial?) -> Int? {
+        guard let material = material else { return nil }
+        STLRTextureController.materials.append(material)
+        return STLRTextureController.materials.count - 1;
     }
     
     static func buildHeap() -> MTLHeap? {

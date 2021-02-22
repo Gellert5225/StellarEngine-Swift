@@ -16,8 +16,9 @@ struct VertexIn {
 };
 
 vertex float4 vertex_depth(const VertexIn vertexIn [[ stage_in ]],
-                           constant STLRUniforms &uniforms [[ buffer(11) ]]) {
-    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
+                           constant STLRUniforms &uniforms [[ buffer(11) ]],
+                           constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
+    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix;
     float4 position = mvp * vertexIn.position;
     return position;
 }

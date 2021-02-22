@@ -29,7 +29,8 @@ vertex VertexOut vertex_morph(constant VertexIn *in [[ buffer(0) ]],
                               constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
                               constant MorphInstance *instances [[ buffer(BufferIndexInstances) ]],
                               uint instanceID [[ instance_id ]],
-                              constant int &vertexCount [[ buffer(1) ]]) {
+                              constant int &vertexCount [[ buffer(1) ]],
+                              constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
     MorphInstance instance = instances[instanceID];
     uint offset = instance.morphTargetID * vertexCount;
     VertexIn vertexIn = in[vertexID + offset];
@@ -39,8 +40,8 @@ vertex VertexOut vertex_morph(constant VertexIn *in [[ buffer(0) ]],
     float3 normal = vertexIn.normal;
     
     out.position = uniforms.projectionMatrix * uniforms.viewMatrix
-    * uniforms.modelMatrix * instance.modelMatrix * position;
-    out.worldPosition = (uniforms.modelMatrix * position
+    * modelParams.modelMatrix * instance.modelMatrix * position;
+    out.worldPosition = (modelParams.modelMatrix * position
                          * instance.modelMatrix).xyz;
     out.worldNormal = uniforms.normalMatrix * instance.normalMatrix * normal;
     out.uv = vertexIn.uv;

@@ -22,47 +22,6 @@ typedef vector_float2 float2;
 typedef vector_float3 float3;
 typedef vector_float4 float4;
 
-typedef struct {
-    vector_float2 size;
-    float height;
-    uint maxTessellation;
-} STLRTerrainUniforms;
-
-typedef struct {
-    matrix_float4x4 modelMatrix;
-    matrix_float4x4 viewMatrix;
-    matrix_float4x4 projectionMatrix;
-    matrix_float3x3 normalMatrix;
-    matrix_float4x4 shadowMatrix;
-    vector_float4 clipPlane;
-    vector_float3 cameraPosition;
-} STLRUniforms;
-
-typedef struct {
-    float3 baseColor;
-    float3 specularColor;
-    float roughness;
-    float metallic;
-    float3 ambientOcclusion;
-    float shininess;
-} Material;
-
-typedef struct {
-    float4x4 projectionMatrix;
-    float3 cameraPosition;
-    float4x4 viewMatrix;
-} STLRSceneConstants;
-
-typedef struct {
-    uint tiling;
-    float3 cameraPosition;
-    uint lightCount;
-} STLRFragmentUniforms;
-
-typedef struct {
-    uint lightCount;
-} STLRLightConstants;
-
 typedef enum {
     unused = 0,
     Sunlight = 1,
@@ -83,6 +42,52 @@ typedef struct {
     float coneAttenuation;
 } Light;
 
+typedef struct {
+    float3 baseColor;
+    float3 specularColor;
+    float roughness;
+    float metallic;
+    float3 ambientOcclusion;
+    float shininess;
+} Material;
+
+typedef struct {
+    vector_float2 size;
+    float height;
+    uint maxTessellation;
+} STLRTerrainUniforms;
+
+typedef struct {
+    matrix_float4x4 modelMatrix;
+    uint tiling;
+    Material material;
+} STLRModelParams;
+
+typedef struct {
+    matrix_float4x4 viewMatrix;
+    matrix_float4x4 projectionMatrix;
+    matrix_float3x3 normalMatrix;
+    matrix_float4x4 shadowMatrix;
+    vector_float4 clipPlane;
+    vector_float3 cameraPosition;
+} STLRUniforms;
+
+typedef struct {
+    float4x4 projectionMatrix;
+    float3 cameraPosition;
+    float4x4 viewMatrix;
+} STLRSceneConstants;
+
+typedef struct {
+    float3 cameraPosition;
+    uint lightCount;
+    Material material;
+} STLRFragmentUniforms;
+
+typedef struct {
+    uint lightCount;
+} STLRLightConstants;
+
 typedef enum {
     BaseColorTexture = 4,
     NormalTexture = 5,
@@ -102,6 +107,7 @@ typedef enum {
 typedef enum {
     BufferIndexVertices = 0,
     STLRGBufferTexturesIndex = 9,
+    BufferIndexModelParams = 10,
     BufferIndexUniforms = 11,
     BufferIndexSceneConstants = 12,
     BufferIndexMaterials = 13,

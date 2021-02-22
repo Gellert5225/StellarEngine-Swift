@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8913B75925E3E2EB00B9BF82 /* ShadersCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8913B75825E3E2EB00B9BF82 /* ShadersCommon.h */; };
+		8913B75A25E3E2EB00B9BF82 /* ShadersCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 8913B75825E3E2EB00B9BF82 /* ShadersCommon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		89157F7B20D20CE600299CB6 /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89157F7A20D20CE600299CB6 /* Renderable.swift */; };
 		8924FDE220D7781500D52908 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Utilities.swift */; };
 		89267CDD20D742780024085C /* STLRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89267CDC20D742780024085C /* STLRViewController.swift */; };
@@ -117,6 +119,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8913B75825E3E2EB00B9BF82 /* ShadersCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadersCommon.h; sourceTree = "<group>"; };
 		89157F7A20D20CE600299CB6 /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		8924FDE120D7781500D52908 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		89267CDC20D742780024085C /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
@@ -308,6 +311,7 @@
 			isa = PBXGroup;
 			children = (
 				DF38B59620DD8D6400E86E82 /* Types.h */,
+				8913B75825E3E2EB00B9BF82 /* ShadersCommon.h */,
 				89FFCABC20CC79B500C6DB28 /* Shaders.metal */,
 				DFA06ECF2230CD7D00631585 /* IBL.metal */,
 				DF4402CC223C9C6F00D5A7E3 /* Morph.metal */,
@@ -457,6 +461,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF38B59820DD907800E86E82 /* Types.h in Headers */,
+				8913B75925E3E2EB00B9BF82 /* ShadersCommon.h in Headers */,
 				89FFCAB520CC799900C6DB28 /* StellariOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -466,6 +471,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9B33E7325D7D4EA00B8BCF3 /* StellarMacOS.h in Headers */,
+				8913B75A25E3E2EB00B9BF82 /* ShadersCommon.h in Headers */,
 				D9B33E9025D7D62F00B8BCF3 /* Types.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

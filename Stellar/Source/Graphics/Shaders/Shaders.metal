@@ -6,10 +6,7 @@
 //  Copyright © 2018 Gellert. All rights reserved.
 //
 
-#include <metal_stdlib>
-#include <simd/simd.h>
-
-#import "Types.h"
+#import "ShadersCommon.h"
 
 using namespace metal;
 
@@ -27,22 +24,6 @@ struct VertexIn{
     float3 bitangent [[ attribute(4) ]];
 };
 
-struct VertexOut {
-    float4 position [[position]];
-    float4 color;
-    float2 textureCoordinates;
-    float4 materialColor;
-    float3 normal;
-    float specularIntensity;
-    float shininess;
-    float3 eyePosition;
-    float3 worldPosition;
-    float occlusion;
-    float3 worldTangent;
-    float3 worldBitangent;
-    float4 shadowPosition;
-};
-
 // all vertex shaders begin with keyword 'vertex'
 // packed_float3 is a vector of 3 floats(position of each vertex)
 // [[ buffer(0) ]] means the first data in vertex buffer
@@ -52,16 +33,20 @@ vertex float4 basic_vertex(const device packed_float3* vertex_array [[ buffer(0)
 }
 
 vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
-                             constant STLRUniforms &uniforms [[ buffer(11) ]]) {
+                             constant STLRUniforms &uniforms [[ buffer(11) ]],
+                             constant STLRModelParams *modelParamsArray [[buffer(BufferIndexModelParams)]],
+                             uint baseInstance [[ base_instance ]]) {
+    STLRModelParams modelParams = modelParamsArray[baseInstance];
     VertexOut out;
-    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
+    matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix;
     out.position = mvp * vertexIn.position;
-    out.worldPosition = (uniforms.modelMatrix * vertexIn.position).xyz;
+    out.worldPosition = (modelParams.modelMatrix * vertexIn.position).xyz;
     out.normal = uniforms.normalMatrix * vertexIn.normal;
-    out.shadowPosition = uniforms.shadowMatrix * uniforms.modelMatrix * vertexIn.position;
+    out.shadowPosition = uniforms.shadowMatrix * modelParams.modelMatrix * vertexIn.position;
     out.worldTangent = uniforms.normalMatrix * vertexIn.tangent;
     out.worldBitangent = uniforms.normalMatrix * vertexIn.bitangent;
     out.textureCoordinates = vertexIn.textureCoordinates;
+    out.modelIndex = baseInstance;
     
     return out;
 }
@@ -69,17 +54,18 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
 vertex VertexOut mp_vertex(const VertexIn in [[ stage_in ]],
                            constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
                            constant Instances *instances [[ buffer(BufferIndexInstances) ]],
-                           uint instanceID [[ instance_id ]]) {
+                           uint instanceID [[ instance_id ]],
+                           constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
     VertexOut out;
     Instances instance = instances[instanceID];
     
-    out.position = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix * instance.modelMatrix * in.position;
-    out.worldPosition = (uniforms.modelMatrix * in.position * instance.modelMatrix).xyz;
+    out.position = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix * instance.modelMatrix * in.position;
+    out.worldPosition = (modelParams.modelMatrix * in.position * instance.modelMatrix).xyz;
     out.textureCoordinates = in.textureCoordinates;
     out.normal = uniforms.normalMatrix * instance.normalMatrix * in.normal;
     out.worldTangent = uniforms.normalMatrix * instance.normalMatrix * in.tangent;
     out.worldBitangent = uniforms.normalMatrix * instance.normalMatrix * in.bitangent;
-    out.shadowPosition = uniforms.shadowMatrix * uniforms.modelMatrix * in.position;
+    out.shadowPosition = uniforms.shadowMatrix * modelParams.modelMatrix * in.position;
     
     return out;
 }
@@ -148,45 +134,6 @@ fragment half4 fragment_color(VertexOut v [[ stage_in ]],
     return half4(color.r, color.g, color.b, 1.0);
 }
 
-float3 diffuseLighting(float3 normal,
-                       float3 position,
-                       constant STLRFragmentUniforms &fragmentUniforms,
-                       constant Light *lights,
-                       float3 baseColor) {
-    float3 diffuseColor = 0;
-    float3 normalDirection = normalize(normal);
-    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
-        Light light = lights[i];
-        if (light.type == Sunlight) {
-            float3 lightDirection = normalize(light.position);
-            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-            diffuseColor += light.color * light.intensity * baseColor * diffuseIntensity;
-        } else if (light.type == Pointlight) {
-            float d = distance(light.position, position);
-            float3 lightDirection = normalize(light.position - position);
-            float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
-            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-            float3 color = light.color * baseColor * diffuseIntensity;
-            color *= attenuation;
-            diffuseColor += color;
-        } else if (light.type == Spotlight) {
-            float d = distance(light.position, position);
-            float3 lightDirection = normalize(light.position - position);
-            float3 coneDirection = normalize(-light.coneDirection);
-            float spotResult = (dot(lightDirection, coneDirection));
-            if (spotResult > cos(light.coneAngle)) {
-                float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
-                attenuation *= pow(spotResult, light.coneAttenuation);
-                float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-                float3 color = light.color * baseColor * diffuseIntensity;
-                color *= attenuation;
-                diffuseColor += color;
-            }
-        }
-    }
-    return diffuseColor;
-}
-
 // lighting fragment
 fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
                                       sampler sampler2d [[ sampler(0) ]],
@@ -226,7 +173,7 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
             ambientColor += light.color * light.intensity;
         }
     }
-    diffuseColor = diffuseLighting(v.normal, v.worldPosition, fragmentConstants, lights, baseColor);
+    diffuseColor = calculateLighting(v.normal, v.worldPosition, fragmentConstants, lights, baseColor);
     
     float2 xy = v.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -263,8 +210,6 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
     return float4(color.r, color.g, color.b, 1.0);
 }
 
-float3 render(Lighting lighting);
-
 fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
                              sampler sampler2d [[ sampler(0) ]],
                              constant Light *lights [[ buffer(3) ]],
@@ -276,15 +221,16 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
                              depth2d<float> shadowTexture [[ texture(Shadow) ]],
                              constant Material &material [[ buffer(13) ]],
                              constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                             constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]]) {
+                             constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]],
+                             constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
     
     //    float4 color = float4(texture.sample(sampler2d, v.textureCoordinates * fragmentConstants.tiling).rgb, 1);
     //    color = color * v.materialColor;
     
     float4 color;// = float4(material.baseColor, 1.0);
     if (hasColorTexture) {
-        float4 colorAlpha = texture.sample(sampler2d, v.textureCoordinates * fragmentConstants.tiling);
-        color = float4(texture.sample(sampler2d, v.textureCoordinates * fragmentConstants.tiling).rgb, 1);
+        float4 colorAlpha = texture.sample(sampler2d, v.textureCoordinates * modelParams.tiling);
+        color = float4(texture.sample(sampler2d, v.textureCoordinates * modelParams.tiling).rgb, 1);
         
         if (colorAlpha.a < 0.2) {
             discard_fragment();
@@ -316,7 +262,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
     
     float3 normal;
     if (hasNormalTexture) {
-        float3 normalValue = normalTexture.sample(sampler2d, v.textureCoordinates * fragmentConstants.tiling).rgb;
+        float3 normalValue = normalTexture.sample(sampler2d, v.textureCoordinates * modelParams.tiling).rgb;
         normalValue = normalValue * 2 - 1;
         normal = v.normal * normalValue.z + v.worldTangent * normalValue.x + v.worldBitangent * normalValue.y;
     } else {
@@ -348,7 +294,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
             lighting.lightColor = light.color;
             lighting.intensity = light.intensity;
             
-            specularOutput = render(lighting);
+            specularOutput = calculateSpecularOutput(lighting);
             
             //compute Lambertian diffuse
 //            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
@@ -359,7 +305,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
         }
     }
     
-    diffuseColor = diffuseLighting(v.normal, v.worldPosition, fragmentConstants, lights, color.xyz);
+    diffuseColor = calculateLighting(v.normal, v.worldPosition, fragmentConstants, lights, color.xyz);
     
     // shadow with pcf
     float2 xy = v.shadowPosition.xy;
@@ -399,45 +345,4 @@ fragment float4 skyboxTest(VertexOut in [[ stage_in ]],
     float4 copper = float4(211/255.0, 211/255.0, 211/255.0, 1);
     color = color * copper;
     return color;
-}
-
-float3 render(Lighting lighting) {
-    // Rendering equation courtesy of Apple et al.
-    float NoL = saturate(dot(lighting.normal, lighting.lightDirection));
-    float3 H = normalize(lighting.lightDirection + lighting.viewDirection); // half vector
-    float NoH = saturate(dot(lighting.normal, H));
-    float NoV = saturate(dot(lighting.normal, lighting.viewDirection));
-    float HoL = saturate(dot(lighting.lightDirection, H));
-    
-    // specular roughness
-    float specularRoughness = lighting.roughness * (1.0 - lighting.metallic) + lighting.metallic;
-    
-    // Distribution
-    float Ds;
-    if (specularRoughness >= 1.0) {
-        Ds = 1.0 / pi;
-    }
-    else {
-        float roughnessSqr = specularRoughness * specularRoughness;
-        float d = (NoH * roughnessSqr - NoH) * NoH + 1;
-        Ds = roughnessSqr / (pi * d * d);
-    }
-    
-    // Fresnel
-    float3 Cspec0 = float3(1.0);
-    float fresnel = pow(clamp(1.0 - HoL, 0.0, 1.0), 5.0);
-    float3 Fs = float3(mix(float3(Cspec0), float3(1), fresnel));
-    
-    // Geometry
-    float alphaG = (specularRoughness * 0.5 + 0.5) * (specularRoughness * 0.5 + 0.5);
-    float a = alphaG * alphaG;
-    float b1 = NoL * NoL;
-    float b2 = NoV * NoV;
-    float G1 = (float)(1.0 / (b1 + sqrt(a + b1 - a * b1)));
-    float G2 = (float)(1.0 / (b2 + sqrt(a + b2 - a * b2)));
-    float Gs = G1 * G2;
-    
-    float3 specularColor = mix(lighting.lightColor, lighting.baseColor.rgb, lighting.metallic);
-    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion * lighting.intensity;
-    return specularOutput;
 }

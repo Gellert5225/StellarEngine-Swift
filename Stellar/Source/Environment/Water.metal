@@ -23,13 +23,14 @@ struct VertexOut {
 };
 
 vertex VertexOut vertex_water(const VertexIn vertex_in [[ stage_in ]],
-                              constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]]) {
+                              constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
+                              constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
     VertexOut out;
     
-    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
+    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix;
     out.position = mvp * vertex_in.position;
     out.uv = vertex_in.uv;
-    out.worldPosition = (uniforms.modelMatrix * vertex_in.position).xyz;
+    out.worldPosition = (modelParams.modelMatrix * vertex_in.position).xyz;
     out.toCamera = uniforms.cameraPosition - out.worldPosition;
     
     return out;

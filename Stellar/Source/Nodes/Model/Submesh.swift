@@ -19,13 +19,14 @@ class STLRSubmesh {
         let ao: Int?
     }
     let textures: Textures
-    let material: Material
+    var material: Material
     //let pipelineState: MTLRenderPipelineState?
     
     var fragmentFunction: MTLFunction
     var vertexFunction: MTLFunction
     
     var textureBuffer: MTLBuffer?
+    var materialBuffer: MTLBuffer?
     
     init(submesh: MTKSubmesh, mdlSubmesh: MDLSubmesh, vertexFunctionName: String, fragmentFunctionName: String) {
         self.submesh = submesh
@@ -61,6 +62,27 @@ class STLRSubmesh {
 //        }
         
         initializeTextures()
+        initializeMaterials()
+    }
+    
+    func initializeMaterials() {
+        let materialEncoder = fragmentFunction.makeArgumentEncoder(bufferIndex: Int(BufferIndexMaterials.rawValue))
+        
+        materialBuffer = STLRRenderer.metalDevice.makeBuffer(length: materialEncoder.encodedLength, options: [])
+        materialBuffer!.label = "\(submesh.name) material"
+        materialEncoder.setArgumentBuffer(materialBuffer, offset: 0)
+        var address = materialEncoder.constantData(at: 0)
+        address.copyMemory(from: &material.baseColor, byteCount: MemoryLayout<simd_float3>.size)
+        address = materialEncoder.constantData(at: 1)
+        address.copyMemory(from: &material.specularColor, byteCount: MemoryLayout<simd_float3>.size)
+        address = materialEncoder.constantData(at: 2)
+        address.copyMemory(from: &material.roughness, byteCount: MemoryLayout<simd_float1>.size)
+        address = materialEncoder.constantData(at: 3)
+        address.copyMemory(from: &material.metallic, byteCount: MemoryLayout<simd_float1>.size)
+        address = materialEncoder.constantData(at: 4)
+        address.copyMemory(from: &material.ambientOcclusion, byteCount: MemoryLayout<simd_float3>.size)
+        address = materialEncoder.constantData(at: 5)
+        address.copyMemory(from: &material.shininess, byteCount: MemoryLayout<simd_float1>.size)
     }
     
     func initializeTextures() {
@@ -110,7 +132,7 @@ private extension STLRSubmesh {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         
-        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(MDLVertexDescriptor.defaultVertexDescriptor)
+        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
         pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
@@ -137,6 +159,7 @@ private extension STLRSubmesh.Textures {
                 let bundleURL = Bundle.main.url(forResource: "Assets", withExtension: "bundle"),
                 let bundle = Bundle(url: bundleURL),
                 let texture = ((try? STLRSubmesh.loadTexture(imageName: filename, bundle: bundle)) as MTLTexture??) else {
+                print("nil texture")
                     return nil
             }
             return texture
@@ -165,47 +188,16 @@ private extension Material {
             self.shininess = shininess.floatValue
         }
         if let roughness = material?.property(with: .roughness),
-            roughness.type == .float3 {
+            roughness.type == .float {
             self.roughness = roughness.floatValue
         }
         if let metallic = material?.property(with: .metallic),
-            metallic.type == .float3 {
+            metallic.type == .float {
             self.metallic = metallic.floatValue
+        }
+        if let ao = material?.property(with: .ambientOcclusion),
+           ao.type == .float3 {
+            self.ambientOcclusion = ao.float3Value
         }
     }
 }
-
-extension MDLVertexDescriptor {
-  static var defaultVertexDescriptor: MDLVertexDescriptor = {
-    let vertexDescriptor = MDLVertexDescriptor()
-    var offset  = 0
-    
-    // position attribute
-    vertexDescriptor.attributes[0]
-      = MDLVertexAttribute(name: MDLVertexAttributePosition,
-                           format: .float3,
-                           offset: 0,
-                           bufferIndex: Int(BufferIndexVertices.rawValue))
-    offset += MemoryLayout<float3>.stride
-    
-    // normal attribute
-    vertexDescriptor.attributes[1] =
-      MDLVertexAttribute(name: MDLVertexAttributeNormal,
-                         format: .float3,
-                         offset: offset,
-                         bufferIndex: Int(BufferIndexVertices.rawValue))
-    offset += MemoryLayout<float3>.stride
-    
-    // uv attribute
-    vertexDescriptor.attributes[2] =
-      MDLVertexAttribute(name: MDLVertexAttributeTextureCoordinate,
-                         format: .float2,
-                         offset: offset,
-                         bufferIndex: Int(BufferIndexVertices.rawValue))
-    offset += MemoryLayout<float2>.stride
-    
-    vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
-    return vertexDescriptor
-  }()
-}
-

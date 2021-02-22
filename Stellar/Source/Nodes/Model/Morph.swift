@@ -168,7 +168,7 @@ extension STLRMorph: Renderable {
         guard let submesh = submesh else { return }
         var uniforms = uniforms
         var fragmentUniforms = fragmentUniforms
-        uniforms.modelMatrix = worldTransform
+        //uniforms.modelMatrix = worldTransform
         uniforms.normalMatrix = float3x3(normalFrom4x4: modelMatrix)
         
         commandEncoder.setRenderPipelineState(pipelineState)
