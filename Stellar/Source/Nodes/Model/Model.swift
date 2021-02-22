@@ -40,6 +40,9 @@ open class STLRModel: STLRNode {
     open var fragmentFunctionName: String = "fragment_PBR"
     open var vertexFunctionName: String = "mp_vertex"
     
+    var vertexFunction: MTLFunction?
+    var fragmentFunction: MTLFunction?
+    
     let instanceCount: Int
     let samplerState: MTLSamplerState?
     var pipelineState: MTLRenderPipelineState!
@@ -70,7 +73,7 @@ open class STLRModel: STLRNode {
         return vertexDescriptor
     }
     
-    public init(modelName: String, vertexFunctionName: String = "mp_vertex",
+    public init(modelName: String, vertexFunctionName: String = "vertex_main",
                 fragmentFunctionName: String = "fragment_IBL", instanceCount: Int = 1) {
         self.instanceCount = instanceCount
         samplerState = STLRModel.buildSamplerState()
@@ -81,7 +84,6 @@ open class STLRModel: STLRNode {
         loadModel(modelName: modelName, vertexFunctionName: vertexFunctionName, fragmentFunctionName: fragmentFunctionName)
         self.vertexFunctionName = vertexFunctionName
         self.fragmentFunctionName = fragmentFunctionName
-        //pipelineState = buildPipelineState()
     }
     
     private static func buildSamplerState() -> MTLSamplerState? {
@@ -144,6 +146,12 @@ open class STLRModel: STLRNode {
         
         STLRModel.defaultVertexDescriptor = descriptor
         
+        let library = STLRRenderer.library
+        vertexFunction = (library?.makeFunction(name: vertexFunctionName))!
+        fragmentFunction = (library?.makeFunction(name: fragmentFunctionName))!
+        
+        //pipelineState = STLRModel.buildPipelineState(vertexFunction: vertexFunction!, fragmentFunction: fragmentFunction!)
+        
         let bufferAllocator = MTKMeshBufferAllocator(device: STLRRenderer.metalDevice)
         let asset = MDLAsset(url: assetURL, vertexDescriptor: descriptor, bufferAllocator: bufferAllocator)
         let mdlMesh = asset.object(at: 0) as! MDLMesh
@@ -163,47 +171,51 @@ open class STLRModel: STLRNode {
         }
     }
     
+    private static func buildPipelineState(vertexFunction: MTLFunction,
+                                           fragmentFunction: MTLFunction) -> MTLRenderPipelineState {
+        let vertexDescriptor = MDLVertexDescriptor()
+        vertexDescriptor.attributes[0] = MDLVertexAttribute(name: MDLVertexAttributePosition,
+                                                            format: .float3,
+                                                            offset: 0,
+                                                            bufferIndex: 0)
+        vertexDescriptor.attributes[1] = MDLVertexAttribute(name: MDLVertexAttributeNormal,
+                                                            format: .float3,
+                                                            offset: MemoryLayout<Float>.size * 3,
+                                                            bufferIndex: 0)
+        vertexDescriptor.attributes[2] = MDLVertexAttribute(name: MDLVertexAttributeTangent,
+                                                            format: .float3,
+                                                            offset: MemoryLayout<Float>.size * 6,
+                                                            bufferIndex: 0)
+        vertexDescriptor.attributes[3] = MDLVertexAttribute(name: MDLVertexAttributeTextureCoordinate,
+                                                            format: .float2,
+                                                            offset: MemoryLayout<Float>.size * 9,
+                                                            bufferIndex: 0)
+        vertexDescriptor.attributes[4] = MDLVertexAttribute(name: MDLVertexAttributeBitangent,
+                                                            format: .float3,
+                                                            offset: MemoryLayout<Float>.size * 11,
+                                                            bufferIndex: 0)
+        vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: MemoryLayout<Float>.size * 14)
+        var pipelineState: MTLRenderPipelineState
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(vertexDescriptor)
+        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+//        /pipelineDescriptor.supportIndirectCommandBuffers = true
+        do {
+            pipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        } catch let error {
+            fatalError(error.localizedDescription)
+        }
+        return pipelineState
+    }
+    
 }
 
 extension STLRModel: Renderable {
     
-    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
-//        var fragConsts = fragmentUniforms
-//        fragConsts.tiling = tiling
-//        var vertexUniform = uniforms
-//        vertexUniform.modelMatrix = worldTransform
-//        vertexUniform.normalMatrix = float3x3(normalFrom4x4: modelMatrix)
-//        
-//        commandEncoder.setVertexBuffer(instanceBuffer, offset: 0, index: Int(BufferIndexInstances.rawValue))
-//        
-//        commandEncoder.setFragmentSamplerState(samplerState, index: 0)
-//        
-//        commandEncoder.setFragmentBytes(&fragConsts, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
-//        commandEncoder.setVertexBytes(&vertexUniform, length: MemoryLayout<STLRUniforms>.stride, index: 11)
-//        
-//        for (index, vertexBuffer) in (mesh?.vertexBuffers.enumerated())! {
-//            commandEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
-//        }
-//        
-//        for mesh in submeshes! {
-//            commandEncoder.setRenderPipelineState(mesh.pipelineState)
-//            
-//            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
-//            commandEncoder.setFragmentTexture(mesh.textures.normal, index: Int(NormalTexture.rawValue))
-//            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
-//            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: Int(MetallicTexture.rawValue))
-//            commandEncoder.setFragmentTexture(mesh.textures.ao, index: Int(AOTexture.rawValue))
-//            var material = mesh.material
-//            commandEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
-//
-//            commandEncoder.drawIndexedPrimitives(type: mesh.submesh.primitiveType,
-//                                                 indexCount: mesh.submesh.indexCount,
-//                                                 indexType: mesh.submesh.indexType,
-//                                                 indexBuffer: mesh.submesh.indexBuffer.buffer,
-//                                                 indexBufferOffset: mesh.submesh.indexBuffer.offset,
-//                                                 instanceCount: instanceCount)
-//        }
-    }
+    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {}
     
 }
 

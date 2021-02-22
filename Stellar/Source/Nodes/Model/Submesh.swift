@@ -20,7 +20,7 @@ class STLRSubmesh {
     }
     let textures: Textures
     let material: Material
-    let pipelineState: MTLRenderPipelineState!
+    //let pipelineState: MTLRenderPipelineState?
     
     var fragmentFunction: MTLFunction
     var vertexFunction: MTLFunction
@@ -42,22 +42,23 @@ class STLRSubmesh {
             fatalError("No metal function exists")
         }
         
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        
-        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
-        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        pipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
-        pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        pipelineDescriptor.colorAttachments[3].pixelFormat = .bgra8Unorm
-        pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
-        pipelineDescriptor.sampleCount = 4
-        do {
-            pipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
-        } catch let error {
-            fatalError(error.localizedDescription)
-        }
+//        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+//        pipelineDescriptor.vertexFunction = vertexFunction
+//        pipelineDescriptor.fragmentFunction = fragmentFunction
+//
+//        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
+//        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+//        pipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
+//        pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
+//        pipelineDescriptor.colorAttachments[3].pixelFormat = .bgra8Unorm
+//        pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+//        pipelineDescriptor.sampleCount = 4
+//        //pipelineDescriptor.supportIndirectCommandBuffers = true
+//        do {
+//            pipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
+//        } catch let error {
+//            fatalError(error.localizedDescription)
+//        }
         
         initializeTextures()
     }
@@ -109,7 +110,7 @@ private extension STLRSubmesh {
         pipelineDescriptor.vertexFunction = vertexFunction
         pipelineDescriptor.fragmentFunction = fragmentFunction
         
-        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
+        pipelineDescriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(MDLVertexDescriptor.defaultVertexDescriptor)
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.colorAttachments[1].pixelFormat = .rgba16Float
         pipelineDescriptor.colorAttachments[2].pixelFormat = .rgba16Float
@@ -172,5 +173,39 @@ private extension Material {
             self.metallic = metallic.floatValue
         }
     }
+}
+
+extension MDLVertexDescriptor {
+  static var defaultVertexDescriptor: MDLVertexDescriptor = {
+    let vertexDescriptor = MDLVertexDescriptor()
+    var offset  = 0
+    
+    // position attribute
+    vertexDescriptor.attributes[0]
+      = MDLVertexAttribute(name: MDLVertexAttributePosition,
+                           format: .float3,
+                           offset: 0,
+                           bufferIndex: Int(BufferIndexVertices.rawValue))
+    offset += MemoryLayout<float3>.stride
+    
+    // normal attribute
+    vertexDescriptor.attributes[1] =
+      MDLVertexAttribute(name: MDLVertexAttributeNormal,
+                         format: .float3,
+                         offset: offset,
+                         bufferIndex: Int(BufferIndexVertices.rawValue))
+    offset += MemoryLayout<float3>.stride
+    
+    // uv attribute
+    vertexDescriptor.attributes[2] =
+      MDLVertexAttribute(name: MDLVertexAttributeTextureCoordinate,
+                         format: .float2,
+                         offset: offset,
+                         bufferIndex: Int(BufferIndexVertices.rawValue))
+    offset += MemoryLayout<float2>.stride
+    
+    vertexDescriptor.layouts[0] = MDLVertexBufferLayout(stride: offset)
+    return vertexDescriptor
+  }()
 }
 

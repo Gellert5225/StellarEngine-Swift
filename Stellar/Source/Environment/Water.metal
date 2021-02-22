@@ -39,7 +39,7 @@ fragment float4 fragment_water(VertexOut vertex_in [[ stage_in ]],
                                texture2d<float> reflectionTexture [[ texture(0) ]],
                                texture2d<float> normalTexture [[ texture(2) ]],
                                constant float& timer [[ buffer(3) ]],
-                               constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentConstants) ]]) {
+                               constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentUniforms) ]]) {
     constexpr sampler s(filter::linear, address::repeat);
     
     float width = float(reflectionTexture.get_width() * 2.0);

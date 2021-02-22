@@ -57,7 +57,7 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
     matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
     out.position = mvp * vertexIn.position;
     out.worldPosition = (uniforms.modelMatrix * vertexIn.position).xyz;
-    out.normal = uniforms.normalMatrix * vertexIn.normal, 0;
+    out.normal = uniforms.normalMatrix * vertexIn.normal;
     out.shadowPosition = uniforms.shadowMatrix * uniforms.modelMatrix * vertexIn.position;
     out.worldTangent = uniforms.normalMatrix * vertexIn.tangent;
     out.worldBitangent = uniforms.normalMatrix * vertexIn.bitangent;
@@ -67,7 +67,7 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
 }
 
 vertex VertexOut mp_vertex(const VertexIn in [[ stage_in ]],
-                           constant STLRUniforms &uniforms [[ buffer(11) ]],
+                           constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
                            constant Instances *instances [[ buffer(BufferIndexInstances) ]],
                            uint instanceID [[ instance_id ]]) {
     VertexOut out;
@@ -110,7 +110,7 @@ fragment half4 textured_fragment(VertexOut v [[ stage_in ]],
 fragment half4 fragment_color(VertexOut v [[ stage_in ]],
                               constant Light *lights [[ buffer(3) ]],
                               constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                              constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
+                              constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]]) {
     
     float4 color = v.materialColor;
     float3 baseColor = float3(1, 1, 1);
@@ -196,7 +196,7 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
                                       depth2d<float> shadowTexture [[ texture(Shadow) ]],
                                       constant Material &material [[ buffer(13) ]],
                                       constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                                      constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
+                                      constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]]) {
     
     float4 color = float4(material.baseColor, 1.0);
 //    float materialShininess = material.shininess;
@@ -276,7 +276,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
                              depth2d<float> shadowTexture [[ texture(Shadow) ]],
                              constant Material &material [[ buffer(13) ]],
                              constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                             constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
+                             constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]]) {
     
     //    float4 color = float4(texture.sample(sampler2d, v.textureCoordinates * fragmentConstants.tiling).rgb, 1);
     //    color = color * v.materialColor;
@@ -390,7 +390,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
 }
 
 fragment float4 skyboxTest(VertexOut in [[ stage_in ]],
-                           constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]],
+                           constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]],
                            texturecube<float> skybox [[ texture(20) ]]) {
     float3 viewDirection = in.worldPosition.xyz - fragmentConstants.cameraPosition;
     float3 textureCoordinates = reflect(viewDirection, in.normal);

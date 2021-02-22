@@ -88,8 +88,7 @@ typedef enum {
     NormalTexture = 5,
     RoughnessTexture = 6,
     MetallicTexture = 7,
-    AOTexture = 8,
-    STLRGBufferTexturesIndex = 9
+    AOTexture = 8
 } Textures;
 
 typedef enum {
@@ -102,11 +101,12 @@ typedef enum {
 
 typedef enum {
     BufferIndexVertices = 0,
+    STLRGBufferTexturesIndex = 9,
     BufferIndexUniforms = 11,
     BufferIndexSceneConstants = 12,
     BufferIndexMaterials = 13,
     BufferIndexLightConstants = 14,
-    BufferIndexFragmentConstants = 15,
+    BufferIndexFragmentUniforms = 15,
     BufferIndexInstances = 16,
     BufferIndexSkybox = 20,
     BufferIndexSkyboxDiffuse = 21,

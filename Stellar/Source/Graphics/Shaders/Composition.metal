@@ -71,7 +71,7 @@ float3 compositionLighting(float3 normal,
 }
 
 fragment float4 composition_frag(VertexOut in [[ stage_in ]],
-                                 constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
+                                 constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentUniforms) ]],
                                  constant Light *lightsBuffer                   [[ buffer(2) ]],
                                  depth2d<float> shadowTexture                   [[ texture(Shadow) ]],
                                  texture2d<float> albedoTexture                 [[ texture(Albedo) ]],

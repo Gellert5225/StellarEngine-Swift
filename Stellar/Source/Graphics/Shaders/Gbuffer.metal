@@ -76,7 +76,7 @@ float3 calculateSpecularOutput(Lighting lighting);
 
 fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
                                     sampler sampler2d [[ sampler(0) ]],
-                                    constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
+                                    constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentUniforms) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
                                     constant Material &material                     [[ buffer(13) ]],
                                     depth2d<float> shadow_texture                   [[ texture(Shadow) ]],
@@ -206,7 +206,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
 
 fragment GbufferOut gBufferFragment_IBL(VertexOut in [[stage_in]],
                                     sampler sampler2d [[ sampler(0) ]],
-                                    constant STLRFragmentUniforms &fragmentUniforms [[ buffer(15) ]],
+                                    constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentUniforms) ]],
                                     constant Light *lightsBuffer                    [[ buffer(2) ]],
                                     constant Material &material                     [[ buffer(13) ]],
                                     constant STLRGBufferTextures &textures          [[ buffer(STLRGBufferTexturesIndex) ]],

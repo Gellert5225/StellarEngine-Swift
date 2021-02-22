@@ -50,6 +50,7 @@ open class STLRWater: STLRNode, Texturable {
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_water")
         descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "fragment_water")
         descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(mesh!.vertexDescriptor)
+        //descriptor.supportIndirectCommandBuffers = true
         do {
             try pipelineState = STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
         } catch {
@@ -76,7 +77,7 @@ open class STLRWater: STLRNode, Texturable {
         renderEncoder.setFragmentTexture(reflectionRenderPass.texture_resolve, index: 0)
         renderEncoder.setFragmentTexture(texture, index: 2)
         renderEncoder.setFragmentBytes(&timer, length: MemoryLayout<Float>.size, index: 3)
-        renderEncoder.setFragmentBytes(&frag, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
+        renderEncoder.setFragmentBytes(&frag, length: MemoryLayout<STLRFragmentUniforms>.stride, index: Int(BufferIndexFragmentUniforms.rawValue))
         
         for submesh in mesh.submeshes {
             renderEncoder.drawIndexedPrimitives(type: .triangle, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)

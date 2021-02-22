@@ -14,6 +14,8 @@
 		894F33B625E21458004EDC24 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33B425E21458004EDC24 /* TextureController.swift */; };
 		894F33BC25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */; };
 		894F33BD25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */; };
+		89B24FC925E36CC200BDF621 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B24FC825E36CC200BDF621 /* Mesh.swift */; };
+		89B24FCA25E36CC200BDF621 /* Mesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B24FC825E36CC200BDF621 /* Mesh.swift */; };
 		89B34CA020D2F20F00873A28 /* Texturable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B34C9F20D2F20F00873A28 /* Texturable.swift */; };
 		89B384EA20D78AB700FAEDE4 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384E920D78AB700FAEDE4 /* Node.swift */; };
 		89B384EC20D78E3600FAEDE4 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384EB20D78E3600FAEDE4 /* Camera.swift */; };
@@ -120,6 +122,7 @@
 		89267CDC20D742780024085C /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
 		894F33B425E21458004EDC24 /* TextureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
 		894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureDescriptorExtension.swift; sourceTree = "<group>"; };
+		89B24FC825E36CC200BDF621 /* Mesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mesh.swift; sourceTree = "<group>"; };
 		89B34C9F20D2F20F00873A28 /* Texturable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texturable.swift; sourceTree = "<group>"; };
 		89B384E920D78AB700FAEDE4 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		89B384EB20D78E3600FAEDE4 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
@@ -241,6 +244,7 @@
 				89B384F320D7C31E00FAEDE4 /* Model.swift */,
 				DFEA65BC20E5D64300F3C8A0 /* Submesh.swift */,
 				DF4402CA223C8F7B00D5A7E3 /* Morph.swift */,
+				89B24FC825E36CC200BDF621 /* Mesh.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -652,6 +656,7 @@
 				89267CDD20D742780024085C /* STLRViewController.swift in Sources */,
 				8924FDE220D7781500D52908 /* Utilities.swift in Sources */,
 				DF4402CD223C9C6F00D5A7E3 /* Morph.metal in Sources */,
+				89B24FC925E36CC200BDF621 /* Mesh.swift in Sources */,
 				DFEF7BA0223FDCD6006711DE /* Gbuffer.metal in Sources */,
 				DFA06EC422309A5A00631585 /* Skybox.metal in Sources */,
 				89157F7B20D20CE600299CB6 /* Renderable.swift in Sources */,
@@ -692,6 +697,7 @@
 				D9B33E9C25D7D67700B8BCF3 /* Submesh.swift in Sources */,
 				D9B33E9D25D7D67700B8BCF3 /* Morph.swift in Sources */,
 				D9B33E9E25D7D67700B8BCF3 /* Shapes.swift in Sources */,
+				89B24FCA25E36CC200BDF621 /* Mesh.swift in Sources */,
 				D9B33E9F25D7D67700B8BCF3 /* Scene.swift in Sources */,
 				D9B33EA025D7D67700B8BCF3 /* Camera.swift in Sources */,
 				D9B33EA125D7D67700B8BCF3 /* Node.swift in Sources */,

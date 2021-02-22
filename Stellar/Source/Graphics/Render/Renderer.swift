@@ -18,6 +18,11 @@ open class STLRRenderer: NSObject {
     static var commandQueue: MTLCommandQueue!
     static var commandBuffer: MTLCommandBuffer?
     static var drawableSize: CGSize!
+    
+    var uniformsBuffer: MTLBuffer!
+    var fragmentUniformsBuffer: MTLBuffer!
+    //var modelParamsBuffer: MTLBuffer!
+    var icb: MTLIndirectCommandBuffer!
         
     var metalView: MTKView!
     var renderPassDescriptor: MTLRenderPassDescriptor!
@@ -43,9 +48,7 @@ open class STLRRenderer: NSObject {
     var gBufferRenderPass: RenderPass!
     
     var compositionPipelineState: MTLRenderPipelineState!
-    
-    //var reflectionRenderPass: RenderPass
-    
+        
     var quadVerticesBuffer: MTLBuffer!
     var quadTexCoordBuffer: MTLBuffer!
     
@@ -100,7 +103,7 @@ open class STLRRenderer: NSObject {
         renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
 //        renderPassDescriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
-        initialize()
+        
         depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .less)
         buildShadowTexture(size: self.metalView.drawableSize)
         buildShadowPipelineState()
@@ -170,13 +173,13 @@ open class STLRRenderer: NSObject {
     
     func buildGbufferPipelineState(withFragmentFunctionName name: String) {
         let descriptor = MTLRenderPipelineDescriptor()
-        //descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[1].pixelFormat = .rgba16Float
         descriptor.colorAttachments[2].pixelFormat = .rgba16Float
         descriptor.sampleCount = 4
         descriptor.depthAttachmentPixelFormat = .depth32Float
-        descriptor.label = "GBuffer state"
+        //descriptor.supportIndirectCommandBuffers = true
+        //descriptor.label = "GBuffer state"
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_main")
         if (name == "fragment_PBR") {
             descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "gBufferFragment")
@@ -234,8 +237,9 @@ open class STLRRenderer: NSObject {
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         
         renderEncoder.setFragmentTexture(shadowTexture, index: Int(Shadow.rawValue))
-        renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         
+        updateUniforms()
+        //initializeCommands()
         for child in scene.renderables {
             if let renderable = child as? STLRModel {
                 draw(renderEncoder: renderEncoder, model: renderable)
@@ -264,7 +268,7 @@ open class STLRRenderer: NSObject {
         let lights = scene.lights
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
-        renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
+        renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: Int(BufferIndexFragmentUniforms.rawValue))
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: quadVertices.count)
         
         renderEncoder.endEncoding()
@@ -293,8 +297,52 @@ open class STLRRenderer: NSObject {
         scene?.renderables.forEach { renderable in
             if let model = renderable as? STLRModel {
                 model.submeshes!.forEach { submesh in
-                    print("initialize textures")
                     submesh.initializeTextures()
+                }
+            }
+        }
+        
+        var bufferLength = MemoryLayout<STLRUniforms>.stride
+        uniformsBuffer = STLRRenderer.metalDevice.makeBuffer(length: bufferLength, options: [])
+        uniformsBuffer.label = "STLRUniforms"
+        
+        bufferLength = MemoryLayout<STLRFragmentUniforms>.stride
+        fragmentUniformsBuffer = STLRRenderer.metalDevice.makeBuffer(length: bufferLength, options: [])
+        fragmentUniformsBuffer.label = "STLRFragmentUniforms"
+    }
+    
+    func initializeCommands() {
+        guard let scene = scene else { return }
+        let icbDescriptor = MTLIndirectCommandBufferDescriptor()
+        icbDescriptor.commandTypes = [.drawIndexed]
+        icbDescriptor.inheritBuffers = false
+        icbDescriptor.maxVertexBufferBindCount = 25
+        icbDescriptor.maxFragmentBufferBindCount = 25
+        icbDescriptor.inheritPipelineState = false
+        
+        guard let icb = STLRRenderer.metalDevice.makeIndirectCommandBuffer(descriptor: icbDescriptor, maxCommandCount: scene.renderables.count, options: [])
+        else { fatalError("Failed to create ICB") }
+        
+        self.icb = icb
+        
+        for (modelIndex, renderable) in scene.renderables.enumerated() {
+            if let model = renderable as? STLRModel {
+                guard let modelSubmeshes = model.submeshes else { return }
+                for (submeshIndex, submesh) in modelSubmeshes.enumerated() {
+                    let icbCommand = icb.indirectRenderCommandAt(modelIndex)
+                    icbCommand.setRenderPipelineState(gBufferPipelineState)
+                    icbCommand.setVertexBuffer(uniformsBuffer, offset: 0, at: Int(BufferIndexUniforms.rawValue))
+                    icbCommand.setFragmentBuffer(fragmentUniformsBuffer, offset: 0, at: Int(BufferIndexFragmentUniforms.rawValue))
+                    icbCommand.setVertexBuffer(model.mesh!.vertexBuffers[0].buffer, offset: 0, at: Int(BufferIndexVertices.rawValue))
+                    icbCommand.setFragmentBuffer(submesh.textureBuffer!, offset: 0, at: Int(STLRGBufferTexturesIndex.rawValue))
+                    icbCommand.drawIndexedPrimitives(.triangle,
+                                                     indexCount: submesh.submesh.indexCount,
+                                                     indexType: submesh.submesh.indexType,
+                                                     indexBuffer: submesh.submesh.indexBuffer.buffer,
+                                                     indexBufferOffset: submesh.submesh.indexBuffer.offset,
+                                                     instanceCount: 1,
+                                                     baseVertex: 0,
+                                                     baseInstance: submeshIndex)
                 }
             }
         }
@@ -400,6 +448,15 @@ extension STLRRenderer: MTKViewDelegate {
         //STLRRenderer.commandBuffer = nil
     }
     
+    func updateUniforms() {
+        guard let scene = scene else { return }
+        var bufferLength = MemoryLayout<STLRUniforms>.stride
+        uniformsBuffer.contents().copyMemory(from: &scene.uniforms, byteCount: bufferLength)
+        
+        bufferLength = MemoryLayout<STLRFragmentUniforms>.stride
+        fragmentUniformsBuffer.contents().copyMemory(from: &scene.fragmentUniforms, byteCount: bufferLength)
+    }
+    
     func draw(renderEncoder: MTLRenderCommandEncoder, model: STLRModel) {
         guard let scene = scene else { return }
         if let heap = STLRTextureController.heap {
@@ -408,17 +465,19 @@ extension STLRRenderer: MTKViewDelegate {
         
         scene.uniforms.modelMatrix = model.worldTransform
         scene.uniforms.normalMatrix = float3x3(normalFrom4x4: model.modelMatrix)
-        renderEncoder.setVertexBytes(&scene.uniforms, length: MemoryLayout<STLRUniforms>.stride, index: 11)
+        updateUniforms()
+        renderEncoder.setVertexBytes(&scene.uniforms, length: MemoryLayout<STLRUniforms>.stride, index: Int(BufferIndexUniforms.rawValue))
         renderEncoder.setVertexBuffer(model.mesh?.vertexBuffers[0].buffer, offset: 0, index: 0)
+        renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: Int(BufferIndexFragmentUniforms.rawValue))
         renderEncoder.setFragmentSamplerState(model.samplerState, index: 0)
         guard let modelSubmeshes = model.submeshes else { return }
-        
+
         for modelSubmesh in modelSubmeshes {
             let submesh = modelSubmesh.submesh
             var material = modelSubmesh.material
 
             renderEncoder.setFragmentBuffer(modelSubmesh.textureBuffer, offset: 0, index: Int(STLRGBufferTexturesIndex.rawValue))
-            
+
             renderEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
             renderEncoder.drawIndexedPrimitives(type: .triangle,
                                                 indexCount: submesh.indexCount,
@@ -426,6 +485,7 @@ extension STLRRenderer: MTKViewDelegate {
                                                 indexBuffer: submesh.indexBuffer.buffer,
                                                 indexBufferOffset: submesh.indexBuffer.offset)
         }
+        //initializeCommands()
     }
     
 }

@@ -64,7 +64,7 @@ struct VertexOut {
 fragment float4 fragment_IBL(VertexOut in                                       [[ stage_in ]],
                              sampler textureSampler                             [[ sampler(0) ]],
                              constant Material &material                        [[ buffer(BufferIndexMaterials) ]],
-                             constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentConstants) ]],
+                             constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentUniforms) ]],
                              constant STLRGBufferTextures &textures             [[ buffer(STLRGBufferTexturesIndex) ]],
                              depth2d<float> shadowTexture                       [[ texture(Shadow) ]],
                              texturecube<float> skybox                          [[ texture(BufferIndexSkybox) ]],
