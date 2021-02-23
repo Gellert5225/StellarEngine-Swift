@@ -24,6 +24,7 @@ struct VertexOut {
     float2 textureCoordinates;
     float3 worldTangent;
     float3 worldBitangent;
+    float occlusion;
 };
 
 struct GbufferOut {
@@ -117,7 +118,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     if (!is_null_texture(textures.aoTexture)) {
         ambientOcclusion = textures.aoTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
-        ambientOcclusion = 1.0;
+        ambientOcclusion = 1.0;//in.occlusion;
     }
 
     float3 normal;
