@@ -20,8 +20,9 @@ struct VertexIn{
     float4 position [[ attribute(0) ]];
     float3 normal [[ attribute(1) ]];
     float2 textureCoordinates [[ attribute(2) ]];
-    float3 tangent [[ attribute(3) ]];
-    float3 bitangent [[ attribute(4) ]];
+    float  ambientOcculusion [[ attribute(3) ]];
+    float3 tangent [[ attribute(4) ]];
+    float3 bitangent [[ attribute(5) ]];
 };
 
 // all vertex shaders begin with keyword 'vertex'
@@ -47,6 +48,7 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
     out.worldBitangent = uniforms.normalMatrix * vertexIn.bitangent;
     out.textureCoordinates = vertexIn.textureCoordinates;
     out.modelIndex = baseInstance;
+    out.occlusion = vertexIn.ambientOcculusion;
     
     return out;
 }

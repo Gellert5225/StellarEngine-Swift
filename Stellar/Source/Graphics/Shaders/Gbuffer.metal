@@ -88,7 +88,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     if (!is_null_texture(textures.aoTexture)) {
         ambientOcclusion = textures.aoTexture.sample(sampler2d, in.textureCoordinates).r;
     } else {
-        ambientOcclusion = 1.0;
+        ambientOcclusion = 1.0;//in.occlusion;
     }
 
     float3 normal;
@@ -136,7 +136,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
     
     float bias = 0.005;
     constexpr sampler s(coord::normalized, filter::linear, address::clamp_to_edge, compare_func::less);
-    const int neighborWidth = 3;
+    const int neighborWidth = 7;
     const float neighbors = (neighborWidth * 3.0 + 1.0) * (neighborWidth * 3.0 + 1.0);
 
     float mapSize = 4096;
