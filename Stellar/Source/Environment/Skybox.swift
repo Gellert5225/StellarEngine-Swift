@@ -138,7 +138,7 @@ open class STLRSkybox {
         var viewMatrix = uniforms.viewMatrix
         viewMatrix.columns.3 = [0, 0, 0, 1]
         uniform.viewMatrix = viewMatrix
-        //uniform.modelMatrix = transform.modelMatrix
+        uniform.modelMatrix = transform.modelMatrix
         
         renderEncoder.setVertexBytes(&uniform, length: MemoryLayout<STLRUniforms>.stride, index: Int(BufferIndexUniforms.rawValue))
         
