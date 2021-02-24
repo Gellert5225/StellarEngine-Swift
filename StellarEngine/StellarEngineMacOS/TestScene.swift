@@ -15,11 +15,11 @@ class TestScene: STLRScene {
     }
     
     func setupScene() {
-//        skybox = STLRSkybox(textureName: nil)
-//        skybox?.skySettings = STLRSkybox.MidDay
-//        
-//        let water = STLRWater()
-//        add(water: water)
+        skybox = STLRSkybox(textureName: nil)
+        skybox?.skySettings = STLRSkybox.MidDay
+        
+        let water = STLRWater()
+        add(water: water)
         
         let ground = STLRModel(modelName: "plane")
         ground.scale = [10, 10, 10]

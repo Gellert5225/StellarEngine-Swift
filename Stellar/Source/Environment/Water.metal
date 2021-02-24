@@ -27,10 +27,10 @@ vertex VertexOut vertex_water(const VertexIn vertex_in [[ stage_in ]],
                               constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
     VertexOut out;
     
-    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix;
+    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
     out.position = mvp * vertex_in.position;
     out.uv = vertex_in.uv;
-    out.worldPosition = (modelParams.modelMatrix * vertex_in.position).xyz;
+    out.worldPosition = (uniforms.modelMatrix * vertex_in.position).xyz;
     out.toCamera = uniforms.cameraPosition - out.worldPosition;
     
     return out;

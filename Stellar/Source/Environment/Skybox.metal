@@ -32,10 +32,10 @@ vertex VertexOut vertexSkybox(const VertexIn vertex_in [[ stage_in ]],
                               constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
                               constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
     VertexOut vertex_out;
-    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix;
+    float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
     vertex_out.position = (mvp * vertex_in.position).xyww;
     vertex_out.uv = vertex_in.position;
-    vertex_out.clip_distance[0] = dot(modelParams.modelMatrix * vertex_in.position, uniforms.clipPlane);
+    vertex_out.clip_distance[0] = dot(uniforms.modelMatrix * vertex_in.position, uniforms.clipPlane);
     return vertex_out;
 }
 

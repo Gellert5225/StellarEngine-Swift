@@ -378,7 +378,7 @@ open class STLRRenderer: NSObject {
         for (modelIndex, renderable) in scene.renderables.enumerated() {
             if let model = renderable as? STLRModel {
                 guard let modelSubmeshes = model.submeshes else { return }
-                for (submeshIndex, submesh) in modelSubmeshes.enumerated() {
+                for (_, submesh) in modelSubmeshes.enumerated() {
                     let icbCommand = icb.indirectRenderCommandAt(currentIndex)
                     icbCommand.setRenderPipelineState(gBufferPipelineState)
                     icbCommand.setVertexBuffer(uniformsBuffer, offset: 0, at: Int(BufferIndexUniforms.rawValue))
@@ -433,36 +433,37 @@ extension STLRRenderer: MTKViewDelegate {
         guard let shadowEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPassDescriptor) else { return }
         renderShadowPass(renderEncoder: shadowEncoder)
         
-        for water in scene.waters {
-            guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
-                else { return }
-
-            scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
-            scene.fragmentUniforms.lightCount = uint(scene.lights.count)
-            scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
-            scene.uniforms.cameraPosition = scene.camera.transform.position
-
-            // Render reflection
-            //reflectEncoder.setDepthStencilState(depthStencilState)
-            scene.reflectionCamera.transform = scene.camera.transform
-            scene.reflectionCamera.transform.position.y = -scene.camera.transform.position.y
-            scene.reflectionCamera.transform.rotation.x = -scene.camera.transform.rotation.x
-            if let reflectionCam = scene.reflectionCamera as? STLRArcballCamera, let cam = scene.camera as? STLRArcballCamera {
-                reflectionCam.distance = cam.distance
-                scene.reflectionCamera = reflectionCam
-                scene.uniforms.viewMatrix = reflectionCam.viewMatrix
-            }
-
-            scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
-
-            scene.skybox?.update(renderEncoder: reflectEncoder)
-            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
-
-            scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
-
-            reflectEncoder.endEncoding()
-            reflectEncoder.popDebugGroup()
-        }
+        // reflection
+//        for water in scene.waters {
+//            guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
+//                else { return }
+//
+//            scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
+//            scene.fragmentUniforms.lightCount = uint(scene.lights.count)
+//            scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
+//            scene.uniforms.cameraPosition = scene.camera.transform.position
+//
+//            // Render reflection
+//            //reflectEncoder.setDepthStencilState(depthStencilState)
+//            scene.reflectionCamera.transform = scene.camera.transform
+//            scene.reflectionCamera.transform.position.y = -scene.camera.transform.position.y
+//            scene.reflectionCamera.transform.rotation.x = -scene.camera.transform.rotation.x
+//            if let reflectionCam = scene.reflectionCamera as? STLRArcballCamera, let cam = scene.camera as? STLRArcballCamera {
+//                reflectionCam.distance = cam.distance
+//                scene.reflectionCamera = reflectionCam
+//                scene.uniforms.viewMatrix = reflectionCam.viewMatrix
+//            }
+//
+//            scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
+//
+//            scene.skybox?.update(renderEncoder: reflectEncoder)
+//            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
+//
+//            scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
+//
+//            reflectEncoder.endEncoding()
+//            reflectEncoder.popDebugGroup()
+//        }
 
         scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
         scene.fragmentUniforms.lightCount = uint(scene.lights.count)
