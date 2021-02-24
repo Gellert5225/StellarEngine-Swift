@@ -116,7 +116,8 @@ typedef enum {
     BufferIndexSkybox = 20,
     BufferIndexSkyboxDiffuse = 21,
     BufferIndexBRDFLut = 22,
-    BufferIndexSkyboxTextures = 23
+    BufferIndexSkyboxTextures = 23,
+    BufferIndexWaterTextures = 24
 } BufferIndices;
 
 struct MorphInstance {

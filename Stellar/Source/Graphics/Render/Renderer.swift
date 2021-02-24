@@ -251,10 +251,7 @@ open class STLRRenderer: NSObject {
         gbufferArgumentEncoder.setTexture(shadowTexture, index: 0)
         //initializeCommands()
         renderEncoder.useResource(lightsBuffer!, usage: .read)
-        if let skybox = scene.skybox {
-            renderEncoder.useResource(skybox.textureBuffer, usage: .read)
-        }
-        
+
         for child in scene.renderables {
             if let renderable = child as? STLRModel {
                 updateUniforms()
@@ -394,7 +391,6 @@ open class STLRRenderer: NSObject {
                     icbCommand.setFragmentBuffer(submesh.textureBuffer!, offset: 0, at: Int(STLRGBufferTexturesIndex.rawValue))
                     icbCommand.setFragmentBuffer(gbufferFragmentArgumentBuffer!, offset: 0, at: Int(Shadow.rawValue))
                     icbCommand.setFragmentBuffer(lightsBuffer!, offset: 0, at: 2)
-                    icbCommand.setFragmentBuffer(scene.skybox!.textureBuffer, offset: 0, at: Int(BufferIndexSkyboxTextures.rawValue))
                     icbCommand.drawIndexedPrimitives(.triangle,
                                                      indexCount: submesh.submesh.indexCount,
                                                      indexType: submesh.submesh.indexType,
@@ -481,13 +477,13 @@ extension STLRRenderer: MTKViewDelegate {
         // gbuffer pass
         guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor) else {return}
         
+        renderGbufferPass(renderEncoder: gBufferEncoder)
         scene.skybox?.update(renderEncoder: gBufferEncoder)
         scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
         for water in scene.waters {
             water.update()
             water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
         }
-        renderGbufferPass(renderEncoder: gBufferEncoder)
         
 //        for terrain in scene.terrains {
 //            terrain.doRender(commandEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)

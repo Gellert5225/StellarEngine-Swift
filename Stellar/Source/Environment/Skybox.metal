@@ -29,8 +29,8 @@ struct FragmentIn {
 };
 
 struct STLRGSKyboxBufferTextures {
-    texturecube<float> cubeTexture      [[ texture(BufferIndexSkybox) ]];
-    texturecube<float> diffuseTexture   [[ texture(BufferIndexSkyboxDiffuse) ]];
+    texturecube<half> cubeTexture       [[ texture(BufferIndexSkybox) ]];
+    texturecube<half> diffuseTexture    [[ texture(BufferIndexSkyboxDiffuse) ]];
     texture2d<float> brdf               [[ texture(BufferIndexBRDFLut) ]];
 };
 

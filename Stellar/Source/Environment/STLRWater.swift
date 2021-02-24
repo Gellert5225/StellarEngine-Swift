@@ -69,7 +69,8 @@ open class STLRWater: STLRNode, Texturable {
         renderEncoder.setVertexBuffer(mesh.vertexBuffers[0].buffer, offset: 0, index: 0)
         
         var uniform = uniforms
-        uniform.modelMatrix = Transform().modelMatrix
+        //uniform.modelMatrix = Transform().modelMatrix
+        scale = float3(repeating: 10)
         
         var frag = fragmentUniform
         
