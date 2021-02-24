@@ -10,6 +10,10 @@
 		89157F7B20D20CE600299CB6 /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89157F7A20D20CE600299CB6 /* Renderable.swift */; };
 		8924FDE220D7781500D52908 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Utilities.swift */; };
 		89267CDD20D742780024085C /* STLRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89267CDC20D742780024085C /* STLRViewController.swift */; };
+		894F33B525E21458004EDC24 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33B425E21458004EDC24 /* TextureController.swift */; };
+		894F33B625E21458004EDC24 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33B425E21458004EDC24 /* TextureController.swift */; };
+		894F33BC25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */; };
+		894F33BD25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */; };
 		89B34CA020D2F20F00873A28 /* Texturable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B34C9F20D2F20F00873A28 /* Texturable.swift */; };
 		89B384EA20D78AB700FAEDE4 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384E920D78AB700FAEDE4 /* Node.swift */; };
 		89B384EC20D78E3600FAEDE4 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89B384EB20D78E3600FAEDE4 /* Camera.swift */; };
@@ -114,12 +118,15 @@
 		89157F7A20D20CE600299CB6 /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		8924FDE120D7781500D52908 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		89267CDC20D742780024085C /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
+		894F33B425E21458004EDC24 /* TextureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
+		894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureDescriptorExtension.swift; sourceTree = "<group>"; };
 		89B34C9F20D2F20F00873A28 /* Texturable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texturable.swift; sourceTree = "<group>"; };
 		89B384E920D78AB700FAEDE4 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		89B384EB20D78E3600FAEDE4 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		89B384EF20D7926400FAEDE4 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		89B384F120D7B9E600FAEDE4 /* MatrixMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatrixMath.swift; sourceTree = "<group>"; };
 		89B384F320D7C31E00FAEDE4 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		89FDA0B525E66BFF00FCC2D5 /* ShadersCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadersCommon.h; sourceTree = "<group>"; };
 		89FFCAB020CC799900C6DB28 /* StellariOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StellariOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		89FFCAB320CC799900C6DB28 /* StellariOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StellariOS.h; sourceTree = "<group>"; };
 		89FFCAB420CC799900C6DB28 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -202,6 +209,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		894F33B325E2143A004EDC24 /* Texture */ = {
+			isa = PBXGroup;
+			children = (
+				89B34C9F20D2F20F00873A28 /* Texturable.swift */,
+				894F33B425E21458004EDC24 /* TextureController.swift */,
+				894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */,
+			);
+			path = Texture;
+			sourceTree = "<group>";
+		};
 		89B3850620D8B80000FAEDE4 /* Scene */ = {
 			isa = PBXGroup;
 			children = (
@@ -235,7 +252,6 @@
 				89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */,
 				DFD684262247449100A78E9F /* RenderPass.swift */,
 				89157F7A20D20CE600299CB6 /* Renderable.swift */,
-				89B34C9F20D2F20F00873A28 /* Texturable.swift */,
 			);
 			path = Render;
 			sourceTree = "<group>";
@@ -289,6 +305,9 @@
 			isa = PBXGroup;
 			children = (
 				DF38B59620DD8D6400E86E82 /* Types.h */,
+				89FDA0B525E66BFF00FCC2D5 /* ShadersCommon.h */,
+				DFA06EC322309A5A00631585 /* Skybox.metal */,
+				DFD6842222473EB600A78E9F /* Water.metal */,
 				89FFCABC20CC79B500C6DB28 /* Shaders.metal */,
 				DFA06ECF2230CD7D00631585 /* IBL.metal */,
 				DF4402CC223C9C6F00D5A7E3 /* Morph.metal */,
@@ -316,6 +335,7 @@
 		89FFCAC220CC79FE00C6DB28 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				894F33B325E2143A004EDC24 /* Texture */,
 				89FFCABB20CC79A600C6DB28 /* Shaders */,
 				89B3850920D8B85500FAEDE4 /* Render */,
 			);
@@ -417,9 +437,7 @@
 		DFA06EC0222F01EC00631585 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
-				DFA06EC322309A5A00631585 /* Skybox.metal */,
 				DFA06EC1222F020800631585 /* Skybox.swift */,
-				DFD6842222473EB600A78E9F /* Water.metal */,
 				DFD6842022473AC400A78E9F /* STLRWater.swift */,
 				DFD6842822477BF400A78E9F /* normal-water.png */,
 				DFEAD89A224848E900703436 /* ocean.png */,
@@ -629,6 +647,8 @@
 				DF3347C32240D3AF00632BCB /* Composition.metal in Sources */,
 				DFD684272247449100A78E9F /* RenderPass.swift in Sources */,
 				DFD6842122473AC400A78E9F /* STLRWater.swift in Sources */,
+				894F33BC25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */,
+				894F33B525E21458004EDC24 /* TextureController.swift in Sources */,
 				DF4402B0223C737000D5A7E3 /* Transform.swift in Sources */,
 				89FFCABD20CC79B500C6DB28 /* Shaders.metal in Sources */,
 				89267CDD20D742780024085C /* STLRViewController.swift in Sources */,
@@ -667,6 +687,8 @@
 				D9B33E9725D7D67700B8BCF3 /* Skybox.metal in Sources */,
 				D9B33E9825D7D67700B8BCF3 /* Skybox.swift in Sources */,
 				D9B33E9925D7D67700B8BCF3 /* Water.metal in Sources */,
+				894F33BD25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */,
+				894F33B625E21458004EDC24 /* TextureController.swift in Sources */,
 				D9B33E9A25D7D67700B8BCF3 /* STLRWater.swift in Sources */,
 				D9B33E9B25D7D67700B8BCF3 /* Model.swift in Sources */,
 				D9B33E9C25D7D67700B8BCF3 /* Submesh.swift in Sources */,

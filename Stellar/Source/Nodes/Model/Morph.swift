@@ -187,7 +187,7 @@ extension STLRMorph: Renderable {
         
         commandEncoder.setFragmentBytes(&fragmentUniforms,
                                        length: MemoryLayout<STLRFragmentUniforms>.stride,
-                                       index: Int(BufferIndexFragmentConstants.rawValue))
+                                       index: Int(BufferIndexFragmentUniforms.rawValue))
         commandEncoder.setFragmentTexture(baseColorTexture, index: Int(BaseColorTexture.rawValue))
         commandEncoder.drawIndexedPrimitives(type: .triangle,
                                             indexCount: submesh.indexCount,

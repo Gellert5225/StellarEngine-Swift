@@ -14,7 +14,7 @@ open class STLRScene {
     
     open var name: String = "Untitled Scene"
     open var camera = STLRArcballCamera()
-    open var lights = [Light]()
+    open var lights = [STLRLight]()
     open var skybox: STLRSkybox?
     open var terrains: [STLRTerrain] = []
     open var waters: [STLRWater] = []
@@ -38,8 +38,8 @@ open class STLRScene {
 //        }
 //    }
     
-    open var sunLignt: Light = {
-        var light = Light()
+    open var sunLignt: STLRLight = {
+        var light = STLRLight()
         light.position = [1, 2, -2]
         light.color = [1, 1, 1]
         light.specularColor = [1, 1, 1]
@@ -48,7 +48,7 @@ open class STLRScene {
         return light
     }()
     
-    open lazy var ambientLight: Light = {
+    open lazy var ambientLight: STLRLight = {
         var light = buildDefaultLight()
         light.color = [0.7, 0.7, 0.7]
         light.specularColor = [0.7, 0.7, 0.7]
@@ -123,8 +123,8 @@ open class STLRScene {
         renderables.remove(at: index)
     }
     
-    public func buildDefaultLight() -> Light {
-        var light = Light()
+    public func buildDefaultLight() -> STLRLight {
+        var light = STLRLight()
         light.position = [0, 0, 0]
         light.color = [1, 1, 1]
         light.specularColor = [1, 1, 1]
