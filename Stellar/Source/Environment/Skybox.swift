@@ -148,12 +148,9 @@ open class STLRSkybox: Renderable {
     }
     
     func update(renderEncoder: MTLRenderCommandEncoder) {
-        renderEncoder.setFragmentTexture(texture,
-                                         index: Int(BufferIndexSkybox.rawValue))
-        renderEncoder.setFragmentTexture(diffuseTexture,
-                                         index: Int(BufferIndexSkyboxDiffuse.rawValue))
-        renderEncoder.setFragmentTexture(brdfLut,
-                                         index: Int(BufferIndexBRDFLut.rawValue))
+        renderEncoder.setFragmentTexture(texture, index: Int(BufferIndexSkybox.rawValue))
+        renderEncoder.setFragmentTexture(diffuseTexture, index: Int(BufferIndexSkyboxDiffuse.rawValue))
+        renderEncoder.setFragmentTexture(brdfLut, index: Int(BufferIndexBRDFLut.rawValue))
     }
 }
 
