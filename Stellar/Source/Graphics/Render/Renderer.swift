@@ -256,6 +256,9 @@ open class STLRRenderer: NSObject {
         renderEncoder.useResource(modelParamsBuffer, usage: .read)
         renderEncoder.useResource(gbufferFragmentArgumentBuffer!, usage: .sample)
         renderEncoder.useResource(lightsBuffer!, usage: .read)
+        if let skybox = scene.skybox {
+            renderEncoder.useResource(skybox.textureBuffer, usage: .read)
+        }
         
         for child in scene.renderables {
             if let renderable = child as? STLRModel {
@@ -390,6 +393,7 @@ open class STLRRenderer: NSObject {
                     icbCommand.setFragmentBuffer(submesh.textureBuffer!, offset: 0, at: Int(STLRGBufferTexturesIndex.rawValue))
                     icbCommand.setFragmentBuffer(gbufferFragmentArgumentBuffer!, offset: 0, at: Int(Shadow.rawValue))
                     icbCommand.setFragmentBuffer(lightsBuffer!, offset: 0, at: 2)
+                    icbCommand.setFragmentBuffer(scene.skybox!.textureBuffer, offset: 0, at: Int(BufferIndexSkyboxTextures.rawValue))
                     icbCommand.drawIndexedPrimitives(.triangle,
                                                      indexCount: submesh.submesh.indexCount,
                                                      indexType: submesh.submesh.indexType,

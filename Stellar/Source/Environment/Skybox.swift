@@ -8,9 +8,24 @@
 
 import MetalKit
 
-open class STLRSkybox: Renderable {
-    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
-        
+open class STLRSkybox {
+    
+    public static var SunRise = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885)
+    public static var MidDay = SkySettings(turbidity: 0.7982, sunElevation: 0.7221, upperAtmosphereScattering: 0.6449, groundAlbedo: 0.0)
+    public static var SunSet = SkySettings(turbidity: 0.6778, sunElevation: 0.4551, upperAtmosphereScattering: 0.0497, groundAlbedo: 0.0)
+    
+    public struct SkySettings {
+        var turbidity: Float = 0.5597
+        var sunElevation: Float = 0.5164
+        var upperAtmosphereScattering: Float = 0.1767
+        var groundAlbedo: Float = 0.6885
+    }
+
+    open var skySettings = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885) {
+        didSet {
+            texture = loadGeneratedSkyboxTexture(dimensions: [1024, 1024])
+            diffuseTexture = texture
+        }
     }
     
     var texture: MTLTexture?
@@ -25,23 +40,7 @@ open class STLRSkybox: Renderable {
     
     var renderPass: RenderPass
     
-    public struct SkySettings {
-        var turbidity: Float = 0.5597
-        var sunElevation: Float = 0.5164
-        var upperAtmosphereScattering: Float = 0.1767
-        var groundAlbedo: Float = 0.6885
-    }
-    
-    open var skySettings = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885) {
-        didSet {
-            texture = loadGeneratedSkyboxTexture(dimensions: [1024, 1024])
-            diffuseTexture = texture
-        }
-    }
-    
-    public static var SunRise = SkySettings(turbidity: 0.5597, sunElevation: 0.5164, upperAtmosphereScattering: 0.1767, groundAlbedo: 0.6885)
-    public static var MidDay = SkySettings(turbidity: 0.7982, sunElevation: 0.7221, upperAtmosphereScattering: 0.6449, groundAlbedo: 0.0)
-    public static var SunSet = SkySettings(turbidity: 0.6778, sunElevation: 0.4551, upperAtmosphereScattering: 0.0497, groundAlbedo: 0.0)
+    var textureBuffer: MTLBuffer!
     
     public init(textureName: String?) {
         renderPass = RenderPass(name: "skybox", size: STLRRenderer.drawableSize, multiplier: 1.0)
@@ -53,7 +52,22 @@ open class STLRSkybox: Renderable {
             fatalError("failed to create skybox mesh")
         }
         
-        pipelineState = STLRSkybox.buildPipelineState(vertexDescriptor: cube.vertexDescriptor)
+        let descriptor = MTLRenderPipelineDescriptor()
+        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
+        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        descriptor.depthAttachmentPixelFormat = .depth32Float
+        descriptor.sampleCount = 4
+        descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertexSkybox")
+        descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "fragmentSkybox")
+        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(cube.vertexDescriptor)
+        
+        do {
+            pipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+        
         depthStencilState = STLRSkybox.buildDepthStencilState()
         
         if let textureName = textureName {
@@ -69,6 +83,18 @@ open class STLRSkybox: Renderable {
         }
         
         brdfLut = STLRRenderer.buildBRDF()
+        
+        let textureEncoder = descriptor.fragmentFunction!.makeArgumentEncoder(bufferIndex: Int(BufferIndexSkyboxTextures.rawValue))
+        textureBuffer = STLRRenderer.metalDevice.makeBuffer(length: textureEncoder.encodedLength, options: [])!
+        textureBuffer?.label = "Skybox Texture Buffer"
+        textureEncoder.setArgumentBuffer(textureBuffer, offset: 0)
+        if let texture = texture {
+            textureEncoder.setTexture(texture, index: 0)
+            textureEncoder.setTexture(diffuseTexture, index: 1)
+        }
+        if let brdf = brdfLut {
+            textureEncoder.setTexture(brdf, index: 2)
+        }
     }
     
     private static func buildPipelineState(vertexDescriptor: MDLVertexDescriptor) -> MTLRenderPipelineState {
@@ -151,7 +177,12 @@ open class STLRSkybox: Renderable {
         renderEncoder.setFragmentTexture(texture, index: Int(BufferIndexSkybox.rawValue))
         renderEncoder.setFragmentTexture(diffuseTexture, index: Int(BufferIndexSkyboxDiffuse.rawValue))
         renderEncoder.setFragmentTexture(brdfLut, index: Int(BufferIndexBRDFLut.rawValue))
+        renderEncoder.useResource(textureBuffer, usage: .read)
     }
+}
+
+extension STLRSkybox: Renderable {
+    public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {}
 }
 
 extension STLRSkybox: Texturable {}
