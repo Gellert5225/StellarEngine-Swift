@@ -6,10 +6,7 @@
 //  Copyright © 2018 Gellert. All rights reserved.
 //
 
-#include <metal_stdlib>
-#include <simd/simd.h>
-
-#import "Types.h"
+#import "ShadersCommon.h"
 
 using namespace metal;
 
@@ -28,32 +25,13 @@ struct VertexIn{
     float3 bitangent [[ attribute(5) ]];
 };
 
-struct VertexOut {
-    float4 position [[position]];
-    float4 color;
-    float2 textureCoordinates;
-    float4 materialColor;
-    float3 normal;
-    float specularIntensity;
-    float shininess;
-    float3 eyePosition;
-    float3 worldPosition;
-    float occlusion;
-    float3 worldTangent;
-    float3 worldBitangent;
-    float4 shadowPosition;
-};
-
-// all vertex shaders begin with keyword 'vertex'
-// packed_float3 is a vector of 3 floats(position of each vertex)
-// [[ buffer(0) ]] means the first data in vertex buffer
 vertex float4 basic_vertex(const device packed_float3* vertex_array [[ buffer(0) ]],
                            unsigned int vid [[ vertex_id ]]) {
     return float4(vertex_array[vid], 1.0); // return final position of vertex
 }
 
-vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
-                             constant STLRUniforms &uniforms [[ buffer(11) ]]) {
+vertex VertexOut vertex_main(const VertexIn vertexIn            [[ stage_in ]],
+                             constant STLRUniforms &uniforms    [[ buffer(BufferIndexUniforms) ]]) {
     VertexOut out;
     matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
     out.position = mvp * vertexIn.position;
@@ -68,10 +46,10 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
     return out;
 }
 
-vertex VertexOut mp_vertex(const VertexIn in [[ stage_in ]],
-                           constant STLRUniforms &uniforms [[ buffer(11) ]],
-                           constant Instances *instances [[ buffer(BufferIndexInstances) ]],
-                           uint instanceID [[ instance_id ]]) {
+vertex VertexOut mp_vertex(const VertexIn in                [[ stage_in ]],
+                           constant STLRUniforms &uniforms  [[ buffer(BufferIndexUniforms) ]],
+                           constant Instances *instances    [[ buffer(BufferIndexInstances) ]],
+                           uint instanceID                  [[ instance_id ]]) {
     VertexOut out;
     Instances instance = instances[instanceID];
     
@@ -99,9 +77,9 @@ fragment float4 grayScale_fragment(VertexOut v [[ stage_in ]]) {
 }
 
 // texture fragment
-fragment half4 textured_fragment(VertexOut v [[ stage_in ]],
-                                 sampler sampler2d [[ sampler(0) ]],
-                                 texture2d<float> texture [[ texture(BaseColorTexture) ]]) {
+fragment half4 textured_fragment(VertexOut v                [[ stage_in ]],
+                                 sampler sampler2d          [[ sampler(0) ]],
+                                 texture2d<float> texture   [[ texture(BaseColorTexture) ]]) {
     float4 color = texture.sample(sampler2d, v.textureCoordinates);
     color = color * v.materialColor;
     
@@ -109,10 +87,10 @@ fragment half4 textured_fragment(VertexOut v [[ stage_in ]],
 }
 
 // material fragment
-fragment half4 fragment_color(VertexOut v [[ stage_in ]],
-                              constant Light *lights [[ buffer(3) ]],
-                              constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                              constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
+fragment half4 fragment_color(VertexOut v                                       [[ stage_in ]],
+                              constant STLRLight *lights                        [[ buffer(BufferIndexLight) ]],
+                              constant STLRLightConstants &lightConstants       [[ buffer(BufferIndexLightConstants) ]],
+                              constant STLRFragmentUniforms &fragmentConstants  [[ buffer(BufferIndexFragmentUniforms) ]]) {
     
     float4 color = v.materialColor;
     float3 baseColor = float3(1, 1, 1);
@@ -122,7 +100,7 @@ fragment half4 fragment_color(VertexOut v [[ stage_in ]],
     float3 materialSpecularColor = float3(1, 1, 1);
     
     for (uint i = 0; i < lightConstants.lightCount; i++) {
-        Light light = lights[i];
+        STLRLight light = lights[i];
         
         float3 normal = normalize(v.normal);
         if (light.type == Sunlight){
@@ -150,55 +128,15 @@ fragment half4 fragment_color(VertexOut v [[ stage_in ]],
     return half4(color.r, color.g, color.b, 1.0);
 }
 
-float3 diffuseLighting(float3 normal,
-                       float3 position,
-                       constant STLRFragmentUniforms &fragmentUniforms,
-                       constant Light *lights,
-                       float3 baseColor) {
-    float3 diffuseColor = 0;
-    float3 normalDirection = normalize(normal);
-    for (uint i = 0; i < fragmentUniforms.lightCount; i++) {
-        Light light = lights[i];
-        if (light.type == Sunlight) {
-            float3 lightDirection = normalize(light.position);
-            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-            diffuseColor += light.color * light.intensity * baseColor * diffuseIntensity;
-        } else if (light.type == Pointlight) {
-            float d = distance(light.position, position);
-            float3 lightDirection = normalize(light.position - position);
-            float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
-            float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-            float3 color = light.color * baseColor * diffuseIntensity;
-            color *= attenuation;
-            diffuseColor += color;
-        } else if (light.type == Spotlight) {
-            float d = distance(light.position, position);
-            float3 lightDirection = normalize(light.position - position);
-            float3 coneDirection = normalize(-light.coneDirection);
-            float spotResult = (dot(lightDirection, coneDirection));
-            if (spotResult > cos(light.coneAngle)) {
-                float attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * d + light.attenuation.z * d * d);
-                attenuation *= pow(spotResult, light.coneAttenuation);
-                float diffuseIntensity = saturate(dot(lightDirection, normalDirection));
-                float3 color = light.color * baseColor * diffuseIntensity;
-                color *= attenuation;
-                diffuseColor += color;
-            }
-        }
-    }
-    return diffuseColor;
-}
-
 // lighting fragment
-fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
-                                      sampler sampler2d [[ sampler(0) ]],
-                                      constant Light *lights [[ buffer(3) ]],
-                                      texture2d<float> texture [[ texture(BaseColorTexture),  function_constant(hasColorTexture) ]],
-                                      texture2d<float> normalTexture [[ texture(NormalTexture),  function_constant(hasNormalTexture) ]],
-                                      depth2d<float> shadowTexture [[ texture(Shadow) ]],
-                                      constant Material &material [[ buffer(13) ]],
-                                      constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                                      constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
+fragment float4 lit_textured_fragment(VertexOut v                                       [[ stage_in ]],
+                                      sampler sampler2d                                 [[ sampler(0) ]],
+                                      constant STLRLight *lights                        [[ buffer(BufferIndexLight) ]],
+                                      texture2d<float> texture                          [[ texture(BaseColorTexture),  function_constant(hasColorTexture) ]],
+                                      texture2d<float> normalTexture                    [[ texture(NormalTexture),  function_constant(hasNormalTexture) ]],
+                                      depth2d<float> shadowTexture                      [[ texture(Shadow) ]],
+                                      constant STLRMaterial &material                   [[ buffer(BufferIndexMaterials) ]],
+                                      constant STLRFragmentUniforms &fragmentConstants  [[ buffer(BufferIndexFragmentUniforms) ]]) {
     
     float4 color = float4(material.baseColor, 1.0);
 //    float materialShininess = material.shininess;
@@ -223,12 +161,12 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
 //    normalDirection = normalize(normalDirection);
     
     for (uint i = 0; i < fragmentConstants.lightCount; i++) {
-        Light light = lights[i];
+        STLRLight light = lights[i];
         if (light.type == Ambientlight) {
             ambientColor += light.color * light.intensity;
         }
     }
-    diffuseColor = diffuseLighting(v.normal, v.worldPosition, fragmentConstants, lights, baseColor);
+    diffuseColor = calculateLighting(v.normal, v.worldPosition, fragmentConstants, lights, baseColor);
     
     float2 xy = v.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;
@@ -265,20 +203,17 @@ fragment float4 lit_textured_fragment(VertexOut v [[ stage_in ]],
     return float4(color.r, color.g, color.b, 1.0);
 }
 
-float3 render(Lighting lighting);
-
-fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
-                             sampler sampler2d [[ sampler(0) ]],
-                             constant Light *lights [[ buffer(3) ]],
-                             texture2d<float> texture [[ texture(BaseColorTexture), function_constant(hasColorTexture) ]],
-                             texture2d<float> normalTexture [[ texture(NormalTexture), function_constant(hasNormalTexture) ]],
-                             texture2d<float> roughnessTexture [[texture(RoughnessTexture), function_constant(hasRoughnessTexture) ]],
-                             texture2d<float> metallicTexture [[ texture(MetallicTexture), function_constant(hasMetallicTexture) ]],
-                             texture2d<float> aoTexture [[ texture(AOTexture), function_constant(hasAOTexture)]],
-                             depth2d<float> shadowTexture [[ texture(Shadow) ]],
-                             constant Material &material [[ buffer(13) ]],
-                             constant STLRLightConstants &lightConstants [[ buffer(14) ]],
-                             constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]]) {
+fragment float4 fragment_PBR(VertexOut v                                        [[ stage_in ]],
+                             sampler sampler2d                                  [[ sampler(0) ]],
+                             constant STLRLight *lights                         [[ buffer(BufferIndexLight) ]],
+                             texture2d<float> texture                           [[ texture(BaseColorTexture), function_constant(hasColorTexture) ]],
+                             texture2d<float> normalTexture                     [[ texture(NormalTexture), function_constant(hasNormalTexture) ]],
+                             texture2d<float> roughnessTexture                  [[ texture(RoughnessTexture), function_constant(hasRoughnessTexture) ]],
+                             texture2d<float> metallicTexture                   [[ texture(MetallicTexture), function_constant(hasMetallicTexture) ]],
+                             texture2d<float> aoTexture                         [[ texture(AOTexture), function_constant(hasAOTexture)]],
+                             depth2d<float> shadowTexture                       [[ texture(Shadow) ]],
+                             constant STLRMaterial &material                    [[ buffer(BufferIndexMaterials) ]],
+                             constant STLRFragmentUniforms &fragmentConstants   [[ buffer(BufferIndexFragmentUniforms) ]]) {
     
     //    float4 color = float4(texture.sample(sampler2d, v.textureCoordinates * fragmentConstants.tiling).rgb, 1);
     //    color = color * v.materialColor;
@@ -333,7 +268,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
     float3 ambientColor = 0;
     
     for (uint i = 0; i < fragmentConstants.lightCount; i++) {
-        Light light = lights[i];
+        STLRLight light = lights[i];
         if (light.type == 1) {
             float3 lightDirection = normalize(light.position);
             lightDirection = light.position;
@@ -350,7 +285,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
             lighting.lightColor = light.color;
             lighting.intensity = light.intensity;
             
-            specularOutput = render(lighting);
+            specularOutput = calculateSpecularOutput(lighting);
             
             //compute Lambertian diffuse
 //            float nDotl = saturate(dot(lighting.normal, lighting.lightDirection));
@@ -361,7 +296,7 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
         }
     }
     
-    diffuseColor = diffuseLighting(v.normal, v.worldPosition, fragmentConstants, lights, color.xyz);
+    diffuseColor = calculateLighting(v.normal, v.worldPosition, fragmentConstants, lights, color.xyz);
     
     // shadow with pcf
     float2 xy = v.shadowPosition.xy;
@@ -391,9 +326,9 @@ fragment float4 fragment_PBR(VertexOut v [[ stage_in ]],
     return color * float4(specularOutput + diffuseColor * lightFactor + ambientColor, 1.0) * ambientOcclusion;
 }
 
-fragment float4 skyboxTest(VertexOut in [[ stage_in ]],
-                           constant STLRFragmentUniforms &fragmentConstants [[ buffer(15) ]],
-                           texturecube<float> skybox [[ texture(20) ]]) {
+fragment float4 skyboxTest(VertexOut in                                     [[ stage_in ]],
+                           constant STLRFragmentUniforms &fragmentConstants [[ buffer(BufferIndexFragmentUniforms) ]],
+                           texturecube<float> skybox                        [[ texture(BufferIndexSkybox) ]]) {
     float3 viewDirection = in.worldPosition.xyz - fragmentConstants.cameraPosition;
     float3 textureCoordinates = reflect(viewDirection, in.normal);
     constexpr sampler defaultSampler(filter::linear);
@@ -401,45 +336,4 @@ fragment float4 skyboxTest(VertexOut in [[ stage_in ]],
     float4 copper = float4(211/255.0, 211/255.0, 211/255.0, 1);
     color = color * copper;
     return color;
-}
-
-float3 render(Lighting lighting) {
-    // Rendering equation courtesy of Apple et al.
-    float NoL = saturate(dot(lighting.normal, lighting.lightDirection));
-    float3 H = normalize(lighting.lightDirection + lighting.viewDirection); // half vector
-    float NoH = saturate(dot(lighting.normal, H));
-    float NoV = saturate(dot(lighting.normal, lighting.viewDirection));
-    float HoL = saturate(dot(lighting.lightDirection, H));
-    
-    // specular roughness
-    float specularRoughness = lighting.roughness * (1.0 - lighting.metallic) + lighting.metallic;
-    
-    // Distribution
-    float Ds;
-    if (specularRoughness >= 1.0) {
-        Ds = 1.0 / pi;
-    }
-    else {
-        float roughnessSqr = specularRoughness * specularRoughness;
-        float d = (NoH * roughnessSqr - NoH) * NoH + 1;
-        Ds = roughnessSqr / (pi * d * d);
-    }
-    
-    // Fresnel
-    float3 Cspec0 = float3(1.0);
-    float fresnel = pow(clamp(1.0 - HoL, 0.0, 1.0), 5.0);
-    float3 Fs = float3(mix(float3(Cspec0), float3(1), fresnel));
-    
-    // Geometry
-    float alphaG = (specularRoughness * 0.5 + 0.5) * (specularRoughness * 0.5 + 0.5);
-    float a = alphaG * alphaG;
-    float b1 = NoL * NoL;
-    float b2 = NoV * NoV;
-    float G1 = (float)(1.0 / (b1 + sqrt(a + b1 - a * b1)));
-    float G2 = (float)(1.0 / (b2 + sqrt(a + b2 - a * b2)));
-    float Gs = G1 * G2;
-    
-    float3 specularColor = mix(lighting.lightColor, lighting.baseColor.rgb, lighting.metallic);
-    float3 specularOutput = (Ds * Gs * Fs * specularColor) * lighting.ambientOcclusion * lighting.intensity;
-    return specularOutput;
 }

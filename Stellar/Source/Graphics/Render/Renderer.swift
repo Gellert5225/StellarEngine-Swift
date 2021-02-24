@@ -230,7 +230,7 @@ open class STLRRenderer: NSObject {
         renderEncoder.setDepthStencilState(depthStencilState)
         
         let lights = scene.lights
-        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
+        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         
         renderEncoder.setFragmentTexture(shadowTexture, index: Int(Shadow.rawValue))
@@ -262,7 +262,7 @@ open class STLRRenderer: NSObject {
         guard let scene = scene else { return }
         
         let lights = scene.lights
-        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
+        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: quadVertices.count)
@@ -419,7 +419,7 @@ extension STLRRenderer: MTKViewDelegate {
 
             renderEncoder.setFragmentBuffer(modelSubmesh.textureBuffer, offset: 0, index: Int(STLRGBufferTexturesIndex.rawValue))
             
-            renderEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
+            renderEncoder.setFragmentBytes(&material, length: MemoryLayout<STLRMaterial>.stride, index: 13)
             renderEncoder.drawIndexedPrimitives(type: .triangle,
                                                 indexCount: submesh.indexCount,
                                                 indexType: submesh.indexType,

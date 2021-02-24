@@ -11,15 +11,15 @@ import MetalKit
 class STLRSubmesh {
     let submesh: MTKSubmesh
     
-    struct Textures {
+    struct STLRTextures {
         let baseColor: Int?
         let normal: Int?
         let roughness: Int?
         let metallic: Int?
         let ao: Int?
     }
-    let textures: Textures
-    let material: Material
+    let textures: STLRTextures
+    let material: STLRMaterial
     let pipelineState: MTLRenderPipelineState!
     
     var fragmentFunction: MTLFunction
@@ -29,8 +29,8 @@ class STLRSubmesh {
     
     init(submesh: MTKSubmesh, mdlSubmesh: MDLSubmesh, vertexFunctionName: String, fragmentFunctionName: String) {
         self.submesh = submesh
-        textures = Textures(material: mdlSubmesh.material)
-        material = Material(material: mdlSubmesh.material)
+        textures = STLRTextures(material: mdlSubmesh.material)
+        material = STLRMaterial(material: mdlSubmesh.material)
         
         let library = STLRRenderer.library
         let functionConstants = STLRSubmesh.makeFunctionConstants(textures: textures)
@@ -86,7 +86,7 @@ class STLRSubmesh {
 }
 
 private extension STLRSubmesh {
-    static func makeFunctionConstants(textures: Textures)
+    static func makeFunctionConstants(textures: STLRTextures)
         -> MTLFunctionConstantValues {
             let functionConstants = MTLFunctionConstantValues()
             var property = textures.baseColor != nil
@@ -103,7 +103,7 @@ private extension STLRSubmesh {
             return functionConstants
     }
     
-    func makePipelineState(textures: Textures) -> MTLRenderPipelineState {
+    func makePipelineState(textures: STLRTextures) -> MTLRenderPipelineState {
         var pipelineState: MTLRenderPipelineState
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunction
@@ -127,7 +127,7 @@ private extension STLRSubmesh {
 
 extension STLRSubmesh: Texturable {}
 
-private extension STLRSubmesh.Textures {
+private extension STLRSubmesh.STLRTextures {
     init(material: MDLMaterial?) {
         func property(with semantic: MDLMaterialSemantic) -> MTLTexture? {
             guard let property = material?.property(with: semantic),
@@ -148,7 +148,7 @@ private extension STLRSubmesh.Textures {
     }
 }
 
-private extension Material {
+private extension STLRMaterial {
     init(material: MDLMaterial?) {
         self.init()
         if let baseColor = material?.property(with: .baseColor),

@@ -8,7 +8,7 @@
 
 #include <metal_stdlib>
 using namespace metal;
-#import "../Graphics/Shaders/Types.h"
+#import "Types.h"
 
 struct VertexIn {
     float4 position [[ attribute(0) ]];
@@ -35,11 +35,11 @@ vertex VertexOut vertex_water(const VertexIn vertex_in [[ stage_in ]],
     return out;
 }
 
-fragment float4 fragment_water(VertexOut vertex_in [[ stage_in ]],
-                               texture2d<float> reflectionTexture [[ texture(0) ]],
-                               texture2d<float> normalTexture [[ texture(2) ]],
-                               constant float& timer [[ buffer(3) ]],
-                               constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentConstants) ]]) {
+fragment float4 fragment_water(VertexOut vertex_in                              [[ stage_in ]],
+                               texture2d<float> reflectionTexture               [[ texture(0) ]],
+                               texture2d<float> normalTexture                   [[ texture(2) ]],
+                               constant float& timer                            [[ buffer(3) ]],
+                               constant STLRFragmentUniforms &fragmentUniforms  [[ buffer(BufferIndexFragmentUniforms) ]]) {
     constexpr sampler s(filter::linear, address::repeat);
     
     float width = float(reflectionTexture.get_width() * 2.0);

@@ -28,9 +28,8 @@
  * THE SOFTWARE.
  */
 
-#include <metal_stdlib>
+#include "ShadersCommon.h"
 using namespace metal;
-#import "Types.h"
 
 constant bool hasColorTexture [[ function_constant(0) ]];
 constant bool hasNormalTexture [[ function_constant(1) ]];
@@ -46,25 +45,11 @@ struct STLRGBufferTextures {
     texture2d<float> aoTexture          [[ texture(AOTexture) ]];
 };
 
-struct VertexOut {
-    float4 position [[position]];
-    float4 color;
-    float2 textureCoordinates;
-    float4 materialColor;
-    float3 normal;
-    float specularIntensity;
-    float shininess;
-    float3 eyePosition;
-    float3 worldPosition;
-    float occlusion;
-    float3 worldTangent;
-    float3 worldBitangent;
-    float4 shadowPosition;
-};
+
 fragment float4 fragment_IBL(VertexOut in                                       [[ stage_in ]],
                              sampler textureSampler                             [[ sampler(0) ]],
-                             constant Material &material                        [[ buffer(BufferIndexMaterials) ]],
-                             constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentConstants) ]],
+                             constant STLRMaterial &material                    [[ buffer(BufferIndexMaterials) ]],
+                             constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentUniforms) ]],
                              constant STLRGBufferTextures &textures             [[ buffer(STLRGBufferTexturesIndex) ]],
                              depth2d<float> shadowTexture                       [[ texture(Shadow) ]],
                              texturecube<float> skybox                          [[ texture(BufferIndexSkybox) ]],

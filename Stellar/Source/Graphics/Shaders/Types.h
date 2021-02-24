@@ -45,7 +45,7 @@ typedef struct {
     float metallic;
     float3 ambientOcclusion;
     float shininess;
-} Material;
+} STLRMaterial;
 
 typedef struct {
     float4x4 projectionMatrix;
@@ -81,7 +81,7 @@ typedef struct {
     float coneAngle;
     float3 coneDirection;
     float coneAttenuation;
-} Light;
+} STLRLight;
 
 typedef enum {
     BaseColorTexture = 4,
@@ -102,16 +102,17 @@ typedef enum {
 
 typedef enum {
     BufferIndexVertices = 0,
+    BufferIndexLight = 2,
     BufferIndexUniforms = 11,
     BufferIndexSceneConstants = 12,
     BufferIndexMaterials = 13,
     BufferIndexLightConstants = 14,
-    BufferIndexFragmentConstants = 15,
+    BufferIndexFragmentUniforms = 15,
     BufferIndexInstances = 16,
     BufferIndexSkybox = 20,
     BufferIndexSkyboxDiffuse = 21,
     BufferIndexBRDFLut = 22
-} BufferIndices;
+} STLRBufferIndices;
 
 struct MorphInstance {
     uint textureID;

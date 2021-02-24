@@ -126,6 +126,7 @@
 		89B384EF20D7926400FAEDE4 /* Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scene.swift; sourceTree = "<group>"; };
 		89B384F120D7B9E600FAEDE4 /* MatrixMath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MatrixMath.swift; sourceTree = "<group>"; };
 		89B384F320D7C31E00FAEDE4 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		89FDA0B525E66BFF00FCC2D5 /* ShadersCommon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShadersCommon.h; sourceTree = "<group>"; };
 		89FFCAB020CC799900C6DB28 /* StellariOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StellariOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		89FFCAB320CC799900C6DB28 /* StellariOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StellariOS.h; sourceTree = "<group>"; };
 		89FFCAB420CC799900C6DB28 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -304,6 +305,9 @@
 			isa = PBXGroup;
 			children = (
 				DF38B59620DD8D6400E86E82 /* Types.h */,
+				89FDA0B525E66BFF00FCC2D5 /* ShadersCommon.h */,
+				DFA06EC322309A5A00631585 /* Skybox.metal */,
+				DFD6842222473EB600A78E9F /* Water.metal */,
 				89FFCABC20CC79B500C6DB28 /* Shaders.metal */,
 				DFA06ECF2230CD7D00631585 /* IBL.metal */,
 				DF4402CC223C9C6F00D5A7E3 /* Morph.metal */,
@@ -433,9 +437,7 @@
 		DFA06EC0222F01EC00631585 /* Environment */ = {
 			isa = PBXGroup;
 			children = (
-				DFA06EC322309A5A00631585 /* Skybox.metal */,
 				DFA06EC1222F020800631585 /* Skybox.swift */,
-				DFD6842222473EB600A78E9F /* Water.metal */,
 				DFD6842022473AC400A78E9F /* STLRWater.swift */,
 				DFD6842822477BF400A78E9F /* normal-water.png */,
 				DFEAD89A224848E900703436 /* ocean.png */,
