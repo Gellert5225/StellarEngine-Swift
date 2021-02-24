@@ -18,13 +18,13 @@ vertex VertexOut composition_vert(constant float2 *quadVertices     [[ buffer(0)
 }
 
 fragment float4 composition_frag(VertexOut in [[ stage_in ]],
-                                 constant STLRFragmentUniforms &fragmentUniforms [[ buffer(BufferIndexFragmentUniforms) ]],
-                                 constant Light *lightsBuffer                   [[ buffer(2) ]],
-                                 depth2d<float> shadowTexture                   [[ texture(Shadow) ]],
-                                 texture2d<float> albedoTexture                 [[ texture(Albedo) ]],
-                                 texture2d<float> normalTexture                 [[ texture(Normal) ]],
-                                 texture2d<float> positionTexture               [[ texture(Position) ]],
-                                 texture2d<float> specularTexture               [[ texture(Specular) ]]) {
+                                 constant STLRFragmentUniforms &fragmentUniforms    [[ buffer(BufferIndexFragmentUniforms) ]],
+                                 constant Light *lightsBuffer                       [[ buffer(2) ]],
+                                 depth2d<float> shadowTexture                       [[ texture(Shadow) ]],
+                                 texture2d<float> albedoTexture                     [[ texture(Albedo) ]],
+                                 texture2d<float> normalTexture                     [[ texture(Normal) ]],
+                                 texture2d<float> positionTexture                   [[ texture(Position) ]],
+                                 texture2d<float> specularTexture                   [[ texture(Specular) ]]) {
     constexpr sampler s(min_filter::linear, mag_filter::linear);
     float4 albedo = albedoTexture.sample(s, in.textureCoordinates);
     float3 normal = normalTexture.sample(s, in.textureCoordinates).xyz;

@@ -33,10 +33,10 @@ vertex float4 basic_vertex(const device packed_float3* vertex_array [[ buffer(0)
     return float4(vertex_array[vid], 1.0); // return final position of vertex
 }
 
-vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
-                             constant STLRUniforms &uniforms [[ buffer(11) ]],
-                             constant STLRModelParams *modelParamsArray [[buffer(BufferIndexModelParams)]],
-                             uint baseInstance [[ base_instance ]]) {
+vertex VertexOut vertex_main(const VertexIn vertexIn                    [[ stage_in ]],
+                             constant STLRUniforms &uniforms            [[ buffer(BufferIndexUniforms) ]],
+                             constant STLRModelParams *modelParamsArray [[ buffer(BufferIndexModelParams) ]],
+                             uint baseInstance                          [[ base_instance ]]) {
     STLRModelParams modelParams = modelParamsArray[baseInstance];
     VertexOut out;
     matrix_float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * modelParams.modelMatrix;
@@ -53,11 +53,11 @@ vertex VertexOut vertex_main(const VertexIn vertexIn [[ stage_in ]],
     return out;
 }
 
-vertex VertexOut mp_vertex(const VertexIn in [[ stage_in ]],
-                           constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
-                           constant Instances *instances [[ buffer(BufferIndexInstances) ]],
-                           uint instanceID [[ instance_id ]],
-                           constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
+vertex VertexOut mp_vertex(const VertexIn in                        [[ stage_in ]],
+                           constant STLRUniforms &uniforms          [[ buffer(BufferIndexUniforms) ]],
+                           constant Instances *instances            [[ buffer(BufferIndexInstances) ]],
+                           uint instanceID                          [[ instance_id ]],
+                           constant STLRModelParams &modelParams    [[ buffer(BufferIndexModelParams) ]]) {
     VertexOut out;
     Instances instance = instances[instanceID];
     

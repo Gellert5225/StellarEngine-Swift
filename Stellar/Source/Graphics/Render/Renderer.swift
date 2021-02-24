@@ -250,17 +250,17 @@ open class STLRRenderer: NSObject {
         gbufferFragmentArgumentBuffer.label = "Shadow Texture Buffer"
         gbufferArgumentEncoder.setTexture(shadowTexture, index: 0)
         //initializeCommands()
+        print(uniformsBuffer.contents().load(as: STLRUniforms.self))
+        renderEncoder.useResource(uniformsBuffer, usage: .read)
+        renderEncoder.useResource(fragmentUniformsBuffer, usage: .read)
+        renderEncoder.useResource(modelParamsBuffer, usage: .read)
+        renderEncoder.useResource(gbufferFragmentArgumentBuffer!, usage: .sample)
         renderEncoder.useResource(lightsBuffer!, usage: .read)
 
         for child in scene.renderables {
             if let renderable = child as? STLRModel {
-                updateUniforms()
                 renderEncoder.useResource((renderable.mesh?.vertexBuffers[0].buffer)!, usage: .read)
                 guard let modelSubmesh = renderable.submeshes else { return }
-                renderEncoder.useResource(uniformsBuffer, usage: .read)
-                renderEncoder.useResource(fragmentUniformsBuffer, usage: .read)
-                renderEncoder.useResource(modelParamsBuffer, usage: .read)
-                renderEncoder.useResource(gbufferFragmentArgumentBuffer!, usage: .sample)
                 for submesh in modelSubmesh {
                     renderEncoder.useResource(submesh.submesh.indexBuffer.buffer, usage: .read)
                     renderEncoder.useResource(submesh.materialBuffer!, usage: .sample)
@@ -269,6 +269,7 @@ open class STLRRenderer: NSObject {
             }
         }
         
+        print("executing \(label)")
         renderEncoder.executeCommandsInBuffer(icb, range: 0..<getSubmeshCount())
     }
     
@@ -379,7 +380,6 @@ open class STLRRenderer: NSObject {
             if let model = renderable as? STLRModel {
                 guard let modelSubmeshes = model.submeshes else { return }
                 for (_, submesh) in modelSubmeshes.enumerated() {
-                    updateUniforms()
                     let icbCommand = icb.indirectRenderCommandAt(currentIndex)
                     icbCommand.setRenderPipelineState(gBufferPipelineState)
                     icbCommand.setVertexBuffer(uniformsBuffer, offset: 0, at: Int(BufferIndexUniforms.rawValue))
@@ -454,13 +454,15 @@ extension STLRRenderer: MTKViewDelegate {
                 scene.reflectionCamera = reflectionCam
                 scene.uniforms.viewMatrix = reflectionCam.viewMatrix
             }
+            print("reflec: \(scene.uniforms.viewMatrix)")
+            print("camera: \(scene.camera.viewMatrix)")
 
             scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
-
+            
+            updateUniforms()
             scene.skybox?.update(renderEncoder: reflectEncoder)
-            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
-
             scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
+            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
 
             reflectEncoder.endEncoding()
             reflectEncoder.popDebugGroup()
@@ -477,13 +479,14 @@ extension STLRRenderer: MTKViewDelegate {
         // gbuffer pass
         guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor) else {return}
         
-        renderGbufferPass(renderEncoder: gBufferEncoder)
+        updateUniforms()
         scene.skybox?.update(renderEncoder: gBufferEncoder)
         scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
         for water in scene.waters {
             water.update()
             water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
         }
+        renderGbufferPass(renderEncoder: gBufferEncoder)
         
 //        for terrain in scene.terrains {
 //            terrain.doRender(commandEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
@@ -508,7 +511,7 @@ extension STLRRenderer: MTKViewDelegate {
     
     func updateUniforms() {
         guard let scene = scene else { return }
-        
+        print("update: \(scene.uniforms.viewMatrix)")
         var bufferLength = MemoryLayout<STLRUniforms>.stride
         uniformsBuffer.contents().copyMemory(from: &scene.uniforms, byteCount: bufferLength)
         

@@ -24,13 +24,13 @@ struct VertexOut {
     uint textureID [[ flat ]];
 };
 
-vertex VertexOut vertex_morph(constant VertexIn *in [[ buffer(0) ]],
-                              uint vertexID [[ vertex_id ]],
-                              constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]],
-                              constant MorphInstance *instances [[ buffer(BufferIndexInstances) ]],
-                              uint instanceID [[ instance_id ]],
-                              constant int &vertexCount [[ buffer(1) ]],
-                              constant STLRModelParams &modelParams [[buffer(BufferIndexModelParams)]]) {
+vertex VertexOut vertex_morph(constant VertexIn *in                 [[ buffer(0) ]],
+                              uint vertexID                         [[ vertex_id ]],
+                              constant STLRUniforms &uniforms       [[ buffer(BufferIndexUniforms) ]],
+                              constant MorphInstance *instances     [[ buffer(BufferIndexInstances) ]],
+                              uint instanceID                       [[ instance_id ]],
+                              constant int &vertexCount             [[ buffer(1) ]],
+                              constant STLRModelParams &modelParams [[ buffer(BufferIndexModelParams) ]]) {
     MorphInstance instance = instances[instanceID];
     uint offset = instance.morphTargetID * vertexCount;
     VertexIn vertexIn = in[vertexID + offset];
