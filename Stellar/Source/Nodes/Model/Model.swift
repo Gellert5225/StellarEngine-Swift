@@ -26,6 +26,10 @@ open class STLRModel: STLRNode {
         attributeTexture.name = MDLVertexAttributeTextureCoordinate
         descriptor.attributes[2] = attributeTexture
         
+        let attributeAO = descriptor.attributes[3] as! MDLVertexAttribute
+        attributeAO.name = MDLVertexAttributeOcclusionValue
+        descriptor.attributes[3] = attributeAO
+        
         return descriptor
     }()
     
@@ -58,15 +62,19 @@ open class STLRModel: STLRNode {
         vertexDescriptor.attributes[2].offset = MemoryLayout<Float>.stride * 7
         vertexDescriptor.attributes[2].bufferIndex = 0
         
-        vertexDescriptor.attributes[3].format = .float3
+        vertexDescriptor.attributes[3].format = .float
         vertexDescriptor.attributes[3].offset = MemoryLayout<Float>.stride * 9
         vertexDescriptor.attributes[3].bufferIndex = 0
         
         vertexDescriptor.attributes[4].format = .float3
-        vertexDescriptor.attributes[4].offset = MemoryLayout<Float>.stride * 12
+        vertexDescriptor.attributes[4].offset = MemoryLayout<Float>.stride * 10
         vertexDescriptor.attributes[4].bufferIndex = 0
         
-        vertexDescriptor.layouts[0].stride = MemoryLayout<Float>.stride * 15
+        vertexDescriptor.attributes[5].format = .float3
+        vertexDescriptor.attributes[5].offset = MemoryLayout<Float>.stride * 13
+        vertexDescriptor.attributes[5].bufferIndex = 0
+        
+        vertexDescriptor.layouts[0].stride = MemoryLayout<Float>.stride * 16
         return vertexDescriptor
     }
     
@@ -142,11 +150,17 @@ open class STLRModel: STLRNode {
         attributeTexture.name = MDLVertexAttributeTextureCoordinate
         descriptor.attributes[2] = attributeTexture
         
+        let attributeAO = descriptor.attributes[3] as! MDLVertexAttribute
+        attributeAO.name = MDLVertexAttributeOcclusionValue
+        descriptor.attributes[3] = attributeAO
+        
         STLRModel.defaultVertexDescriptor = descriptor
         
         let bufferAllocator = MTKMeshBufferAllocator(device: STLRRenderer.metalDevice)
         let asset = MDLAsset(url: assetURL, vertexDescriptor: descriptor, bufferAllocator: bufferAllocator)
         let mdlMesh = asset.object(at: 0) as! MDLMesh
+        
+        //mdlMesh.generateAmbientOcclusionVertexColors(withQuality: 1, attenuationFactor: 1, objectsToConsider: [mdlMesh], vertexAttributeNamed: MDLVertexAttributeOcclusionValue)
         
         do {
             mdlMesh.addTangentBasis(forTextureCoordinateAttributeNamed: MDLVertexAttributeTextureCoordinate, tangentAttributeNamed: MDLVertexAttributeTangent, bitangentAttributeNamed: MDLVertexAttributeBitangent)
@@ -168,41 +182,41 @@ open class STLRModel: STLRNode {
 extension STLRModel: Renderable {
     
     public func doRender(commandEncoder: MTLRenderCommandEncoder, uniforms: STLRUniforms, fragmentUniforms: STLRFragmentUniforms) {
-        var fragConsts = fragmentUniforms
-        fragConsts.tiling = tiling
-        var vertexUniform = uniforms
-        vertexUniform.modelMatrix = worldTransform
-        vertexUniform.normalMatrix = float3x3(normalFrom4x4: modelMatrix)
-        
-        commandEncoder.setVertexBuffer(instanceBuffer, offset: 0, index: Int(BufferIndexInstances.rawValue))
-        
-        commandEncoder.setFragmentSamplerState(samplerState, index: 0)
-        
-        commandEncoder.setFragmentBytes(&fragConsts, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
-        commandEncoder.setVertexBytes(&vertexUniform, length: MemoryLayout<STLRUniforms>.stride, index: 11)
-        
-        for (index, vertexBuffer) in (mesh?.vertexBuffers.enumerated())! {
-            commandEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
-        }
-        
-        for mesh in submeshes! {
-            commandEncoder.setRenderPipelineState(mesh.pipelineState)
-            
-            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.normal, index: Int(NormalTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: Int(MetallicTexture.rawValue))
-            commandEncoder.setFragmentTexture(mesh.textures.ao, index: Int(AOTexture.rawValue))
-            var material = mesh.material
-            commandEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
-
-            commandEncoder.drawIndexedPrimitives(type: mesh.submesh.primitiveType,
-                                                 indexCount: mesh.submesh.indexCount,
-                                                 indexType: mesh.submesh.indexType,
-                                                 indexBuffer: mesh.submesh.indexBuffer.buffer,
-                                                 indexBufferOffset: mesh.submesh.indexBuffer.offset,
-                                                 instanceCount: instanceCount)
-        }
+//        var fragConsts = fragmentUniforms
+//        fragConsts.tiling = tiling
+//        var vertexUniform = uniforms
+//        vertexUniform.modelMatrix = worldTransform
+//        vertexUniform.normalMatrix = float3x3(normalFrom4x4: modelMatrix)
+//        
+//        commandEncoder.setVertexBuffer(instanceBuffer, offset: 0, index: Int(BufferIndexInstances.rawValue))
+//        
+//        commandEncoder.setFragmentSamplerState(samplerState, index: 0)
+//        
+//        commandEncoder.setFragmentBytes(&fragConsts, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
+//        commandEncoder.setVertexBytes(&vertexUniform, length: MemoryLayout<STLRUniforms>.stride, index: 11)
+//        
+//        for (index, vertexBuffer) in (mesh?.vertexBuffers.enumerated())! {
+//            commandEncoder.setVertexBuffer(vertexBuffer.buffer, offset: 0, index: index)
+//        }
+//        
+//        for mesh in submeshes! {
+//            commandEncoder.setRenderPipelineState(mesh.pipelineState)
+//            
+//            commandEncoder.setFragmentTexture(mesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.normal, index: Int(NormalTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.metallic, index: Int(MetallicTexture.rawValue))
+//            commandEncoder.setFragmentTexture(mesh.textures.ao, index: Int(AOTexture.rawValue))
+//            var material = mesh.material
+//            commandEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
+//
+//            commandEncoder.drawIndexedPrimitives(type: mesh.submesh.primitiveType,
+//                                                 indexCount: mesh.submesh.indexCount,
+//                                                 indexType: mesh.submesh.indexType,
+//                                                 indexBuffer: mesh.submesh.indexBuffer.buffer,
+//                                                 indexBufferOffset: mesh.submesh.indexBuffer.offset,
+//                                                 instanceCount: instanceCount)
+//        }
     }
     
 }

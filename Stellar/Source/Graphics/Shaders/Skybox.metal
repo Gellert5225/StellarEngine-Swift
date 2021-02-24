@@ -8,7 +8,7 @@
 
 #include <metal_stdlib>
 #include <simd/simd.h>
-#import "../Graphics/Shaders/Types.h"
+#import "Types.h"
 
 using namespace metal;
 
@@ -28,8 +28,8 @@ struct FragmentIn {
     float clip_distance;
 };
 
-vertex VertexOut vertexSkybox(const VertexIn vertex_in [[ stage_in ]],
-                              constant STLRUniforms &uniforms [[ buffer(BufferIndexUniforms) ]]) {
+vertex VertexOut vertexSkybox(const VertexIn vertex_in          [[ stage_in ]],
+                              constant STLRUniforms &uniforms   [[ buffer(BufferIndexUniforms) ]]) {
     VertexOut vertex_out;
     float4x4 mvp = uniforms.projectionMatrix * uniforms.viewMatrix * uniforms.modelMatrix;
     vertex_out.position = (mvp * vertex_in.position).xyww;
@@ -38,7 +38,7 @@ vertex VertexOut vertexSkybox(const VertexIn vertex_in [[ stage_in ]],
     return vertex_out;
 }
 
-fragment half4 fragmentSkybox(FragmentIn vertex_in [[stage_in]],
+fragment half4 fragmentSkybox(FragmentIn vertex_in          [[stage_in]],
                               texturecube<half> cubeTexture [[texture(20)]]) {
     constexpr sampler default_sampler;
     float3 uv = vertex_in.uv.xyz;

@@ -25,26 +25,26 @@ class TestScene: STLRScene {
         ground.scale = [10, 10, 10]
         ground.position = [0, 1, 0]
         add(node: ground)
-//
-//        let train = STLRModel(modelName: "train")
-//        add(node: train, parent: ground)
-//        train.scale = [0.1, 0.1, 0.1]
-//        train.position = [0, 0, 0]
-//
-//        let chest = STLRModel(modelName: "chest")
-//        add(node: chest, parent: ground)
-//        chest.position = [0, 0, -1]
-//        chest.scale = [0.2, 0.2, 0.2]
+
+        let train = STLRModel(modelName: "train")
+        add(node: train, parent: ground)
+        train.scale = [0.2, 0.2, 0.2]
+        train.position = [0.8, 0, -0.8]
+
+        let chest = STLRModel(modelName: "chest")
+        add(node: chest, parent: ground)
+        chest.position = [0, 0, -0.8]
+        chest.scale = [0.1, 0.1, 0.1]
 //
 //        let mouse = STLRModel(modelName: "MagicMouse")
 //        add(node: mouse, parent: ground)
 //        mouse.scale = [0.005, 0.005, 0.005]
 //        mouse.position = [-1, 0, 0]
 //
-//        let car = STLRModel(modelName: "racing-car")
-//        car.scale = [0.2, 0.2, 0.2]
-//        car.position = [1, 0, 0]
-//        add(node: car, parent: ground)
+        let car = STLRModel(modelName: "racing-car")
+        car.scale = [0.1, 0.1, 0.1]
+        car.position = [0.8, 0, 0]
+        add(node: car, parent: ground)
         
         let temple = STLRModel(modelName: "Temple")
         temple.scale = float3(repeating: 0.001)

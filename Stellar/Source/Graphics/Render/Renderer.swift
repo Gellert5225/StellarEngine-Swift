@@ -100,7 +100,7 @@ open class STLRRenderer: NSObject {
         renderPassDescriptor = MTLRenderPassDescriptor()
         renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
 //        renderPassDescriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
-        
+        initialize()
         depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .less)
         buildShadowTexture(size: self.metalView.drawableSize)
         buildShadowPipelineState()
@@ -230,7 +230,7 @@ open class STLRRenderer: NSObject {
         renderEncoder.setDepthStencilState(depthStencilState)
         
         let lights = scene.lights
-        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
+        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         
         renderEncoder.setFragmentTexture(shadowTexture, index: Int(Shadow.rawValue))
@@ -262,7 +262,7 @@ open class STLRRenderer: NSObject {
         guard let scene = scene else { return }
         
         let lights = scene.lights
-        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<Light>.stride * lights.count, options: [])
+        let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: quadVertices.count)
@@ -287,6 +287,18 @@ open class STLRRenderer: NSObject {
             fatalError(error.localizedDescription)
         }
     }
+    
+    func initialize() {
+        STLRTextureController.heap = STLRTextureController.buildHeap()
+        scene?.renderables.forEach { renderable in
+            if let model = renderable as? STLRModel {
+                model.submeshes!.forEach { submesh in
+                    print("initialize textures")
+                    submesh.initializeTextures()
+                }
+            }
+        }
+    }
 }
 
 extension STLRRenderer: MTKViewDelegate {
@@ -296,11 +308,6 @@ extension STLRRenderer: MTKViewDelegate {
         scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
         gBufferRenderPass.updateTextures(size: size)
-        //renderPassDescriptor.setUpColorAttachment(position: 0, texture: gBufferRenderPass.texture, resolveTexture: gBufferRenderPass.texture_resolve)
-//        if let descriptor = view.currentRenderPassDescriptor, let drawable = view.currentDrawable {
-//            descriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: drawable.texture)
-//            descriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: size, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
-//        }
         for water in scene.waters {
             water.reflectionRenderPass.updateTextures(size: size)
         }
@@ -379,13 +386,6 @@ extension STLRRenderer: MTKViewDelegate {
         gBufferEncoder.endEncoding()
         gBufferEncoder.popDebugGroup()
         
-        // skybox pass
-//        guard let mainEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: (scene.skybox?.renderPass.descriptor)!) else {return}
-//        scene.skybox?.update(renderEncoder: mainEncoder)
-//        scene.skybox?.render(renderEncoder: mainEncoder, uniforms: scene.uniforms)
-//        mainEncoder.endEncoding()
-//        mainEncoder.popDebugGroup()
-        
         guard let drawable = view.currentDrawable else {
             return
         }
@@ -402,6 +402,9 @@ extension STLRRenderer: MTKViewDelegate {
     
     func draw(renderEncoder: MTLRenderCommandEncoder, model: STLRModel) {
         guard let scene = scene else { return }
+        if let heap = STLRTextureController.heap {
+            renderEncoder.useHeap(heap)
+        }
         
         scene.uniforms.modelMatrix = model.worldTransform
         scene.uniforms.normalMatrix = float3x3(normalFrom4x4: model.modelMatrix)
@@ -413,12 +416,10 @@ extension STLRRenderer: MTKViewDelegate {
         for modelSubmesh in modelSubmeshes {
             let submesh = modelSubmesh.submesh
             var material = modelSubmesh.material
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.baseColor, index: Int(BaseColorTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.normal, index: Int(NormalTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.roughness, index: Int(RoughnessTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.metallic, index: Int(MetallicTexture.rawValue))
-            renderEncoder.setFragmentTexture(modelSubmesh.textures.ao, index: Int(AOTexture.rawValue))
-            renderEncoder.setFragmentBytes(&material, length: MemoryLayout<Material>.stride, index: 13)
+
+            renderEncoder.setFragmentBuffer(modelSubmesh.textureBuffer, offset: 0, index: Int(STLRGBufferTexturesIndex.rawValue))
+            
+            renderEncoder.setFragmentBytes(&material, length: MemoryLayout<STLRMaterial>.stride, index: 13)
             renderEncoder.drawIndexedPrimitives(type: .triangle,
                                                 indexCount: submesh.indexCount,
                                                 indexType: submesh.indexType,
