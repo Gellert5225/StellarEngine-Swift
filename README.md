@@ -24,7 +24,7 @@
 
 ## Current State: 
 Simple GUI for macOS.
-![](./Images/current.png)
+![](./Images/current.gif)
 
 ## Demo:
 

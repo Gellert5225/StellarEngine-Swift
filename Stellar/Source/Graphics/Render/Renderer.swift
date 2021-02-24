@@ -293,7 +293,6 @@ open class STLRRenderer: NSObject {
         scene?.renderables.forEach { renderable in
             if let model = renderable as? STLRModel {
                 model.submeshes!.forEach { submesh in
-                    print("initialize textures")
                     submesh.initializeTextures()
                 }
             }
