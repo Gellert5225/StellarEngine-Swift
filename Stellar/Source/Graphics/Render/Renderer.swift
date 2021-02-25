@@ -253,10 +253,10 @@ open class STLRRenderer: NSObject {
         stencilStateDesc.writeMask = 0x0
         let depthStencilState = buildDepthStencilState(depthWrite: false, compareFunction: .always, frontFaceStencil: stencilStateDesc, backFaceStencil: stencilStateDesc)
         
-        renderEncoder.setRenderPipelineState(compositionPipelineState)
-        renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setStencilReferenceValue(128)
         renderEncoder.setCullMode(.back)
+        renderEncoder.setRenderPipelineState(compositionPipelineState)
+        renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
@@ -370,10 +370,6 @@ extension STLRRenderer: MTKViewDelegate {
 //        }
         renderGbufferPass(renderEncoder: gBufferEncoder)
         
-//        for terrain in scene.terrains {
-//            terrain.doRender(commandEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniforms: scene.fragmentUniforms)
-//        }
-        
         gBufferEncoder.endEncoding()
         gBufferEncoder.popDebugGroup()
         
@@ -395,7 +391,9 @@ extension STLRRenderer: MTKViewDelegate {
         guard let compositionEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: compositionPassDescriptor) else {return}
         renderCompositionPass(renderEncoder: compositionEncoder)
         
-        drawable.present()
+        STLRRenderer.commandBuffer?.addScheduledHandler({ (buffer) in
+            drawable.present()
+        })
         STLRRenderer.commandBuffer?.commit()
         //STLRRenderer.commandBuffer = nil
     }

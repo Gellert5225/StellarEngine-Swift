@@ -27,7 +27,7 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
                                  texture2d<float> positionTexture               [[ texture(Position) ]],
                                  texture2d<float> specularTexture               [[ texture(Specular) ]]) {
     constexpr sampler s(min_filter::linear, mag_filter::linear);
-    float4 albedo = albedoTexture.read(uint2(in.textureCoordinates.xy));
+    float4 albedo = albedoTexture.read(uint2(in.position.xy));
     float3 normal = normalTexture.sample(s, in.textureCoordinates).xyz;
     float3 position = positionTexture.sample(s, in.textureCoordinates).xyz;
     float3 baseColor = albedo.rgb;
