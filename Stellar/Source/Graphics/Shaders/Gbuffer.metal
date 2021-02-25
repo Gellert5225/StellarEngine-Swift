@@ -112,7 +112,7 @@ fragment GbufferOut gBufferFragment(VertexOut in [[stage_in]],
         }
     }
     
-    diffuseColor = calculateLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
+    //diffuseColor = calculateLighting(out.normal.xyz, out.position.xyz, fragmentUniforms, lightsBuffer, baseColor.rgb);
     
     float2 xy = in.shadowPosition.xy;
     xy = xy * 0.5 + 0.5;

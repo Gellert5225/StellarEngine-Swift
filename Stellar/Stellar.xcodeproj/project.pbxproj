@@ -315,6 +315,7 @@
 				89FFCABC20CC79B500C6DB28 /* Shaders.metal */,
 				DFA06ECF2230CD7D00631585 /* IBL.metal */,
 				DF4402CC223C9C6F00D5A7E3 /* Morph.metal */,
+				DF44030C223E01F900D5A7E3 /* Terrain.metal */,
 				DF89FBEA223F6A7F004BE73B /* Shadow.metal */,
 				DFEF7B9F223FDCD6006711DE /* Gbuffer.metal */,
 				DF3347C22240D3AF00632BCB /* Composition.metal */,
@@ -433,7 +434,6 @@
 			isa = PBXGroup;
 			children = (
 				DF44030A223DCA7F00D5A7E3 /* Terrain.swift */,
-				DF44030C223E01F900D5A7E3 /* Terrain.metal */,
 			);
 			path = Terrain;
 			sourceTree = "<group>";

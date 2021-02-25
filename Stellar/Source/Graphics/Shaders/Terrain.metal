@@ -8,7 +8,7 @@
 
 #include <metal_stdlib>
 using namespace metal;
-#import "../Graphics/Shaders/Types.h"
+#import "Types.h"
 
 struct VertexOut {
     float4 position [[ position ]];

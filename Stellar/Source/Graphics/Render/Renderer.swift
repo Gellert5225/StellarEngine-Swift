@@ -21,6 +21,8 @@ open class STLRRenderer: NSObject {
     
     var scene: STLRScene?
     
+    var mtkView: MTKView!
+    
     var depthStencilState: MTLDepthStencilState!
     
     var shadowPipelineState: MTLRenderPipelineState!
@@ -30,6 +32,7 @@ open class STLRRenderer: NSObject {
     var gBufferRenderPass: GBufferRenderPass!
     
     var compositionPipelineState: MTLRenderPipelineState!
+    var compositionPassDescriptor: MTLRenderPassDescriptor!
         
     var quadVerticesBuffer: MTLBuffer!
     var quadTexCoordBuffer: MTLBuffer!
@@ -56,6 +59,7 @@ open class STLRRenderer: NSObject {
     
     public init(metalView: MTKView) {
         metalView.device = MTLCreateSystemDefaultDevice()
+        self.mtkView = metalView
         guard let device = metalView.device else {
             fatalError("Device not created. Run on a physical device")
         }
@@ -67,7 +71,7 @@ open class STLRRenderer: NSObject {
         
         super.init()
         
-        metalView.depthStencilPixelFormat = .depth32Float
+        metalView.depthStencilPixelFormat = .depth32Float_stencil8
         metalView.delegate = self
         
         mtkView(metalView, drawableSizeWillChange: metalView.bounds.size)
@@ -80,7 +84,7 @@ open class STLRRenderer: NSObject {
         STLRRenderer.library = defaultLibrary
         
         initialize()
-        depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .less)
+        depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .lessEqual)
         shadowRenderPass = RenderPass(name: "Shadow Pass", size: metalView.frame.size, multiplier: 2.0)
         buildShadowPipelineState()
         
@@ -93,13 +97,20 @@ open class STLRRenderer: NSObject {
         quadTexCoordBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: quadTexCoords, length: MemoryLayout<Float>.size * quadTexCoords.count, options: [])
         quadTexCoordBuffer.label = "Quad texCoords"
         
+        compositionPassDescriptor = MTLRenderPassDescriptor()
+        compositionPassDescriptor.colorAttachments[0].storeAction = .multisampleResolve
+        compositionPassDescriptor.depthAttachment.loadAction = .load
+        compositionPassDescriptor.stencilAttachment.loadAction = .load
+        
         buildCompositionPipelineState()
     }
     
-    fileprivate func buildDepthStencilState(depthWrite: Bool, compareFunction: MTLCompareFunction) -> MTLDepthStencilState? {
+    fileprivate func buildDepthStencilState(depthWrite: Bool, compareFunction: MTLCompareFunction, frontFaceStencil: MTLStencilDescriptor? = nil, backFaceStencil: MTLStencilDescriptor? = nil) -> MTLDepthStencilState? {
         let depthStencilDescriptor = MTLDepthStencilDescriptor()
         depthStencilDescriptor.depthCompareFunction = compareFunction
         depthStencilDescriptor.isDepthWriteEnabled = depthWrite
+        depthStencilDescriptor.frontFaceStencil = frontFaceStencil
+        depthStencilDescriptor.backFaceStencil = backFaceStencil
         return STLRRenderer.metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
     }
     
@@ -151,12 +162,13 @@ open class STLRRenderer: NSObject {
     
     func buildGbufferPipelineState(withFragmentFunctionName name: String) {
         let descriptor = MTLRenderPipelineDescriptor()
+        descriptor.label = "GBuffer state"
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         descriptor.colorAttachments[1].pixelFormat = .rgba16Float
         descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        descriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+        descriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
         descriptor.sampleCount = 4
-        descriptor.depthAttachmentPixelFormat = .depth32Float
-        descriptor.label = "GBuffer state"
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_main")
         if (name == "fragment_PBR") {
             descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "gBufferFragment")
@@ -174,11 +186,24 @@ open class STLRRenderer: NSObject {
     func renderGbufferPass(renderEncoder: MTLRenderCommandEncoder, label: String = "G-Buffer") {
         guard let scene = scene else { return }
         
+//        gBufferRenderPass.descriptor?.depthAttachment.texture = mtkView.dep
+//        gBufferRenderPass.descriptor?.stencilAttachment.texture = mtkView.depthStencilTexture
+        
         renderEncoder.pushDebugGroup("\(label) pass")
         renderEncoder.label = "\(label) encoder"
         
+        let stencilStateDesc = MTLStencilDescriptor()
+        stencilStateDesc.stencilCompareFunction = .always
+        stencilStateDesc.stencilFailureOperation = .keep
+        stencilStateDesc.depthFailureOperation = .keep
+        stencilStateDesc.depthStencilPassOperation = .replace
+        stencilStateDesc.readMask = 0x00
+        stencilStateDesc.writeMask = 0xFF
+        
+        renderEncoder.setCullMode(.back)
         renderEncoder.setRenderPipelineState(gBufferPipelineState)
-        renderEncoder.setDepthStencilState(depthStencilState)
+        renderEncoder.setDepthStencilState(buildDepthStencilState(depthWrite: true, compareFunction: .less, frontFaceStencil: stencilStateDesc, backFaceStencil: stencilStateDesc))
+        renderEncoder.setStencilReferenceValue(128)
         
         let lights = scene.lights
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
@@ -198,11 +223,11 @@ open class STLRRenderer: NSObject {
     
     func buildCompositionPipelineState() {
         let descriptor = MTLRenderPipelineDescriptor()
-        descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
-        
-        descriptor.depthAttachmentPixelFormat = .depth32Float
-        descriptor.sampleCount = 4
         descriptor.label = "Composition state"
+        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+        descriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
+        descriptor.sampleCount = 4
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "composition_vert")
         descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "composition_frag")
         
@@ -217,11 +242,21 @@ open class STLRRenderer: NSObject {
         renderEncoder.pushDebugGroup("Composition Pass")
         renderEncoder.label = "Composition encoder"
         
-        let depthStencilState = buildDepthStencilState(depthWrite: false, compareFunction: .always)
+        guard let scene = scene else { return }
+        
+        let stencilStateDesc = MTLStencilDescriptor()
+        stencilStateDesc.stencilCompareFunction = .equal
+        stencilStateDesc.stencilFailureOperation = .keep
+        stencilStateDesc.depthFailureOperation = .keep
+        stencilStateDesc.depthStencilPassOperation = .keep
+        stencilStateDesc.readMask = 0xFF
+        stencilStateDesc.writeMask = 0x0
+        let depthStencilState = buildDepthStencilState(depthWrite: false, compareFunction: .always, frontFaceStencil: stencilStateDesc, backFaceStencil: stencilStateDesc)
         
         renderEncoder.setRenderPipelineState(compositionPipelineState)
         renderEncoder.setDepthStencilState(depthStencilState)
         renderEncoder.setStencilReferenceValue(128)
+        renderEncoder.setCullMode(.back)
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
@@ -229,13 +264,14 @@ open class STLRRenderer: NSObject {
         renderEncoder.setFragmentTexture(gBufferRenderPass.normal_resolve, index: Int(Normal.rawValue))
         renderEncoder.setFragmentTexture(gBufferRenderPass.position_resolve, index: Int(Position.rawValue))
         
-        guard let scene = scene else { return }
-        
         let lights = scene.lights
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: quadVertices.count)
+        
+//        scene.skybox?.update(renderEncoder: renderEncoder)
+//        scene.skybox?.render(renderEncoder: renderEncoder, uniforms: scene.uniforms)
         
         renderEncoder.endEncoding()
         renderEncoder.popDebugGroup()
@@ -261,7 +297,6 @@ extension STLRRenderer: MTKViewDelegate {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         guard let scene = scene else {return}
         scene.sceneSizeWillChange(to: size)
-//        buildShadowTexture(size: size)
         shadowRenderPass.updateTextures(size: size)
         gBufferRenderPass.updateTextures(size: size)
         for water in scene.waters {
@@ -271,6 +306,7 @@ extension STLRRenderer: MTKViewDelegate {
         
     public func draw(in view: MTKView) {
         STLRRenderer.commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()
+        STLRRenderer.commandBuffer?.label = "Shadow and G-Buffer Commands"
         guard let scene = scene else { return }
         
         STLRRenderer.commandBuffer?.addCompletedHandler({ buffer in
@@ -285,36 +321,37 @@ extension STLRRenderer: MTKViewDelegate {
         guard let shadowEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPass.descriptor!) else { return }
         renderShadowPass(renderEncoder: shadowEncoder)
         
-        for water in scene.waters {
-            guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor!)
-                else { return }
-
-            scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
-            scene.fragmentUniforms.lightCount = uint(scene.lights.count)
-            scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
-            scene.uniforms.cameraPosition = scene.camera.transform.position
-
-            // Render reflection
-            //reflectEncoder.setDepthStencilState(depthStencilState)
-            scene.reflectionCamera.transform = scene.camera.transform
-            scene.reflectionCamera.transform.position.y = -scene.camera.transform.position.y
-            scene.reflectionCamera.transform.rotation.x = -scene.camera.transform.rotation.x
-            if let reflectionCam = scene.reflectionCamera as? STLRArcballCamera, let cam = scene.camera as? STLRArcballCamera {
-                reflectionCam.distance = cam.distance
-                scene.reflectionCamera = reflectionCam
-                scene.uniforms.viewMatrix = reflectionCam.viewMatrix
-            }
-
-            scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
-
-            scene.skybox?.update(renderEncoder: reflectEncoder)
-            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
-
-            scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
-
-            reflectEncoder.endEncoding()
-            reflectEncoder.popDebugGroup()
-        }
+        // reflection pass
+//        for water in scene.waters {
+//            guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor!)
+//                else { return }
+//
+//            scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
+//            scene.fragmentUniforms.lightCount = uint(scene.lights.count)
+//            scene.uniforms.projectionMatrix = scene.camera.projectionMatrix
+//            scene.uniforms.cameraPosition = scene.camera.transform.position
+//
+//            // Render reflection
+//            //reflectEncoder.setDepthStencilState(depthStencilState)
+//            scene.reflectionCamera.transform = scene.camera.transform
+//            scene.reflectionCamera.transform.position.y = -scene.camera.transform.position.y
+//            scene.reflectionCamera.transform.rotation.x = -scene.camera.transform.rotation.x
+//            if let reflectionCam = scene.reflectionCamera as? STLRArcballCamera, let cam = scene.camera as? STLRArcballCamera {
+//                reflectionCam.distance = cam.distance
+//                scene.reflectionCamera = reflectionCam
+//                scene.uniforms.viewMatrix = reflectionCam.viewMatrix
+//            }
+//
+//            scene.uniforms.clipPlane = float4(0, 1, 0, 0.1)
+//
+//            scene.skybox?.update(renderEncoder: reflectEncoder)
+//            renderGbufferPass(renderEncoder: reflectEncoder, label: "Reflection")
+//
+//            scene.skybox?.render(renderEncoder: reflectEncoder, uniforms: scene.uniforms)
+//
+//            reflectEncoder.endEncoding()
+//            reflectEncoder.popDebugGroup()
+//        }
         
         scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
         scene.fragmentUniforms.lightCount = uint(scene.lights.count)
@@ -327,12 +364,10 @@ extension STLRRenderer: MTKViewDelegate {
         // gbuffer pass
         guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor!) else {return}
         
-        scene.skybox?.update(renderEncoder: gBufferEncoder)
-        scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
-        for water in scene.waters {
-            water.update()
-            water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
-        }
+//        for water in scene.waters {
+//            water.update()
+//            water.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms, fragmentUniform: scene.fragmentUniforms)
+//        }
         renderGbufferPass(renderEncoder: gBufferEncoder)
         
 //        for terrain in scene.terrains {
@@ -342,16 +377,25 @@ extension STLRRenderer: MTKViewDelegate {
         gBufferEncoder.endEncoding()
         gBufferEncoder.popDebugGroup()
         
+        STLRRenderer.commandBuffer?.commit()
+        
+        STLRRenderer.commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()
+        STLRRenderer.commandBuffer?.label = "Composition Commands"
+        
         guard let drawable = view.currentDrawable else {
             return
         }
         
         // composition pass
-        guard let descriptor = view.currentRenderPassDescriptor else {return}
-        guard let compositionEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: descriptor) else {return}
+        // guard let descriptor = view.currentRenderPassDescriptor else {return}
+        compositionPassDescriptor.colorAttachments[0].texture = view.multisampleColorTexture
+        compositionPassDescriptor.colorAttachments[0].resolveTexture = drawable.texture
+        compositionPassDescriptor.depthAttachment.texture = view.depthStencilTexture;
+        compositionPassDescriptor.stencilAttachment.texture = view.depthStencilTexture;
+        guard let compositionEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: compositionPassDescriptor) else {return}
         renderCompositionPass(renderEncoder: compositionEncoder)
         
-        STLRRenderer.commandBuffer?.present(drawable)
+        drawable.present()
         STLRRenderer.commandBuffer?.commit()
         //STLRRenderer.commandBuffer = nil
     }

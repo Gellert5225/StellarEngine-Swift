@@ -11,6 +11,8 @@ class RenderPass {
     
     var textures: [MTLTexture?] = []
     var resolveTextures: [MTLTexture?] = []
+    
+    var loadAction: MTLLoadAction = .clear
 
     init(name: String, size: CGSize, multiplier: Float, sample: Bool = true) {
         self.name = name
@@ -21,13 +23,13 @@ class RenderPass {
     func updateTextures(size: CGSize) {
         depthTexture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .depth32Float, sample: true)
         depthTexture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture - Resolved", pixelFormat: .depth32Float)
-        descriptor = RenderPass.setupRenderPassDescriptor(textures: [], resolveTextures: [], depthTexture: depthTexture!, depthTextureResolve: depthTexture_resolve!)
+        descriptor = setupRenderPassDescriptor(textures: [], resolveTextures: [], depthTexture: depthTexture!, depthTextureResolve: depthTexture_resolve!)
     }
     
-    static func setupRenderPassDescriptor(textures: [MTLTexture?], resolveTextures: [MTLTexture?], depthTexture: MTLTexture, depthTextureResolve: MTLTexture) -> MTLRenderPassDescriptor {
+    func setupRenderPassDescriptor(textures: [MTLTexture?], resolveTextures: [MTLTexture?], depthTexture: MTLTexture, depthTextureResolve: MTLTexture) -> MTLRenderPassDescriptor {
         let descriptor = MTLRenderPassDescriptor()
         for i in 0..<textures.count {
-            descriptor.setUpColorAttachment(position: i, texture: textures[i]!, resolveTexture: resolveTextures[i]!)
+            descriptor.setUpColorAttachment(position: i, texture: textures[i]!, resolveTexture: resolveTextures[i]!, loadAction: self.loadAction)
         }
         descriptor.setUpDepthAttachment(texture: depthTexture, resolveTexture: depthTextureResolve)
         return descriptor
@@ -66,12 +68,13 @@ extension MTLRenderPassDescriptor {
         stencilAttachment.resolveTexture = resolveTexture
         stencilAttachment.loadAction = .clear
         stencilAttachment.storeAction = .multisampleResolve
+        stencilAttachment.clearStencil = 0
     }
     
-    func setUpColorAttachment(position: Int, texture: MTLTexture, resolveTexture: MTLTexture) {
+    func setUpColorAttachment(position: Int, texture: MTLTexture, resolveTexture: MTLTexture, loadAction: MTLLoadAction) {
         colorAttachments[position].texture = texture
         colorAttachments[position].resolveTexture = resolveTexture
-        colorAttachments[position].loadAction = .clear
+        colorAttachments[position].loadAction = loadAction
         colorAttachments[position].storeAction = .multisampleResolve
         colorAttachments[position].clearColor = MTLClearColorMake(0.66, 0.9, 0.96, 1)
     }

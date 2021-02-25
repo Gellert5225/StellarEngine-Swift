@@ -74,9 +74,10 @@ open class STLRSkybox: Renderable {
     private static func buildPipelineState(vertexDescriptor: MDLVertexDescriptor) -> MTLRenderPipelineState {
         let descriptor = MTLRenderPipelineDescriptor()
         descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
-        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        descriptor.depthAttachmentPixelFormat = .depth32Float
+//        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
+//        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        descriptor.depthAttachmentPixelFormat = .depth32Float_stencil8
+        descriptor.stencilAttachmentPixelFormat = .depth32Float_stencil8
         descriptor.sampleCount = 4
         descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertexSkybox")
         descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "fragmentSkybox")
@@ -91,7 +92,7 @@ open class STLRSkybox: Renderable {
     
     private static func buildDepthStencilState() -> MTLDepthStencilState? {
         let descriptor = MTLDepthStencilDescriptor()
-        descriptor.depthCompareFunction = .lessEqual
+        descriptor.depthCompareFunction = .less
         descriptor.isDepthWriteEnabled = false
         return STLRRenderer.metalDevice.makeDepthStencilState(descriptor: descriptor)
     }
