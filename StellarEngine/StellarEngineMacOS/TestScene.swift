@@ -16,7 +16,7 @@ class TestScene: STLRScene {
     
     func setupScene() {
         skybox = STLRSkybox(textureName: nil)
-        skybox?.skySettings = STLRSkybox.MidDay
+        skybox?.skySettings = STLRSkybox.SunSet
         
         let water = STLRWater()
         add(water: water)
@@ -55,6 +55,7 @@ class TestScene: STLRScene {
         
         sunLignt.position = float3(0, 20, -15)
         sunLignt.intensity = 1.0
+        sunLignt.color = [Float(253/255.0), Float(160/255.0), Float(49/255.0)]
         ambientLight.color = [Float(255/255.0), Float(244/255.0), Float(229/255.0)]
         ambientLight.intensity = 0.01
         

@@ -21,23 +21,6 @@ open class STLRScene {
     open var renderables: [Renderable] = []
     open var rootNode = STLRNode()
     
-//    open var cameraType: STLRCameraType {
-//        didSet {
-//            print("did set")
-//            switch cameraType {
-//            case .Arcball:
-//                camera = STLRArcballCamera()
-//                reflectionCamera = STLRArcballCamera()
-//            case .FPP:
-//                camera = STLRCamera()
-//                reflectionCamera = STLRCamera()
-//            default:
-//                camera = STLRArcballCamera()
-//                reflectionCamera = STLRArcballCamera()
-//            }
-//        }
-//    }
-    
     open var sunLignt: STLRLight = {
         var light = STLRLight()
         light.position = [1, 2, -2]
@@ -80,6 +63,7 @@ open class STLRScene {
         camera.transform.position = [10, 2, 35]
     }
     
+    /// update the scene every deltaTime seconds
     open func updateScene(deltaTime: Float) {
         // override this to update your scene
     }

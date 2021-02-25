@@ -11,42 +11,10 @@ import ModelIO
 
 open class STLRModel: STLRNode {
     
-    static var defaultVertexDescriptor: MDLVertexDescriptor = {
-        let descriptor = MTKModelIOVertexDescriptorFromMetal(vertexDescriptor)
-        
-        let attributePosition = descriptor.attributes[0] as! MDLVertexAttribute
-        attributePosition.name = MDLVertexAttributePosition
-        descriptor.attributes[0] = attributePosition
-        
-        let attributeNormal = descriptor.attributes[1] as! MDLVertexAttribute
-        attributeNormal.name = MDLVertexAttributeNormal
-        descriptor.attributes[1] = attributeNormal
-        
-        let attributeTexture = descriptor.attributes[2] as! MDLVertexAttribute
-        attributeTexture.name = MDLVertexAttributeTextureCoordinate
-        descriptor.attributes[2] = attributeTexture
-        
-        let attributeAO = descriptor.attributes[3] as! MDLVertexAttribute
-        attributeAO.name = MDLVertexAttributeOcclusionValue
-        descriptor.attributes[3] = attributeAO
-        
-        return descriptor
-    }()
-    
-    private var transforms: [Transform]
-    
-    var texture: MTLTexture?
-    var mesh: MTKMesh?
-    var submeshes: [STLRSubmesh]?
-    var instanceBuffer: MTLBuffer
-    
     open var tiling: UInt32 = 1
     open var fragmentFunctionName: String = "fragment_PBR"
     open var vertexFunctionName: String = "mp_vertex"
     
-    let instanceCount: Int
-    let samplerState: MTLSamplerState?
-    var pipelineState: MTLRenderPipelineState!
     static var vertexDescriptor: MTLVertexDescriptor {
         let vertexDescriptor = MTLVertexDescriptor()
         
@@ -77,6 +45,39 @@ open class STLRModel: STLRNode {
         vertexDescriptor.layouts[0].stride = MemoryLayout<Float>.stride * 16
         return vertexDescriptor
     }
+    
+    static var defaultVertexDescriptor: MDLVertexDescriptor {
+        let descriptor = MTKModelIOVertexDescriptorFromMetal(STLRModel.vertexDescriptor)
+        
+        let attributePosition = descriptor.attributes[0] as! MDLVertexAttribute
+        attributePosition.name = MDLVertexAttributePosition
+        descriptor.attributes[0] = attributePosition
+        
+        let attributeNormal = descriptor.attributes[1] as! MDLVertexAttribute
+        attributeNormal.name = MDLVertexAttributeNormal
+        descriptor.attributes[1] = attributeNormal
+        
+        let attributeTexture = descriptor.attributes[2] as! MDLVertexAttribute
+        attributeTexture.name = MDLVertexAttributeTextureCoordinate
+        descriptor.attributes[2] = attributeTexture
+        
+        let attributeAO = descriptor.attributes[3] as! MDLVertexAttribute
+        attributeAO.name = MDLVertexAttributeOcclusionValue
+        descriptor.attributes[3] = attributeAO
+        
+        return descriptor
+    }
+    
+    private var transforms: [Transform]
+    
+    var texture: MTLTexture?
+    var mesh: MTKMesh?
+    var submeshes: [STLRSubmesh]?
+    var instanceBuffer: MTLBuffer
+    
+    let instanceCount: Int
+    let samplerState: MTLSamplerState?
+    var pipelineState: MTLRenderPipelineState!
     
     public init(modelName: String, vertexFunctionName: String = "mp_vertex",
                 fragmentFunctionName: String = "fragment_IBL", instanceCount: Int = 1) {
@@ -136,28 +137,9 @@ open class STLRModel: STLRNode {
             return
         }
         STLRLog.CORE_INFO("Loaded model: \(modelName)")
-        let descriptor = MTKModelIOVertexDescriptorFromMetal(STLRModel.vertexDescriptor)
-        
-        let attributePosition = descriptor.attributes[0] as! MDLVertexAttribute
-        attributePosition.name = MDLVertexAttributePosition
-        descriptor.attributes[0] = attributePosition
-        
-        let attributeNormal = descriptor.attributes[1] as! MDLVertexAttribute
-        attributeNormal.name = MDLVertexAttributeNormal
-        descriptor.attributes[1] = attributeNormal
-        
-        let attributeTexture = descriptor.attributes[2] as! MDLVertexAttribute
-        attributeTexture.name = MDLVertexAttributeTextureCoordinate
-        descriptor.attributes[2] = attributeTexture
-        
-        let attributeAO = descriptor.attributes[3] as! MDLVertexAttribute
-        attributeAO.name = MDLVertexAttributeOcclusionValue
-        descriptor.attributes[3] = attributeAO
-        
-        STLRModel.defaultVertexDescriptor = descriptor
         
         let bufferAllocator = MTKMeshBufferAllocator(device: STLRRenderer.metalDevice)
-        let asset = MDLAsset(url: assetURL, vertexDescriptor: descriptor, bufferAllocator: bufferAllocator)
+        let asset = MDLAsset(url: assetURL, vertexDescriptor: STLRModel.defaultVertexDescriptor, bufferAllocator: bufferAllocator)
         let mdlMesh = asset.object(at: 0) as! MDLMesh
         
         //mdlMesh.generateAmbientOcclusionVertexColors(withQuality: 1, attenuationFactor: 1, objectsToConsider: [mdlMesh], vertexAttributeNamed: MDLVertexAttributeOcclusionValue)

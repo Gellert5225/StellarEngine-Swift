@@ -18,11 +18,9 @@ open class STLRRenderer: NSObject {
     static var commandQueue: MTLCommandQueue!
     static var commandBuffer: MTLCommandBuffer?
     static var drawableSize: CGSize!
-        
-    var metalView: MTKView!
-    var renderPassDescriptor: MTLRenderPassDescriptor!
     
-    var metalLayer: CAMetalLayer!
+    var scene: STLRScene?
+    
     var depthStencilState: MTLDepthStencilState!
     
     var shadowTexture: MTLTexture!
@@ -30,22 +28,11 @@ open class STLRRenderer: NSObject {
     let shadowRenderPassDescriptor = MTLRenderPassDescriptor()
     var shadowPipelineState: MTLRenderPipelineState!
     
-    var albedoTexture: MTLTexture!
-    var albedoTexture_AA: MTLTexture!
-    var normalTexture: MTLTexture!
-    var normalTexture_AA: MTLTexture!
-    var positionTexture: MTLTexture!
-    var positionTexture_AA: MTLTexture!
-    var depthTexture: MTLTexture!
-    var depthTexture_AA: MTLTexture!
-    
     var gBufferPipelineState: MTLRenderPipelineState!
     var gBufferRenderPass: RenderPass!
     
     var compositionPipelineState: MTLRenderPipelineState!
-    
-    //var reflectionRenderPass: RenderPass
-    
+        
     var quadVerticesBuffer: MTLBuffer!
     var quadTexCoordBuffer: MTLBuffer!
     
@@ -69,10 +56,7 @@ open class STLRRenderer: NSObject {
     
     var samplerState: MTLSamplerState?
     
-    var scene: STLRScene?
-    
     public init(metalView: MTKView) {
-        self.metalView = metalView
         metalView.device = MTLCreateSystemDefaultDevice()
         guard let device = metalView.device else {
             fatalError("Device not created. Run on a physical device")
@@ -96,16 +80,13 @@ open class STLRRenderer: NSObject {
             fatalError("Could not load default library from specified bundle")
         }
         STLRRenderer.library = defaultLibrary
-                
-        renderPassDescriptor = MTLRenderPassDescriptor()
-        renderPassDescriptor.setUpColorAttachment(position: 0, texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .bgra8Unorm, sample: false))
-//        renderPassDescriptor.setUpDepthAttachment(texture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: true), resolveTexture: RenderPass.buildTexture(size: metalView.drawableSize, multiplier: 1.0, label: "drawable", pixelFormat: .depth32Float, sample: false))
+        
         initialize()
         depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .less)
-        buildShadowTexture(size: self.metalView.drawableSize)
+        buildShadowTexture(size: metalView.drawableSize)
         buildShadowPipelineState()
         
-        gBufferRenderPass = RenderPass(name: "G-Buffer Pass", size: self.metalView.frame.size, multiplier: 1.0)
+        gBufferRenderPass = RenderPass(name: "G-Buffer Pass", size: metalView.frame.size, multiplier: 1.0)
         buildGbufferPipelineState(withFragmentFunctionName: "fragment_PBR")
         
         quadVerticesBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: quadVertices, length: MemoryLayout<Float>.size * quadVertices.count, options: [])
@@ -154,6 +135,8 @@ open class STLRRenderer: NSObject {
         shadowRenderPassDescriptor.setUpDepthAttachment(texture: shadowTexture_AA, resolveTexture: shadowTexture)
     }
     
+    // MARK: Shadow Pass
+    
     func buildShadowPipelineState() {
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_depth")
@@ -164,30 +147,6 @@ open class STLRRenderer: NSObject {
         do {
             shadowPipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: pipelineDescriptor)
         } catch {
-            fatalError(error.localizedDescription)
-        }
-    }
-    
-    func buildGbufferPipelineState(withFragmentFunctionName name: String) {
-        let descriptor = MTLRenderPipelineDescriptor()
-        //descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
-        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
-        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
-        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
-        descriptor.sampleCount = 4
-        descriptor.depthAttachmentPixelFormat = .depth32Float
-        descriptor.label = "GBuffer state"
-        descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_main")
-        if (name == "fragment_PBR") {
-            descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "gBufferFragment")
-        } else {
-            descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "gBufferFragment_IBL")
-        }
-        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
-        //let a = STLRModel.defaultVertexDescriptor.attributes[3] as! MDLVertexAttribute
-        do {
-            gBufferPipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
-        } catch let error {
             fatalError(error.localizedDescription)
         }
     }
@@ -220,6 +179,30 @@ open class STLRRenderer: NSObject {
         renderEncoder.popDebugGroup()
     }
     
+    // MARK: G-Buffer Pass
+    
+    func buildGbufferPipelineState(withFragmentFunctionName name: String) {
+        let descriptor = MTLRenderPipelineDescriptor()
+        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.colorAttachments[1].pixelFormat = .rgba16Float
+        descriptor.colorAttachments[2].pixelFormat = .rgba16Float
+        descriptor.sampleCount = 4
+        descriptor.depthAttachmentPixelFormat = .depth32Float
+        descriptor.label = "GBuffer state"
+        descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "vertex_main")
+        if (name == "fragment_PBR") {
+            descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "gBufferFragment")
+        } else {
+            descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "gBufferFragment_IBL")
+        }
+        descriptor.vertexDescriptor = MTKMetalVertexDescriptorFromModelIO(STLRModel.defaultVertexDescriptor)
+        do {
+            gBufferPipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
+        } catch let error {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
     func renderGbufferPass(renderEncoder: MTLRenderCommandEncoder, label: String = "G-Buffer") {
         guard let scene = scene else { return }
         
@@ -240,6 +223,25 @@ open class STLRRenderer: NSObject {
             if let renderable = child as? STLRModel {
                 draw(renderEncoder: renderEncoder, model: renderable)
             }
+        }
+    }
+    
+    // MARK: Composite Pass
+    
+    func buildCompositionPipelineState() {
+        let descriptor = MTLRenderPipelineDescriptor()
+        descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
+        
+        descriptor.depthAttachmentPixelFormat = .depth32Float
+        descriptor.sampleCount = 4
+        descriptor.label = "Composition state"
+        descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "composition_vert")
+        descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "composition_frag")
+        
+        do {
+            compositionPipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
+        } catch {
+            fatalError(error.localizedDescription)
         }
     }
     
@@ -271,22 +273,7 @@ open class STLRRenderer: NSObject {
         renderEncoder.popDebugGroup()
     }
     
-    func buildCompositionPipelineState() {
-        let descriptor = MTLRenderPipelineDescriptor()
-        descriptor.colorAttachments[0].pixelFormat = STLRRenderer.colorPixelFormat
-        
-        descriptor.depthAttachmentPixelFormat = .depth32Float
-        descriptor.sampleCount = 4
-        descriptor.label = "Composition state"
-        descriptor.vertexFunction = STLRRenderer.library.makeFunction(name: "composition_vert")
-        descriptor.fragmentFunction = STLRRenderer.library.makeFunction(name: "composition_frag")
-        
-        do {
-            compositionPipelineState = try STLRRenderer.metalDevice.makeRenderPipelineState(descriptor: descriptor)
-        } catch {
-            fatalError(error.localizedDescription)
-        }
-    }
+    // MARK: Initialize Textures
     
     func initialize() {
         STLRTextureController.heap = STLRTextureController.buildHeap()
@@ -300,9 +287,10 @@ open class STLRRenderer: NSObject {
     }
 }
 
+// MARK: MTKViewDelegate
+
 extension STLRRenderer: MTKViewDelegate {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        self.metalView = view
         guard let scene = scene else {return}
         scene.sceneSizeWillChange(to: size)
         buildShadowTexture(size: size)
@@ -311,7 +299,7 @@ extension STLRRenderer: MTKViewDelegate {
             water.reflectionRenderPass.updateTextures(size: size)
         }
     }
-    
+        
     public func draw(in view: MTKView) {
         STLRRenderer.commandBuffer = STLRRenderer.commandQueue.makeCommandBuffer()
         guard let scene = scene else { return }
@@ -329,7 +317,7 @@ extension STLRRenderer: MTKViewDelegate {
         renderShadowPass(renderEncoder: shadowEncoder)
         
         for water in scene.waters {
-            guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor)
+            guard let reflectEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: water.reflectionRenderPass.descriptor!)
                 else { return }
 
             scene.fragmentUniforms.cameraPosition = scene.camera.transform.position
@@ -368,7 +356,7 @@ extension STLRRenderer: MTKViewDelegate {
         scene.uniforms.clipPlane = float4(0, -1, 0, 1000)
         
         // gbuffer pass
-        guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor) else {return}
+        guard let gBufferEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: gBufferRenderPass.descriptor!) else {return}
         
         scene.skybox?.update(renderEncoder: gBufferEncoder)
         scene.skybox?.render(renderEncoder: gBufferEncoder, uniforms: scene.uniforms)
@@ -399,6 +387,7 @@ extension STLRRenderer: MTKViewDelegate {
         //STLRRenderer.commandBuffer = nil
     }
     
+    /// draw the model with provided render encoder
     func draw(renderEncoder: MTLRenderCommandEncoder, model: STLRModel) {
         guard let scene = scene else { return }
         if let heap = STLRTextureController.heap {

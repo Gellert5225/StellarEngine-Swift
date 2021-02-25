@@ -1,41 +1,31 @@
 import MetalKit
 
 class RenderPass {
-    var descriptor: MTLRenderPassDescriptor
-    var texture: MTLTexture
-    var normal: MTLTexture
-    var position: MTLTexture
-    var depthTexture: MTLTexture
+    var descriptor: MTLRenderPassDescriptor?
+    var albedo: MTLTexture?
+    var normal: MTLTexture?
+    var position: MTLTexture?
+    var depthTexture: MTLTexture?
     
-    var texture_resolve: MTLTexture
-    var normal_resolve: MTLTexture
-    var position_resolve: MTLTexture
-    var depthTexture_resolve: MTLTexture
+    var texture_resolve: MTLTexture?
+    var normal_resolve: MTLTexture?
+    var position_resolve: MTLTexture?
+    var depthTexture_resolve: MTLTexture?
     
     let name: String
     let multiplier: Float
     
-    var textures: [MTLTexture]
-    var resolveTextures: [MTLTexture]
+    var textures: [MTLTexture?] = []
+    var resolveTextures: [MTLTexture?] = []
 
     init(name: String, size: CGSize, multiplier: Float, sample: Bool = true) {
         self.name = name
         self.multiplier = multiplier
-        texture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Albedo Texture", pixelFormat: .bgra8Unorm, sample: true)
-        normal = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Normal Texture", pixelFormat: .rgba16Float, sample: true)
-        position = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Position Texture", pixelFormat: .rgba16Float, sample: true)
-        depthTexture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture", pixelFormat: .depth32Float, sample: true)
-        texture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Albedo Texture - Resolved", pixelFormat: .bgra8Unorm)
-        normal_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Normal Texture - Resolved", pixelFormat: .rgba16Float)
-        position_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Position Texture - Resolved", pixelFormat: .rgba16Float)
-        depthTexture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture - Resolved", pixelFormat: .depth32Float)
-        textures = [texture, normal, position]
-        resolveTextures = [texture_resolve, normal_resolve, position_resolve]
-        descriptor = RenderPass.setupRenderPassDescriptor(textures: textures, resolveTextures: resolveTextures, depthTexture: depthTexture, depthTextureResolve: depthTexture_resolve)
+        updateTextures(size: size)
     }
 
     func updateTextures(size: CGSize) {
-        texture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .bgra8Unorm, sample: true)
+        albedo = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .bgra8Unorm, sample: true)
         normal = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .rgba16Float, sample: true)
         position = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .rgba16Float, sample: true)
         depthTexture = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name, pixelFormat: .depth32Float, sample: true)
@@ -44,15 +34,15 @@ class RenderPass {
         position_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Position Texture - Resolved", pixelFormat: .rgba16Float)
         depthTexture_resolve = RenderPass.buildTexture(size: size, multiplier: multiplier, label: name + " Depth Texture - Resolved", pixelFormat: .depth32Float)
         resolveTextures = [texture_resolve, normal_resolve, position_resolve]
-        textures = [texture, normal, position]
+        textures = [albedo, normal, position]
         resolveTextures = [texture_resolve, normal_resolve, position_resolve]
-        descriptor = RenderPass.setupRenderPassDescriptor(textures: textures, resolveTextures: resolveTextures, depthTexture: depthTexture, depthTextureResolve: depthTexture_resolve)
+        descriptor = RenderPass.setupRenderPassDescriptor(textures: textures, resolveTextures: resolveTextures, depthTexture: depthTexture!, depthTextureResolve: depthTexture_resolve!)
     }
     
-    static func setupRenderPassDescriptor(textures: [MTLTexture], resolveTextures: [MTLTexture], depthTexture: MTLTexture, depthTextureResolve: MTLTexture) -> MTLRenderPassDescriptor {
+    static func setupRenderPassDescriptor(textures: [MTLTexture?], resolveTextures: [MTLTexture?], depthTexture: MTLTexture, depthTextureResolve: MTLTexture) -> MTLRenderPassDescriptor {
         let descriptor = MTLRenderPassDescriptor()
         for i in 0..<3 {
-            descriptor.setUpColorAttachment(position: i, texture: textures[i], resolveTexture: resolveTextures[i])
+            descriptor.setUpColorAttachment(position: i, texture: textures[i]!, resolveTexture: resolveTextures[i]!)
         }
         descriptor.setUpDepthAttachment(texture: depthTexture, resolveTexture: depthTextureResolve)
         return descriptor

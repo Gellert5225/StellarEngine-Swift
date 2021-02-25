@@ -23,6 +23,8 @@ open class STLRNode {
 
     open var position = float3(repeating: 0)
     
+    open var scale: simd_float3 = [1.0, 1.0, 1.0]
+    
     open var rotation: simd_float3 = [0, 0, 0] {
         didSet {
             let rotationMatrix = float4x4(rotation: rotation)
@@ -30,10 +32,11 @@ open class STLRNode {
         }
     }
     
-    open var scale: simd_float3 = [1.0, 1.0, 1.0]
-    
-    open func rotate(x: Float, y: Float, z: Float) {
-        rotation = [radians(fromDegrees: x), radians(fromDegrees: y), radians(fromDegrees: z)]
+    open var worldTransform: float4x4 {
+        if let parent = parent {
+            return parent.worldTransform * self.modelMatrix
+        }
+        return modelMatrix
     }
     
     open var children: [STLRNode] = []
@@ -58,6 +61,12 @@ open class STLRNode {
         childNode.parent = nil
     }
     
+    open func rotate(x: Float, y: Float, z: Float) {
+        rotation = [radians(fromDegrees: x), radians(fromDegrees: y), radians(fromDegrees: z)]
+    }
+    
+    // MARK: Private
+    
     var forwardVector: simd_float3 {
       return normalize([sin(rotation.y), 0, cos(rotation.y)])
     }
@@ -73,12 +82,5 @@ open class STLRNode {
         let rotateMatrix = float4x4(quaternion)
         let scaleMatrix = float4x4(scaling: scale)
         return translateMatrix * rotateMatrix * scaleMatrix
-    }
-    
-    open var worldTransform: float4x4 {
-        if let parent = parent {
-            return parent.worldTransform * self.modelMatrix
-        }
-        return modelMatrix
     }
 }
