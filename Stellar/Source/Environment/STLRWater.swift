@@ -13,14 +13,14 @@ open class STLRWater: STLRNode, Texturable {
     
     var transform = Transform()
     var pipelineState: MTLRenderPipelineState!
-    var reflectionRenderPass: RenderPass
+    var reflectionRenderPass: GBufferRenderPass
     var texture: MTLTexture?
     var timer: Float = 0
     
     var mesh: MTKMesh?
     
     public override init() {
-        reflectionRenderPass = RenderPass(name: "reflection", size: STLRRenderer.drawableSize, multiplier: 0.5)
+        reflectionRenderPass = GBufferRenderPass(name: "reflection", size: STLRRenderer.drawableSize, multiplier: 0.5)
         super.init()
         
         name = "Water"
@@ -73,7 +73,7 @@ open class STLRWater: STLRNode, Texturable {
         var frag = fragmentUniform
         
         renderEncoder.setVertexBytes(&uniform, length: MemoryLayout<STLRUniforms>.stride, index: Int(BufferIndexUniforms.rawValue))
-        renderEncoder.setFragmentTexture(reflectionRenderPass.texture_resolve, index: 0)
+        renderEncoder.setFragmentTexture(reflectionRenderPass.albedo_resolve, index: 0)
         renderEncoder.setFragmentTexture(texture, index: 2)
         renderEncoder.setFragmentBytes(&timer, length: MemoryLayout<Float>.size, index: 3)
         renderEncoder.setFragmentBytes(&frag, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)

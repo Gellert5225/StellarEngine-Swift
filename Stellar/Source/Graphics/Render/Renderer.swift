@@ -23,13 +23,11 @@ open class STLRRenderer: NSObject {
     
     var depthStencilState: MTLDepthStencilState!
     
-    var shadowTexture: MTLTexture!
-    var shadowTexture_AA: MTLTexture!
-    let shadowRenderPassDescriptor = MTLRenderPassDescriptor()
     var shadowPipelineState: MTLRenderPipelineState!
+    var shadowRenderPass: RenderPass!
     
     var gBufferPipelineState: MTLRenderPipelineState!
-    var gBufferRenderPass: RenderPass!
+    var gBufferRenderPass: GBufferRenderPass!
     
     var compositionPipelineState: MTLRenderPipelineState!
         
@@ -83,10 +81,10 @@ open class STLRRenderer: NSObject {
         
         initialize()
         depthStencilState = buildDepthStencilState(depthWrite: true, compareFunction: .less)
-        buildShadowTexture(size: metalView.drawableSize)
+        shadowRenderPass = RenderPass(name: "Shadow Pass", size: metalView.frame.size, multiplier: 2.0)
         buildShadowPipelineState()
         
-        gBufferRenderPass = RenderPass(name: "G-Buffer Pass", size: metalView.frame.size, multiplier: 1.0)
+        gBufferRenderPass = GBufferRenderPass(name: "G-Buffer Pass", size: metalView.frame.size, multiplier: 1.0)
         buildGbufferPipelineState(withFragmentFunctionName: "fragment_PBR")
         
         quadVerticesBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: quadVertices, length: MemoryLayout<Float>.size * quadVertices.count, options: [])
@@ -103,36 +101,6 @@ open class STLRRenderer: NSObject {
         depthStencilDescriptor.depthCompareFunction = compareFunction
         depthStencilDescriptor.isDepthWriteEnabled = depthWrite
         return STLRRenderer.metalDevice.makeDepthStencilState(descriptor: depthStencilDescriptor)
-    }
-    
-    func buildResolveTexture(pixelFormat: MTLPixelFormat, size: CGSize) -> MTLTexture {
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width * 2), height: Int(size.height * 2), mipmapped: true)
-        //descriptor.usage = [.shaderRead, .renderTarget]
-        descriptor.storageMode = .private
-        
-        guard let texture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor) else {
-            fatalError()
-        }
-        return texture
-    }
-    
-    func buildTexture(pixelFormat: MTLPixelFormat, size: CGSize, label: String, antiAliased: Bool = false) -> MTLTexture {
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat, width: Int(size.width * 2), height: Int(size.height * 2), mipmapped: false)
-        descriptor.usage = [.shaderRead, .renderTarget]
-        descriptor.storageMode = .private
-        descriptor.textureType = .type2DMultisample
-        descriptor.sampleCount = 4
-        guard let texture = STLRRenderer.metalDevice.makeTexture(descriptor: descriptor) else {
-            fatalError()
-        }
-        texture.label = "\(label) texture"
-        return texture
-    }
-    
-    func buildShadowTexture(size: CGSize) {
-        shadowTexture = buildResolveTexture(pixelFormat: .depth32Float, size: size)
-        shadowTexture_AA = buildTexture(pixelFormat: .depth32Float, size: size, label: "Shadow_AA", antiAliased: true)
-        shadowRenderPassDescriptor.setUpDepthAttachment(texture: shadowTexture_AA, resolveTexture: shadowTexture)
     }
     
     // MARK: Shadow Pass
@@ -216,7 +184,7 @@ open class STLRRenderer: NSObject {
         let lightsBuffer = STLRRenderer.metalDevice.makeBuffer(bytes: lights, length: MemoryLayout<STLRLight>.stride * lights.count, options: [])
         renderEncoder.setFragmentBuffer(lightsBuffer, offset: 0, index: 2)
         
-        renderEncoder.setFragmentTexture(shadowTexture, index: Int(Shadow.rawValue))
+        renderEncoder.setFragmentTexture(shadowRenderPass.depthTexture_resolve, index: Int(Shadow.rawValue))
         renderEncoder.setFragmentBytes(&scene.fragmentUniforms, length: MemoryLayout<STLRFragmentUniforms>.stride, index: 15)
         
         for child in scene.renderables {
@@ -257,7 +225,7 @@ open class STLRRenderer: NSObject {
         renderEncoder.setVertexBuffer(quadVerticesBuffer, offset: 0, index: 0)
         renderEncoder.setVertexBuffer(quadTexCoordBuffer, offset: 0, index: 1)
         
-        renderEncoder.setFragmentTexture(gBufferRenderPass.texture_resolve, index: Int(Albedo.rawValue))
+        renderEncoder.setFragmentTexture(gBufferRenderPass.albedo_resolve, index: Int(Albedo.rawValue))
         renderEncoder.setFragmentTexture(gBufferRenderPass.normal_resolve, index: Int(Normal.rawValue))
         renderEncoder.setFragmentTexture(gBufferRenderPass.position_resolve, index: Int(Position.rawValue))
         
@@ -293,7 +261,8 @@ extension STLRRenderer: MTKViewDelegate {
     public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         guard let scene = scene else {return}
         scene.sceneSizeWillChange(to: size)
-        buildShadowTexture(size: size)
+//        buildShadowTexture(size: size)
+        shadowRenderPass.updateTextures(size: size)
         gBufferRenderPass.updateTextures(size: size)
         for water in scene.waters {
             water.reflectionRenderPass.updateTextures(size: size)
@@ -313,7 +282,7 @@ extension STLRRenderer: MTKViewDelegate {
         })
         
         // shadow pass
-        guard let shadowEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPassDescriptor) else { return }
+        guard let shadowEncoder = STLRRenderer.commandBuffer?.makeRenderCommandEncoder(descriptor: shadowRenderPass.descriptor!) else { return }
         renderShadowPass(renderEncoder: shadowEncoder)
         
         for water in scene.waters {

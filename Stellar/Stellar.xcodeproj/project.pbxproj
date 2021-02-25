@@ -10,6 +10,8 @@
 		89157F7B20D20CE600299CB6 /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89157F7A20D20CE600299CB6 /* Renderable.swift */; };
 		8924FDE220D7781500D52908 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8924FDE120D7781500D52908 /* Utilities.swift */; };
 		89267CDD20D742780024085C /* STLRViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89267CDC20D742780024085C /* STLRViewController.swift */; };
+		8941E02A25E7544F00187548 /* GBufferRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8941E02925E7544F00187548 /* GBufferRenderPass.swift */; };
+		8941E02B25E7544F00187548 /* GBufferRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8941E02925E7544F00187548 /* GBufferRenderPass.swift */; };
 		894F33B525E21458004EDC24 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33B425E21458004EDC24 /* TextureController.swift */; };
 		894F33B625E21458004EDC24 /* TextureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33B425E21458004EDC24 /* TextureController.swift */; };
 		894F33BC25E21949004EDC24 /* TextureDescriptorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */; };
@@ -118,6 +120,7 @@
 		89157F7A20D20CE600299CB6 /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		8924FDE120D7781500D52908 /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		89267CDC20D742780024085C /* STLRViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = STLRViewController.swift; sourceTree = "<group>"; };
+		8941E02925E7544F00187548 /* GBufferRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GBufferRenderPass.swift; sourceTree = "<group>"; };
 		894F33B425E21458004EDC24 /* TextureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureController.swift; sourceTree = "<group>"; };
 		894F33BB25E21949004EDC24 /* TextureDescriptorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureDescriptorExtension.swift; sourceTree = "<group>"; };
 		89B34C9F20D2F20F00873A28 /* Texturable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texturable.swift; sourceTree = "<group>"; };
@@ -251,6 +254,7 @@
 			children = (
 				89FFCAC520CC7A1B00C6DB28 /* Renderer.swift */,
 				DFD684262247449100A78E9F /* RenderPass.swift */,
+				8941E02925E7544F00187548 /* GBufferRenderPass.swift */,
 				89157F7A20D20CE600299CB6 /* Renderable.swift */,
 			);
 			path = Render;
@@ -652,6 +656,7 @@
 				DF4402B0223C737000D5A7E3 /* Transform.swift in Sources */,
 				89FFCABD20CC79B500C6DB28 /* Shaders.metal in Sources */,
 				89267CDD20D742780024085C /* STLRViewController.swift in Sources */,
+				8941E02A25E7544F00187548 /* GBufferRenderPass.swift in Sources */,
 				8924FDE220D7781500D52908 /* Utilities.swift in Sources */,
 				DF4402CD223C9C6F00D5A7E3 /* Morph.metal in Sources */,
 				DFEF7BA0223FDCD6006711DE /* Gbuffer.metal in Sources */,
@@ -692,6 +697,7 @@
 				D9B33E9A25D7D67700B8BCF3 /* STLRWater.swift in Sources */,
 				D9B33E9B25D7D67700B8BCF3 /* Model.swift in Sources */,
 				D9B33E9C25D7D67700B8BCF3 /* Submesh.swift in Sources */,
+				8941E02B25E7544F00187548 /* GBufferRenderPass.swift in Sources */,
 				D9B33E9D25D7D67700B8BCF3 /* Morph.swift in Sources */,
 				D9B33E9E25D7D67700B8BCF3 /* Shapes.swift in Sources */,
 				D9B33E9F25D7D67700B8BCF3 /* Scene.swift in Sources */,
