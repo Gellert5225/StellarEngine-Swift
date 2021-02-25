@@ -26,17 +26,13 @@ fragment float4 composition_frag(VertexOut in [[ stage_in ]],
                                  texture2d<float> normalTexture                 [[ texture(Normal) ]],
                                  texture2d<float> positionTexture               [[ texture(Position) ]],
                                  texture2d<float> specularTexture               [[ texture(Specular) ]]) {
-    constexpr sampler s(min_filter::linear, mag_filter::linear);
-    float4 albedo = albedoTexture.sample(s, in.textureCoordinates);
-    float3 normal = normalTexture.sample(s, in.textureCoordinates).xyz;
-    float3 position = positionTexture.sample(s, in.textureCoordinates).xyz;
+    float4 albedo = albedoTexture.read(uint2(in.position.xy));
+    float3 normal = normalTexture.read(uint2(in.position.xy)).xyz;
+    float3 position = positionTexture.read(uint2(in.position.xy)).xyz;
     float3 baseColor = albedo.rgb;
     float3 diffuseColor = calculateLighting(normal, position, fragmentUniforms, lightsBuffer, baseColor);
-//    float shadow = albedo.a;
-//    if (shadow > 0) {
-//       // diffuseColor *= 0.5;
-//    }
-    return albedo;//float4(diffuseColor, 0);
+
+    return float4(diffuseColor, 0);
 }
 
 
